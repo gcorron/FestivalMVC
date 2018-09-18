@@ -22,3 +22,49 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 5px;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.hide {
+    display: none;
+}
+
+.well {
+    margin: 5px;
+}
+
+.clear {
+    clear: both;
+}
+
+.mousePointer {
+    cursor: pointer;
+}
+
+.centered {
+    text-align: center;
+}
+
+.nodisplay, .blank {
+    display: none;
+}
+
+.formError, .formWarning {
+    text-align: inherit;
+}
