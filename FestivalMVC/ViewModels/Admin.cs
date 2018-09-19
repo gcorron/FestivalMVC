@@ -4,16 +4,63 @@ using System.Web;
 
 using FestivalMVC.Models;
 using Microsoft.AspNet.Identity;
-
 using Microsoft.AspNet.Identity.Owin;
 using System.Web.Security;
 using System.Web.Configuration;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FestivalMVC.ViewModels
 {
-    public class Admin
+    public class AdminPageData
     {
 
+        private Dictionary<int, int> personIndex;
+
+        public AdminPageData(LoginPerson theUser)
+        {
+            Contact[] people;
+            Location[] locations;
+
+
+            TheUser = theUser;
+            SQLData.SelectDataForLocation(theUser.LocationId, out people, out locations);
+
+            People = people;
+            Locations = locations;
+            personIndex = new Dictionary<int, int>();
+
+
+            for (var i = 0; i < people.Length; i++) {
+                people[i].AssignedToLocation = locations
+                    .Where<Location>(p => p.ContactId == people[i].Id)
+                    .Select(p => p.Id)
+                    .SingleOrDefault<int>();
+                personIndex.Add(people[i].Id, i);
+            }
+        }
+
+        public LoginPerson TheUser { get; private set; }
+        public Contact[] People { get; private set; }
+        public Location[] Locations { get; private set; }
+
+        public string GetPersonName(int? id)
+        {
+            if (id is null)
+                return "";
+            else
+                return GetPerson((int)id).FullName;
+        }
+
+        public Contact GetPerson(int id)
+        {
+            return People[personIndex[id]];
+        }
+
+    }
+
+    public class Admin
+    {
         public static int LocationIdSecured // call only from web methods
         {
             get

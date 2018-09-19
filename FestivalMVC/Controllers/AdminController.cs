@@ -19,17 +19,12 @@ namespace FestivalMVC.Controllers
             try
             {
                 theUser = (LoginPerson)Session["TheUser"];
-                if ("ABCDE".Any(p => p== theUser.RoleType))
-                    return View("Index", theUser);
-                else
-                {
-                    return View("NoRole");
-                }
-                
+                var ViewData = new AdminPageData(theUser);
+                return View("Index", ViewData);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return RedirectToAction("/Account/Login");
+                return Content(e.Message); //TODO better reporting of error, session expired
             }
 
         }
@@ -38,23 +33,6 @@ namespace FestivalMVC.Controllers
         {
             SQLData.UpdateLocation(location);
             return Json(0);
-        }
-
-        [HttpPost]
-        public ActionResult GetPeople()
-        {
-            int locationId = Admin.LocationIdSecured;
-
-            SQLData.SelectDataForLocation(locationId, out var Contacts, out var Locations);
-            Contact empty = new Contact { Instrument = "-" };
-            Contacts.Add(empty);
-
-            object[] returnArray = new object[2];
-
-            returnArray[0] = Contacts.ToArray();
-            returnArray[1] = Locations;
-
-            return Json(returnArray);
         }
 
         [HttpPost]

@@ -10,103 +10,61 @@ var AdminApp = (function () {
     var personAvailIcon = '<span class="glyphicon glyphicon-star-empty"></span>';
     var personBusyIcon = '<span class="glyphicon glyphicon-star"></span>';
 
-    var myStorage = new classStorage();
-    var pendingLocation;
-
-    getData();
-
     return {
 
 
         fillOrVacate: function (elt) {
-            var person;
-            var location = $(elt).data('lid');
-            var keys = {};
-            var tlocation;
-            var eligiblePerson;
 
             if (assignmentMode()) {
                 cancelAssignmentMode();
                 return;
             }
-            if (location.ContactId) {
-                person = myStorage.getPerson(location.ContactId);
-                if (confirm('Remove ' + fullName(person) + ' from ' + location.LocationName + '?')) {
-                    updateLocation(0);
+
+            var blob = storedLocation({ element: elt, begin:true});
+            if (blob.location.ContactId) {
+                if (confirm('Remove ' + blob.personName + ' from ' + blob.location.LocationName + '?')) {
+                    blob.location.ContactId = 0;
+                    blob.personName = '';
+                    storedLocation(blob);
+                    updateLocation(blob.location);
                 }
             }
-            else {
-                //check how many are eligibile to fill
-
-                myStorage.begin(); //create keys to search
-                while ((tlocation = myStorage.nextLocation())) {
-                    if (tlocation.ContactId) {
-                        keys['p' + tlocation.ContactId] = 'Y';
-                    }
-                }
-
-                // search for available people not assigned
-                myStorage.begin();
-
-                var count = 0;
-                while ((person = myStorage.nextPerson()) && count <= 2) {
-                    if (person.Available && !keys['p' + person.Id]) {
-                        eligiblePerson = person;
-                        count++;
-                    }
-                }
-
-                switch (count) {
-                    case 0: {
-                        showInfoModal('Fill vacancy', 'No people are eligile right now.\nA person can only fill one position, and must have available status.\n' +
-                            'Add a person or edit one who is not assigned,\nchanging their available status.');
-                        return;
-                    }
-                    case 1: {
-                        if (confirm('One person is eligible right now. Assign ' + fullName(eligiblePerson) + ' to ' + location.LocationName + '?')) {
-                            pendingLocation = location;
-                            updateLocation(eligiblePerson.Id);
-                            return;
-                        }
-                        return;
-                    }
-                    default: {
-                        changeAlertBox('#locationsAlert', 'Now, select a person with a ' + personAvailIcon + ' or click the cancel link.');
-                        changeAlertBox('#peopleAlert', 'You are selecting a person for ' + location.LocationName + '.');
-                        $('#addPerson').hide();
-                        $(elt).children('td')[1].append($('#cancelAssignment > a')[0]); //move the the cancel link out of the invisible div
-                        pendingLocation = location;
-                        return;
-                    }
-                }
+            else { //changed mode, update the UI
+                changeAlertBox('#locationsAlert', 'Now, select a person with a ' + personAvailIcon + ' or click the cancel link.');
+                changeAlertBox('#peopleAlert', 'You are selecting a person for ' + location.LocationName + '.');
+                $('#addPerson').hide(); 
+                $(elt).children('td')[1].append($('#cancelAssignment > a')[0]); //move the the cancel link out of the invisible div
+                return;
             }
         },
 
-        editPerson: function (id) {
-            var person;
-            var location;
-            var isAssigned = isPersonAssigned(); //nested function, also sets location if assigned
-            var canDelete = !isAssigned && id !== 0;
+        editPerson: function (person, assignedToLocation) {
+            var canDelete = !assignedToLocation && person.Id;
 
             if (assignmentMode()) {
-                person = myStorage.getPerson(id);
+
+                var blob = storedLocation({});
 
                 if (!person.Available) {
                     showInfoModal('Assign Person', fullName(person) + ' does not have Available status. (You can change that.)');
                     return;
                 }
 
-                if (isAssigned) {
-                    showInfoModal('Assign Person', fullName(person) + ' is already assigned to ' + location.LocationName + '.');
+                if (assignedToLocation > 0) {
+                    showInfoModal('Assign Person', fullName(person) + ' is already assigned to another location.');
+                    return;
                 }
 
-                if (confirm('Assign ' + fullName(person) + ' to ' + pendingLocation.LocationName + '?')) {
-                    updateLocation(id);
+                if (confirm('Assign ' + fullName(person) + ' to ' + blob.location.LocationName + '?')) {
+                    blob.location.ContactId = person.Id;
+                    blob.personName = fullName(person);
+                    storedLocation(blob);
+                    updateLocation(blob.location);
+                    return;
                 }
-                return;
             }
             else {
-                populatePersonForm(id);
+                populatePersonForm(person.Id);
                 $('.no-new, #submitError').hide();
 
                 if (id !== 0) {
@@ -126,18 +84,6 @@ var AdminApp = (function () {
                 }
             }
             $("#modalEdit").modal();
-
-            function isPersonAssigned() {
-                myStorage.begin();
-                while ((location = myStorage.nextLocation())) {
-                    if (location.ContactId === id) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-
 
         },
 
@@ -175,31 +121,26 @@ var AdminApp = (function () {
         },
 
         init: function () {
-            $(document).ajaxStart(function () {
-                document.body.style.cursor = 'wait';
-            });
-
-            $(document).ajaxStop(function () {
-                document.body.style.cursor = 'default';
-            });
-
-            $('form').validate();
 
             $('#starsKey').attr('data-content', '<p>' + personBusyIcon + ' means the person has been assigned to one of your locations.</p>' +
                 '<p>' + personAvailIcon + ' means the person has not been assigned.</p>' +
                 '<p> No star means the person has been designated not available to be assigned.</p>');
+
+
+            $('[data-toggle="popover"]').popover(); // enable popover anchor for persons
+
         }
+
 
     };
 
-    function updateLocation(contactId) {
-        pendingLocation.ContactId = contactId;
+    function updateLocation(location) {
         cancelAssignmentMode();
 
         $.ajax({
             type: "POST",
-            url: "Admin.aspx/UpdateLocation",
-            data: JSON.stringify({ location: pendingLocation }),
+            url: "Admin/UpdateLocation",
+            data: JSON.stringify({ location }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: onUpdateLocationSuccess,
@@ -209,21 +150,66 @@ var AdminApp = (function () {
     }
 
     function onUpdateLocationSuccess(response) {
-        myStorage.setLocation(pendingLocation);
-        renderTables();
+        storedLocation({ update: true });
+    }
+
+    function storedLocation(o) {
+
+        function ChangePersonAssigned(personId,LocationId) {
+            $('#people >tr[name="' + personId + '"]').attr('data-location',LocationId);
+        }
+
+        var me = storedLocation;
+
+        if (o.begin) {
+            delete o.begin;
+            me.stored = {};
+            me.stored.element = o.element;
+            me.stored.location = JSON.parse(o.element.getAttribute('data-location'));
+            me.stored.ContactId = me.stored.location.ContactId;
+            me.stored.personName = o.element.children[1].innerText;    
+            return $.extend({},me.stored);
+        }
+        if ('location' in o) {
+            me.stored.location = o.location;
+        }
+        if ('personName' in o) {
+            me.stored.personName = o.personName;
+        }
+
+        if (o.update) {
+            me.stored.element.setAttribute('data-location',JSON.stringify(me.stored.location));
+            if (me.stored.ContactId) {
+                ChangePersonAssigned(me.stored.ContactId, "0"); // old no longer assigned to location 
+            }
+            if (me.stored.location.ContactId) {
+                ChangePersonAssigned(me.stored.location.ContactId, me.stored.location.Id);
+            }
+            me.stored.element.children[1].innerText = me.stored.personName;
+            delete me.stored;
+        }
+        return $.extend({}, me.stored);
+    }
+
+    function storedPerson(p) {
+        var element;
+
+        if ('children' in p) { //it's an element, checking the data out
+            element = p;
+            return JSON.parse($(element).attr('data-person'));
+        }
+        else { //it's a data object, checking it in
+            $(element).attr('data-person', JSON.stringify(p));
+        }
     }
 
     function onUpdatePersonSuccess(response) {
         var person = JSON.parse(response.d);
-        myStorage.setPerson(person);
-        renderTables();
         $('#modalEdit').modal('hide');
     }
 
     function onDeletePersonSuccess(response) {
         var person = JSON.parse(response.d);
-        myStorage.deletePerson(person.Id);
-        renderTables();
         $('#modalEdit').modal('hide');
     }
 
@@ -240,19 +226,6 @@ var AdminApp = (function () {
         $('#addPerson').show();
     }
 
-    function getData() {
-        $.ajax({
-            type: "POST",
-            url: "Admin.aspx/GetPeople",
-            data: '{}',
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: onGetDataSuccess,
-            failure: onAJAXFailure,
-            error: onAJAXFailure,
-            global: true
-        });
-    }
 
     function onAJAXFailure(response) {
 
@@ -301,168 +274,6 @@ var AdminApp = (function () {
         }
     }
 
-    function onGetDataSuccess(response) {
-        var array = JSON.parse(response.d);
-        var people = array[0];
-        var locations = array[1];
-
-        people.forEach(function (person) { myStorage.setPerson(person); });
-        locations.forEach(function (location) { myStorage.setLocation(location); });
-        renderTables();
-    }
-
-    function renderTables() {
-        var row;
-        var tr;
-        var table;
-        var clone;
-        var anchor;
-        var person;
-        var people;
-        var location;
-        var assigned = {};
-
-        // erase any existing rows, except the blank template row
-        $('#locations>tr').not('#blankLocation').remove();
-        $('#people>tr').not('#blankPerson').remove();
-
-        // add locations (sort order never changes)
-
-        myStorage.begin();
-        row = document.getElementById('blankLocation');
-        table = document.getElementById('locations');
-        while ((location = myStorage.nextLocation()) !== null) {
-            if (location.ContactId) {
-                assigned[location.ContactId] = 'Y';
-            }
-            clone = row.cloneNode(true);
-            clone.getElementsByTagName('td')[0].innerText = location.LocationName;
-            clone.getElementsByTagName('td')[1].innerText = contactName(location.ContactId);
-            clone.setAttribute('id', location.key);
-            $(clone).data('lid', location);
-            addClone();
-        }
-
-        // add people
-        people = sortedPeople();
-        row = document.getElementById('blankPerson');
-        table = document.getElementById('people'); // find table body to append to
-
-        for (var i = 0; i < people.length; i++) {
-            person = people[i];
-            clone = row.cloneNode(true); // true means get all descendant nodes too
-            clone.setAttribute('id', person.key);
-            anchor = clone.getElementsByTagName('a')[0];
-            anchor.innerText = fullName(person);
-            anchor.setAttribute('data-content', person.Email + '  ph. ' + person.Phone);
-            $(anchor).data("pid", person.Id);
-            clone.getElementsByTagName('td')[1].innerHTML = assigned[person.Id] ? personBusyIcon : person.Available ? personAvailIcon : '';
-            addClone();
-        }
-        $('[data-toggle="popover"]').popover(); // enable popover anchor for persons
-
-        function addClone() {
-            $(clone).removeClass('nodisplay')
-            table.append(clone);
-        }
-
-    }
-
-    function enableButton(buttonName) {
-        document.getElementById(buttonName).classList.remove('disabled');
-    }
-
-    function sortedPeople() {
-        var arr = [];
-        var person;
-
-        myStorage.begin();
-        while ((person = myStorage.nextPerson())) {
-            arr.push(person);
-        }
-
-        arr.sort(function (a, b) {
-            return sortName(a) < sortName(b) ? -1 : 1;
-        });
-
-        return arr;
-
-        function sortName(person) {
-            return person.LastName + ' ' + person.FirstName;
-        }
-
-    }
-
-    //simulates localstorage, or database, ensuring that objects returned are not references to the stored data
-    //which the code could inadvertently change
-    function classStorage() {
-        var dict = {};
-        var index;
-        var keyz;
-
-        return {
-            begin: function () {
-                keyz = Object.keys(dict);
-                index = 0;
-            },
-
-            nextPerson: function () {
-                return nextObject('p');
-            },
-
-            nextLocation: function () {
-                return nextObject('l');
-            },
-
-            setPerson: function (person) {
-                set((person.Id === 0 ? 'P' : 'p') + person.Id, person); // P for blank person, so nextPerson does not return it
-            },
-
-            getPerson: function (id) {
-                return get((id === 0 ? 'P' : 'p') + id);
-            },
-
-            deletePerson: function (id) {
-                delete dict['p' + id];
-            },
-
-            setLocation: function (location) {
-                set('l' + location.Id, location);
-            },
-
-            getLocation: function (id) {
-                return get('l' + id);
-            }
-        };
-
-        function set(key, datum) {
-            dict[key] = datum;
-        }
-
-        function get(key) {
-            var o = jQuery.extend(true, {}, dict[key]); // return a clone of the object
-            Object.defineProperty(o, "key", {
-                value: key,
-                writable: false,
-                enumerable: false,
-                configurable: true
-            });
-            return o;
-        }
-
-        function nextObject(keytype) {
-            while (index < keyz.length && keyz[index].slice(0, 1) !== keytype) {
-                index++;
-            }
-            if (index < keyz.length) {
-                return get(keyz[index++]);
-            }
-            else {
-                return null;
-            }
-        }
-    }
-
     function CollectJsonFormData() {
         var control;
         var person = myStorage.getPerson(0); //just to get the property names
@@ -504,15 +315,6 @@ var AdminApp = (function () {
         $('#infoModal h4').text(heading);
         $('#infoModal p').text(message);
         $("#infoModal").modal();
-    }
-
-    function contactName(id) {
-        var person;
-        if (id) {
-            person = myStorage.getPerson(id);
-            return fullName(person);
-        }
-        return '';
     }
 
     function fullName(person) {

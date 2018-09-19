@@ -38,13 +38,13 @@ namespace FestivalMVC
 
         }
 
-        public static void SelectDataForLocation(int location, out List<Contact> contacts, out Location[] locations)
+        public static void SelectDataForLocation(int location, out Contact[] contacts, out Location[] locations)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 using (var multi = connection.QueryMultiple("SelectDataForLocation", new { location }, commandType: CommandType.StoredProcedure))
                 {
-                    contacts = multi.Read<Contact>().ToList<Contact>();
+                    contacts = multi.Read<Contact>().ToArray<Contact>();
                     locations = multi.Read<Location>().ToArray<Location>();
                 }
             }

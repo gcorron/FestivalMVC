@@ -1,43 +1,66 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace FestivalMVC.Models
 {
 
+    [DataContract]
     public struct Contact
     {
+        [DataMember]
         public int Id { get; set; }
+        [DataMember]
         public string Email { get; set; }
+        [DataMember]
         public string Phone { get; set; }
+        [DataMember]
         public string LastName { get; set; }
+        [DataMember]
         public string FirstName { get; set; }
+        [DataMember]
         public string UserName { get; set; }
+        [DataMember]
         public string Instrument { get; set; }
+        [DataMember]
         public Boolean Available { get; set; }
+        [DataMember]
         public int ParentLocation { get; set; }
+
+        public int AssignedToLocation { get; set; }
+        public string FullName { get => $"{FirstName} {LastName}"; }
     }
 
     public struct Location
     {
+        [DataMember]
         public string LocationName { get; set; }
+        [DataMember]
         public int Id { get; set; }
+        [DataMember]
         public int? ContactId { get; set; }
     }
 
 
     public struct LoginPerson
     {
+        [DataMember]
         public string LastName { get; set; }
+        [DataMember]
         public string FirstName { get; set; }
+        [DataMember]
         public string Instrument { get; set; }
+        [DataMember]
         public string LocationName { get; set; }
+        [DataMember]
         public int LocationId { get; set; }
+        [DataMember]
         public string ParentLocationName { get; set; }
+        [DataMember]
         public int ParentLocaitonId { get; set; }
-        public string FullName { get => $"{FirstName} {LastName}"; }
+        [DataMember]
         public char RoleType { get; set; }
 
-        public bool IsUnassigned { get => RoleType == '-'; }
-
+        public string FullName { get => $"{FirstName} {LastName}"; }
         public string LocationDomain { get => RoleScope(LocationRank); }
         public string LocationSlot { get => RoleScope(LocationRank + 1); }
 
