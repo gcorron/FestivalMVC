@@ -7,6 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FestivalMVC", "FestivalMVC\
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "FestivalDatabase", "..\FestivalEntry\FestivalDatabase\FestivalDatabase.sqlproj", "{F6693765-0F71-4AFA-9C2E-484E7680AF0D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FBE45D43-287A-492F-B754-D21C85893D76}"
+	ProjectSection(SolutionItems) = preProject
+		FestivalMVC\Festival App Project Blueprint.docx = FestivalMVC\Festival App Project Blueprint.docx
+		FestivalMVC\LICENSE.md = FestivalMVC\LICENSE.md
+		FestivalMVC\README.md = FestivalMVC\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
