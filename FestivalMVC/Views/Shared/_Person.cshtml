@@ -1,0 +1,23 @@
+﻿@using FestivalMVC.Models
+@model ContactForView
+@{string icon; }
+<tr name="@Model.Id" data-location="@Model.AssignedToLocation" data-person="@Json.Encode(Model)" class="mousePointer">
+    <td>
+        <a onclick="AdminApp.editPerson($(this).closest('tr').data('person'),
+                                    $(this).closest('tr').data('location'))" data-toggle="popover">@Model.FullName</a>
+                                </td>
+                                @{if (Model.AssignedToLocation > 0)
+                                    {
+                                        icon = "glyphicon glyphicon-star";
+                                    }
+                                    else if (Model.Available)
+                                    {
+                                        icon = "glyphicon glyphicon-star-empty";
+                                    }
+                                    else
+                                    {
+                                        icon = "";
+                                    }
+                                }
+                                <td class="centered"><span class="@icon"></span></td>
+                            </tr>

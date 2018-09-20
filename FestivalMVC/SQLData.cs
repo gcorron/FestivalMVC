@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using Dapper;
+using Dapper.Contrib;
 using FestivalMVC.Models;
 
 namespace FestivalMVC
@@ -32,32 +33,31 @@ namespace FestivalMVC
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                int ret = connection.Query<int>("UpdateContact", contact, commandType: CommandType.StoredProcedure).Single<int>();
-                return ret;
+                return connection.QuerySingle<int>("UpdateContact", contact, commandType: CommandType.StoredProcedure);
             }
 
         }
 
-        public static void SelectDataForLocation(int location, out Contact[] contacts, out Location[] locations)
+        public static void SelectDataForLocation(int location, out ContactForView[] contacts, out Location[] locations)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 using (var multi = connection.QueryMultiple("SelectDataForLocation", new { location }, commandType: CommandType.StoredProcedure))
                 {
-                    contacts = multi.Read<Contact>().ToArray<Contact>();
+                    contacts = multi.Read<ContactForView>().ToArray<ContactForView>();
                     locations = multi.Read<Location>().ToArray<Location>();
                 }
             }
 
         }
 
-        public static void SelectDataForChair(int location, out List<Contact> contacts, out List<Event> events, out List<TeacherEvent> teacherEvents)
+        public static void SelectDataForChair(int location, out List<ContactForView> contacts, out List<Event> events, out List<TeacherEvent> teacherEvents)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 using (var multi = connection.QueryMultiple("SelectDataForChairLocation", new { location }, commandType: CommandType.StoredProcedure))
                 {
-                    contacts = multi.Read<Contact>().ToList<Contact>();
+                    contacts = multi.Read<ContactForView>().ToList<ContactForView>();
                     events = multi.Read<Event>().ToList<Event>();
                     teacherEvents = multi.Read<TeacherEvent>().ToList<TeacherEvent>();
                 }
@@ -69,10 +69,7 @@ namespace FestivalMVC
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                var userList = connection.Query<LoginPerson>("GetLoginPerson", new { userName }, commandType: CommandType.StoredProcedure).ToList<LoginPerson>();
-                if (userList.Count != 1)
-                    throw new RowNotInTableException();
-                return userList[0];
+                return connection.QuerySingle<LoginPerson>("GetLoginPerson", new { userName }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -80,10 +77,7 @@ namespace FestivalMVC
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                var resultList = connection.Query<string>("GenerateUserName", new { seed }, commandType: CommandType.StoredProcedure).ToList<string>();
-                if (resultList.Count != 1)
-                    throw new RowNotInTableException();
-                return resultList[0];
+                return connection.QuerySingle<string>("GenerateUserName", new { seed }, commandType: CommandType.StoredProcedure);
             }
 
         }

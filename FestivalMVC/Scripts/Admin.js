@@ -20,7 +20,7 @@ var AdminApp = (function () {
                 return;
             }
 
-            var blob = storedLocation({ element: elt, begin:true});
+            var blob = storedLocation({ element: elt, begin: true });
             if (blob.location.ContactId) {
                 if (confirm('Remove ' + blob.personName + ' from ' + blob.location.LocationName + '?')) {
                     blob.location.ContactId = 0;
@@ -32,7 +32,7 @@ var AdminApp = (function () {
             else { //changed mode, update the UI
                 changeAlertBox('#locationsAlert', 'Now, select a person with a ' + personAvailIcon + ' or click the cancel link.');
                 changeAlertBox('#peopleAlert', 'You are selecting a person for ' + location.LocationName + '.');
-                $('#addPerson').hide(); 
+                $('#addPerson').hide();
                 $(elt).children('td')[1].append($('#cancelAssignment > a')[0]); //move the the cancel link out of the invisible div
                 return;
             }
@@ -64,10 +64,10 @@ var AdminApp = (function () {
                 }
             }
             else {
-                populatePersonForm(person.Id);
+                populatePersonForm(person);
                 $('.no-new, #submitError').hide();
 
-                if (id !== 0) {
+                if (person.Id !== 0) {
                     $('.no-new').show();
                 }
 
@@ -91,7 +91,7 @@ var AdminApp = (function () {
             if (confirm('Delete, are you sure?')) {
                 $.ajax({
                     type: "POST",
-                    url: "Admin.aspx/DeletePerson",
+                    url: "Admin/DeletePerson",
                     data: CollectJsonFormData(),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -103,17 +103,17 @@ var AdminApp = (function () {
         },
 
         updatePerson: function () {
-            if (!$('form').valid()) {
+            if (!$('#personForm').valid()) {
                 showInfoModal('Attention', 'Please make corrections first.');
                 return;
             }
 
             $.ajax({
                 type: "POST",
-                url: "Admin.aspx/UpdatePerson",
+                url: "Admin/UpdatePerson",
                 data: CollectJsonFormData(),
                 contentType: "application/json; charset=utf-8",
-                dataType: "json",
+                dataType: "html",
                 success: onUpdatePersonSuccess,
                 failure: onUpdatePersonFailure,
                 error: onUpdatePersonFailure
@@ -121,17 +121,36 @@ var AdminApp = (function () {
         },
 
         init: function () {
-
             $('#starsKey').attr('data-content', '<p>' + personBusyIcon + ' means the person has been assigned to one of your locations.</p>' +
                 '<p>' + personAvailIcon + ' means the person has not been assigned.</p>' +
                 '<p> No star means the person has been designated not available to be assigned.</p>');
 
+            //parse all the table row json objects, replace them with JQuery data objects
+            var o;
+            $('#locations tr').each(function (i, v) {
+                o = JSON.parse($(v).attr('data-location'));
+                $(v).data('location', o);
+                $(v).removeAttr('data-location');
+            });
 
-            $('[data-toggle="popover"]').popover(); // enable popover anchor for persons
+            $('#people tr').each(function (i, v) {
+                o = JSON.parse($(v).attr('data-person'));
+                $(v).data('person', o);
+                $(v).find('[data-toggle="popover"]').
+                    popover({
+                        title: 'Contact',
+                        trigger: 'hover',
+                        content: o.Email + '  ph: ' + o.Phone
+                    });
 
+
+                $(v).removeAttr('data-person');
+                o = JSON.parse($(v).attr('data-location'));
+                $(v).data('location', o);
+                $(v).removeAttr('data-location');
+            });
+            sortPersonTable();
         }
-
-
     };
 
     function updateLocation(location) {
@@ -155,8 +174,8 @@ var AdminApp = (function () {
 
     function storedLocation(o) {
 
-        function ChangePersonAssigned(personId,LocationId) {
-            $('#people >tr[name="' + personId + '"]').attr('data-location',LocationId);
+        function ChangePersonAssigned(personId, LocationId) {
+            $('#people >tr[name="' + personId + '"]').attr('data-location', LocationId);
         }
 
         var me = storedLocation;
@@ -165,10 +184,10 @@ var AdminApp = (function () {
             delete o.begin;
             me.stored = {};
             me.stored.element = o.element;
-            me.stored.location = JSON.parse(o.element.getAttribute('data-location'));
+            me.stored.location = $(o.element).data('location');
             me.stored.ContactId = me.stored.location.ContactId;
-            me.stored.personName = o.element.children[1].innerText;    
-            return $.extend({},me.stored);
+            me.stored.personName = o.element.children[1].innerText;
+            return $.extend({}, me.stored);
         }
         if ('location' in o) {
             me.stored.location = o.location;
@@ -178,7 +197,7 @@ var AdminApp = (function () {
         }
 
         if (o.update) {
-            me.stored.element.setAttribute('data-location',JSON.stringify(me.stored.location));
+            $(me.stored.element).data('location', me.stored.location);
             if (me.stored.ContactId) {
                 ChangePersonAssigned(me.stored.ContactId, "0"); // old no longer assigned to location 
             }
@@ -191,22 +210,23 @@ var AdminApp = (function () {
         return $.extend({}, me.stored);
     }
 
-    function storedPerson(p) {
-        var element;
+    function onUpdatePersonSuccess(html) {
 
-        if ('children' in p) { //it's an element, checking the data out
-            element = p;
-            return JSON.parse($(element).attr('data-person'));
+        var personId = $('#Id').val();
+        $('#people >tr[name="' + personId + '"]').remove();
+        $('#people').append(html);
+        sortPersonTable();
+        //now update the person's name in the location table, if assigned to one
+        var locationId = $('#personForm').data('assignedToLocation');
+        if (locationId) {
+            var person = $('#people >tr[name="' + personId + '"]').data('person');
+            var row = $('#locations tr[name="' + locationId + '"]')[0];
+            row.children[1].innerText = person.FullName;
         }
-        else { //it's a data object, checking it in
-            $(element).attr('data-person', JSON.stringify(p));
-        }
-    }
 
-    function onUpdatePersonSuccess(response) {
-        var person = JSON.parse(response.d);
         $('#modalEdit').modal('hide');
     }
+
 
     function onDeletePersonSuccess(response) {
         var person = JSON.parse(response.d);
@@ -233,7 +253,10 @@ var AdminApp = (function () {
     }
 
     function parseResponse(response) {
-        if (response.d) {
+        if (response.responseText > "") {
+            return response.responseText;
+        }
+        else if (response.d > "") {
             try {
                 return JSON.parse(response.d);
             }
@@ -244,50 +267,77 @@ var AdminApp = (function () {
         else if (response.responseJSON) {
             return response.responseJSON.Message;
         }
-        else if (response.responseText) {
-            return response.responseText;
-        }
         else {
             return 'No response from server.';
         }
     }
 
-    function populatePersonForm(id) {
-        var person = myStorage.getPerson(id);
-        var mess;
-        var control;
+    function populatePersonForm(person) {
+        var name;
+        $('#personForm .form-control').each(function (i, control) {
+            name = control.getAttribute('name');
+            if (control.type === 'checkbox') {
+                control.setAttribute('checked', person[name]);
+            }
+            else {
+                control.value = (person[name]);
+            }
+        });
+        $('#personForm').data('assignedToLocation', person.AssignedToLocation); //needed for the new table row partial view being created on the server
+    }
 
-        if (!person) {
-            mess = + 'person ' + id + ' not found!';
-            alert(mess);
-            throw mess;
-        }
-
-        for (var name in person) {
-            control = $('#' + name);
-            if (control) {
-                if ($(control).attr('type') === 'checkbox')
-                    control.prop('checked', person[name]);
-                else
-                    control.val(person[name]);
+    function sortPersonTable() {
+        var table, rows, switching, i, shouldSwitch;
+        var personx, persony, compared;
+        table = document.getElementById("people");
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 0; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                personx = $(rows[i]).data('person');
+                persony = $(rows[i + 1]).data('person');
+                compared = compare(personx.LastName, persony.LastName);
+                if (compared === 0)
+                    compared = compare(personx.FirstName, persony.FirstName);
+                if (compared > 0) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
             }
         }
+        function compare(x, y) {
+            var cx = x.toLowerCase();
+            var cy = y.toLowerCase();
+            if (cx > cy)
+                return 1;
+            if (cx < cy)
+                return -1;
+            return 0;
+        }
+
     }
 
     function CollectJsonFormData() {
-        var control;
-        var person = myStorage.getPerson(0); //just to get the property names
-
-        for (var name in person) {
-            control = $('#' + name);
-            if (control) {
-                if ($(control).attr('type') === 'checkbox')
-                    person[name] = control.prop('checked');
-                else
-                    person[name] = control.val();
+        var name;
+        var person = {};
+        $('#personForm .form-control').each(function (i, control) {
+            name = control.getAttribute('name');
+            if (control.type === 'checkbox') {
+                person[name] = control.getAttribute('checked');
             }
-        }
-        return JSON.stringify({ person: person });
+            else {
+                person[name] = control.value;
+            }
+        });
+        var assignedToLocation = $('#personForm').data('assignedToLocation');
+        var temp = JSON.stringify({ person: person, assignedToLocation: assignedToLocation });
+        return temp;
     }
 
     function changeAlertBox(selector, message) {

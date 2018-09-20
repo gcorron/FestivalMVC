@@ -67,33 +67,14 @@
                     </th>
                     <th class="centered">
                         <span id="starsKey" title="Stars" class="glyphicon glyphicon-question-sign" data-container="body"
-                              data-html="true" data-toggle="popover" data-trigger="hover" data-content="Test"></span>
+                              data-html="true" data-toggle="popover" data-trigger="hover"></span>
                     </th>
                 </tr>
             </thead>
             <tbody id="people">
-                @{string icon; }
                 @{foreach (var person in Model.People)
                     {
-                        <tr name="@person.Id" data-location="@person.AssignedToLocation" data-person="@Json.Encode(person)" class="mousePointer">
-                            <td>
-                                <a onclick="AdminApp.editPerson(JSON.parse($(this).closest('tr').attr('data-person')),$(this).closest('tr').attr('data-location'))" title="Contact info" data-toggle="popover"
-                                   data-trigger="hover" data-content="@($"{person.Email} tel. {person.Phone}")">@person.FullName</a>
-                            </td>
-                            @{if (person.AssignedToLocation>0)
-                                {
-                                    icon = "glyphicon glyphicon-star";
-                                }
-                                else if (person.Available) {
-                                    icon= "glyphicon glyphicon-star-empty";
-                                }
-                                else
-                                {
-                                    icon = "";
-                                }
-                            }
-                            <td class="centered"><span class= "@icon"></span></td>
-                        </tr>
+                        Html.RenderPartial("_Person", person);
                     } }
             </tbody>
         </table>
@@ -101,71 +82,73 @@
 </div>
 
 <!-- Edit People modal -->
-<div class="modal fade" id="modalEdit" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="well">
-                <div class="row">
+<form id="personForm">
+    <div class="modal fade" id="modalEdit" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="well">
+                    <div class="row">
 
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="control-label" for="first">First Name:</label>
-                            <input class="form-control" type="text" id="FirstName" placeholder="Enter First Name"
-                                   name="FirstName" maxlength="50" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="last">Last Name:</label>
-                            <input class="form-control" type="text" id="LastName" placeholder="Enter Last Name"
-                                   name="LastName" minlength="2" maxlength="50" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="email">Email:</label>
-                            <input class="form-control" type="email" id="Email" placeholder="Enter Email"
-                                   name="Email" maxlength="50" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="phone">Phone:</label>
-                            <input class="form-control" type="tel" id="Phone" placeholder="Enter Phone"
-                                   name="Phone" maxlength="50" required>
-                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label" for="first">First Name:</label>
+                                <input class="form-control" type="text" id="FirstName" placeholder="Enter First Name"
+                                       name="FirstName" maxlength="50" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="last">Last Name:</label>
+                                <input class="form-control" type="text" id="LastName" placeholder="Enter Last Name"
+                                       name="LastName" minlength="2" maxlength="50" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="email">Email:</label>
+                                <input class="form-control" type="email" id="Email" placeholder="Enter Email"
+                                       name="Email" maxlength="50" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="phone">Phone:</label>
+                                <input class="form-control" type="tel" id="Phone" placeholder="Enter Phone"
+                                       name="Phone" maxlength="50" required>
+                            </div>
 
-                    </div>
-                    <div class="col-sm-6">
-                        <!-- RH half -->
-                        <div id="instrumentGroup" class="form-group">
-                            <label class="control-label" for="instrument">Instrument Category:</label>
-                            <select class="form-control" id="Instrument" name="Instrument" required>
-                                <option value="" disabled selected hidden>Select ...</option>
-                                <option value="P">Piano</option>
-                                <option value="S">Strings</option>
-                                <option value="V">Voice</option>
-                                <option value="W">Winds</option>
-                            </select>
                         </div>
+                        <div class="col-sm-6">
+                            <!-- RH half -->
+                            <div id="instrumentGroup" class="form-group">
+                                <label class="control-label" for="instrument">Instrument Category:</label>
+                                <select class="form-control" id="Instrument" name="Instrument" required>
+                                    <option value="" disabled selected hidden>Select ...</option>
+                                    <option value="P">Piano</option>
+                                    <option value="S">Strings</option>
+                                    <option value="V">Voice</option>
+                                    <option value="W">Winds</option>
+                                </select>
+                            </div>
 
-                        <div class="checkbox no-new">
-                            <label>
-                                <input type="checkbox" value="" name="Available" id="Available">Active
-                            </label>
-                        </div>
+                            <div class="checkbox no-new">
+                                <label>
+                                    <input type="checkbox" class="form-control" value="" name="Available" id="Available">Active
+                                </label>
+                            </div>
 
-                        <input id="Id" name="Id" class="hide" />
+                            <input id="Id" name="Id" class="hide form-control" />
 
-                        <div class="form-group">
-                            <a class="btn btn-default" onclick="AdminApp.updatePerson()">Save</a>
-                            <a class="btn btn-default" onclick="$('#modalEdit').modal('hide')" title="Close">Cancel</a>
-                            <a id="deleteButton" class="btn btn-warning" onclick="AdminApp.deletePerson()" title="Delete"
-                               data-toggle="popover" data-trigger="hover" data-content="You can delete only people who are not assigned to a position.">Delete</a>
-                        </div>
-                        <div class="alert alert-danger" id="submitError">
-                            <strong>Server error! </strong><span id="serverError"></span>
+                            <div class="form-group">
+                                <a class="btn btn-default" onclick="AdminApp.updatePerson()">Save</a>
+                                <a class="btn btn-default" onclick="$('#modalEdit').modal('hide')" title="Close">Cancel</a>
+                                <a id="deleteButton" class="btn btn-warning" onclick="AdminApp.deletePerson()" title="Delete"
+                                   data-toggle="popover" data-trigger="hover" data-content="You can delete only people who are not assigned to a position.">Delete</a>
+                            </div>
+                            <div class="alert alert-danger" id="submitError">
+                                <strong>Server error! </strong><span id="serverError"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 
 <!-- Modal -->
 <div class="modal fade" id="infoModal" role="dialog">

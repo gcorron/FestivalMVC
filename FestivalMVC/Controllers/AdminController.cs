@@ -3,9 +3,9 @@ using FestivalMVC.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 
 namespace FestivalMVC.Controllers
 {
@@ -14,7 +14,6 @@ namespace FestivalMVC.Controllers
         // GET: Admin
         public ActionResult Index()
         {
-
             LoginPerson theUser;
             try
             {
@@ -43,8 +42,9 @@ namespace FestivalMVC.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdatePerson(Contact person)
+        public ActionResult UpdatePerson(Contact person, int assignedToLocation)
         {
+
             person.ParentLocation = Admin.LocationIdSecured;
             if (person.Id == 0)
             {
@@ -52,11 +52,24 @@ namespace FestivalMVC.Controllers
                 person.Available = true;
             }
 
-            int ret = SQLData.UpdateContact(person);
-            if (person.Id == 0)
-                person.Id = ret;
+            try
+            {
+                int ret = SQLData.UpdateContact(person);
 
-            return Json(person);
+                if (person.Id == 0)
+                    person.Id = ret;
+
+                var personOut = new ContactForView(person);
+                personOut.AssignedToLocation = assignedToLocation;
+
+                return PartialView("_Person", personOut);
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Response.StatusCode = (Int32)HttpStatusCode.BadRequest;
+                var message = ex.Message;
+                return Json(message);
+            }
         }
 
     }

@@ -1,63 +1,74 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Dapper.Contrib.Extensions;
 
 namespace FestivalMVC.Models
 {
 
-    [DataContract]
     public struct Contact
     {
-        [DataMember]
         public int Id { get; set; }
-        [DataMember]
         public string Email { get; set; }
-        [DataMember]
         public string Phone { get; set; }
-        [DataMember]
         public string LastName { get; set; }
-        [DataMember]
         public string FirstName { get; set; }
-        [DataMember]
         public string UserName { get; set; }
-        [DataMember]
         public string Instrument { get; set; }
-        [DataMember]
         public Boolean Available { get; set; }
-        [DataMember]
         public int ParentLocation { get; set; }
+    }
 
+    public struct ContactForView
+    {
+
+        public ContactForView(Contact contact)
+        {
+            Id = contact.Id;
+            Email = contact.Email;
+            Phone = contact.Phone;
+            LastName = contact.LastName;
+            FirstName = contact.FirstName;
+            Instrument = contact.Instrument;
+            Available = contact.Available;
+            ParentLocation = contact.ParentLocation;
+            AssignedToLocation = 0;
+        }
+
+        public int Id { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string Instrument { get; set; }
+        public Boolean Available { get; set; }
+        public int ParentLocation { get; set; }
         public int AssignedToLocation { get; set; }
-        public string FullName { get => $"{FirstName} {LastName}"; }
+        public string FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
     }
 
     public struct Location
     {
-        [DataMember]
         public string LocationName { get; set; }
-        [DataMember]
         public int Id { get; set; }
-        [DataMember]
         public int? ContactId { get; set; }
     }
 
 
     public struct LoginPerson
     {
-        [DataMember]
         public string LastName { get; set; }
-        [DataMember]
         public string FirstName { get; set; }
-        [DataMember]
         public string Instrument { get; set; }
-        [DataMember]
         public string LocationName { get; set; }
-        [DataMember]
         public int LocationId { get; set; }
-        [DataMember]
         public string ParentLocationName { get; set; }
-        [DataMember]
         public int ParentLocaitonId { get; set; }
-        [DataMember]
         public char RoleType { get; set; }
 
         public string FullName { get => $"{FirstName} {LastName}"; }

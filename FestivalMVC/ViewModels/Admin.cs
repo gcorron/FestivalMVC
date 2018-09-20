@@ -1,37 +1,32 @@
 ﻿using System;
 using System.Linq;
 using System.Web;
-
 using FestivalMVC.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System.Web.Security;
 using System.Web.Configuration;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 
 namespace FestivalMVC.ViewModels
 {
     public class AdminPageData
     {
-
         private Dictionary<int, int> personIndex;
 
         public AdminPageData(LoginPerson theUser)
         {
-            Contact[] people;
-            Location[] locations;
-
-
             TheUser = theUser;
-            SQLData.SelectDataForLocation(theUser.LocationId, out people, out locations);
+            SQLData.SelectDataForLocation(theUser.LocationId, out ContactForView[] people, out Location[] locations);
 
             People = people;
             Locations = locations;
             personIndex = new Dictionary<int, int>();
 
-
-            for (var i = 0; i < people.Length; i++) {
+            for (var i = 0; i < people.Length; i++)
+            {
                 people[i].AssignedToLocation = locations
                     .Where<Location>(p => p.ContactId == people[i].Id)
                     .Select(p => p.Id)
@@ -41,18 +36,19 @@ namespace FestivalMVC.ViewModels
         }
 
         public LoginPerson TheUser { get; private set; }
-        public Contact[] People { get; private set; }
+        public ContactForView[] People { get; private set; }
         public Location[] Locations { get; private set; }
+
 
         public string GetPersonName(int? id)
         {
             if (id is null)
                 return "";
-            else
-                return GetPerson((int)id).FullName;
+            var person = GetPerson((int)id);
+            return person.FirstName + " " + person.LastName;
         }
 
-        public Contact GetPerson(int id)
+        public ContactForView GetPerson(int id)
         {
             return People[personIndex[id]];
         }
