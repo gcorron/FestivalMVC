@@ -56,16 +56,16 @@ namespace FestivalMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UpdateContactInfo(ContactForSelf model)
         {
+            ManageController.ManageMessageId message= ManageMessageId.UpdateContactSuccess;
             try
             {
                 SQLData.UpdateContactForAccount(model);
             }
             catch (Exception e)
             {
-                return RedirectToAction("Index", ManageMessageId.Error);
+                message = ManageMessageId.Error;
             }
-
-            return RedirectToAction("Index",new { message = ManageMessageId.UpdateContactSuccess });
+            return RedirectToAction("Index",new { message });
         }
 
         //

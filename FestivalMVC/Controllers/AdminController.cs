@@ -9,10 +9,10 @@ using System.Web.Mvc;
 
 namespace FestivalMVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         // GET: Admin
-        [Authorize]
         public ActionResult Index()
         {
             LoginPerson theUser;
@@ -26,26 +26,43 @@ namespace FestivalMVC.Controllers
             {
                 return Content(e.Message); //TODO better reporting of error, session expired
             }
-
         }
         [HttpPost]
-        [Authorize]
+        [ValidateAntiForgeryToken]
         public ActionResult UpdateLocation(Location location)
         {
-            SQLData.UpdateLocation(location);
-            return Json(0);
+            try
+            {
+                SQLData.UpdateLocation(location);
+                return Json(0);
+            }
+            catch (Exception e)
+            {
+                return Content(e.Message);
+            }
+
         }
 
         [HttpPost]
-        [Authorize]
+        [ValidateAntiForgeryToken]
         public ActionResult DeletePerson(Contact person)
         {
-            SQLData.DeleteContact(person.Id);
-            return Content(person.Id.ToString());
+            try
+            {
+                SQLData.DeleteContact(person.Id);
+                return Content(person.Id.ToString());
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Response.StatusCode = (Int32)HttpStatusCode.BadRequest;
+                var message = ex.Message;
+                return Json(message);
+            }
+
         }
 
         [HttpPost]
-        [Authorize]
+        [ValidateAntiForgeryToken]
         public ActionResult UpdatePerson(Contact person, int assignedToLocation)
         {
 

@@ -7,11 +7,13 @@ namespace FestivalMVC.Models
 
     public struct Contact
     {
+        private string firstName, lastName, email, phone;
+
         public int Id { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
+        public string FirstName { get => firstName; set => firstName = value.Trim(); }
+        public string LastName { get => lastName; set => lastName = value.Trim(); }
+        public string Email { get => email; set => email = value.Trim(); }
+        public string Phone { get => phone; set => phone = value.Trim(); }
         public string UserName { get; set; }
         public string Instrument { get; set; }
         public Boolean Available { get; set; }
@@ -54,11 +56,13 @@ namespace FestivalMVC.Models
 
     public struct ContactForSelf
     {
+        private string firstName, lastName, email, phone;
+
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
+        public string FirstName { get => firstName; set => firstName = value.Trim(); }
+        public string LastName { get => lastName; set => lastName = value.Trim(); }
+        public string Email { get => email; set => email = value.Trim(); }
+        public string Phone { get => phone; set => phone = value.Trim(); }
     }
 
     public struct Location

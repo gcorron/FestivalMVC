@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [Joe]
+    WITH PASSWORD = N'r4vjeDlFwIbdfsdsw9klb!mkmsFT7_&#$!~<^myfuxvfcfjc', SID = 0x631F6AEEB3504145BDBEC2A57701C231, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+
