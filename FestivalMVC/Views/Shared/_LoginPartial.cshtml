@@ -5,12 +5,28 @@
     {
     @Html.AntiForgeryToken()
 
-    <ul class="nav navbar-nav navbar-right">
-        <li>
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-        </li>
-        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-    </ul>
+<ul class="nav navbar-nav navbar-right">
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Hello @(" " + User.Identity.GetUserName() + "!")
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                @Html.ActionLink("Your account settings", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Account" })
+            </li>
+            <li>
+                @Html.ActionLink("Festival Management", "Index", "Admin", routeValues: null, htmlAttributes: new { title = "Festival" })
+            </li>
+        </ul>
+    </li>
+
+
+    <li>
+        
+    </li>
+    <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+</ul>
     }
 }
 else

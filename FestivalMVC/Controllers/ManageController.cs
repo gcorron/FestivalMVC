@@ -51,8 +51,26 @@ namespace FestivalMVC.Controllers
         }
 
         //
+        // POST: /Manage/Index
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateContactInfo(ContactForSelf model)
+        {
+            try
+            {
+                SQLData.UpdateContactForAccount(model);
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Index", ManageMessageId.Error);
+            }
+
+            return RedirectToAction("Index",new { message = ManageMessageId.UpdateContactSuccess });
+        }
+
+        //
         // GET: /Manage/Index
-        public async Task<ActionResult> Index(ManageMessageId? message)
+        public ActionResult Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
@@ -61,18 +79,19 @@ namespace FestivalMVC.Controllers
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : message == ManageMessageId.UpdateContactSuccess ? "Your contact information has been udpated."
                 : "";
 
-            var userId = User.Identity.GetUserId();
-            var model = new IndexViewModel
+            try
             {
-                HasPassword = HasPassword(),
-                PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
-                TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
-                Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
-            };
-            return View(model);
+                var userName = User.Identity.GetUserName();
+                ContactForSelf model = SQLData.SelectContactForAccount(userName);
+                return View(model);
+            } 
+            catch (Exception e)
+            {
+                return Content(e.Message); //TODO better reporting of error, session expired
+            }
         }
 
         //
@@ -381,7 +400,8 @@ namespace FestivalMVC.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
-            Error
+            Error,
+            UpdateContactSuccess
         }
 
 #endregion

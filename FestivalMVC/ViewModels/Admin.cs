@@ -92,6 +92,9 @@ namespace FestivalMVC.ViewModels
             var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var user = new ApplicationUser() { UserName = userName, Email = person.Email };
             string password = WebConfigurationManager.AppSettings["NewUserPassword"];
+            if (string.IsNullOrEmpty(password)) {
+                throw new Exception("Server is not configured for new user password!");
+            }
             IdentityResult result = manager.Create(user, password); //initial password, they can change it later
             if (result.Succeeded)
             {

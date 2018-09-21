@@ -7,8 +7,8 @@ $(document).ready(function () {
 var AdminApp = (function () {
 
 
-    var personAvailIcon = '<span class="glyphicon glyphicon-star-empty"></span>';
-    var personBusyIcon = '<span class="glyphicon glyphicon-star"></span>';
+    var personAvailIcon = 'glyphicon glyphicon-star-empty';
+    var personBusyIcon = 'glyphicon glyphicon-star';
 
     return {
 
@@ -38,7 +38,13 @@ var AdminApp = (function () {
             }
         },
 
+        addPerson: function () {
+            var person = new Person();
+            AdminApp.editPerson(person, 0);
+        },
+
         editPerson: function (person, assignedToLocation) {
+
             var canDelete = !assignedToLocation && person.Id;
 
             if (assignmentMode()) {
@@ -46,26 +52,28 @@ var AdminApp = (function () {
                 var blob = storedLocation({});
 
                 if (!person.Available) {
-                    showInfoModal('Assign Person', fullName(person) + ' does not have Available status. (You can change that.)');
+                    showInfoModal('Assign Person', person.FullName + ' does not have Available status. (You can change that.)');
                     return;
                 }
 
                 if (assignedToLocation > 0) {
-                    showInfoModal('Assign Person', fullName(person) + ' is already assigned to another location.');
+                    showInfoModal('Assign Person', person.FullName + ' is already assigned to another location.');
                     return;
                 }
 
-                if (confirm('Assign ' + fullName(person) + ' to ' + blob.location.LocationName + '?')) {
+                if (confirm('Assign ' + person.FullName + ' to ' + blob.location.LocationName + '?')) {
                     blob.location.ContactId = person.Id;
-                    blob.personName = fullName(person);
+                    blob.personName = person.FullName;
                     storedLocation(blob);
                     updateLocation(blob.location);
                     return;
                 }
             }
             else {
+
                 populatePersonForm(person);
-                $('.no-new, #submitError').hide();
+                $('.no-new').hide();
+                $('#submitError').hide();
 
                 if (person.Id !== 0) {
                     $('.no-new').show();
@@ -93,7 +101,7 @@ var AdminApp = (function () {
                     type: "POST",
                     url: "Admin/DeletePerson",
                     data: CollectJsonFormData(),
-                    contentType: "application/json; charset=utf-8",
+                    contentType: "text",
                     dataType: "json",
                     success: onDeletePersonSuccess,
                     failure: onUpdatePersonFailure,
@@ -104,7 +112,7 @@ var AdminApp = (function () {
 
         updatePerson: function () {
             if (!$('#personForm').valid()) {
-                showInfoModal('Attention', 'Please make corrections first.');
+                showEditError('Attention','Please make corrections.');
                 return;
             }
 
@@ -121,9 +129,9 @@ var AdminApp = (function () {
         },
 
         init: function () {
-            $('#starsKey').attr('data-content', '<p>' + personBusyIcon + ' means the person has been assigned to one of your locations.</p>' +
-                '<p>' + personAvailIcon + ' means the person has not been assigned.</p>' +
-                '<p> No star means the person has been designated not available to be assigned.</p>');
+            $('#starsKey').attr('data-content', '<p>' + spanIcon(personBusyIcon) + ' means the person has been assigned to one of your locations.</p>' +
+                '<p>' + spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>' +
+                '<p> No star means the person has been designated not available to be assigned.</p>').popover();
 
             //parse all the table row json objects, replace them with JQuery data objects
             var o;
@@ -134,24 +142,31 @@ var AdminApp = (function () {
             });
 
             $('#people tr').each(function (i, v) {
-                o = JSON.parse($(v).attr('data-person'));
-                $(v).data('person', o);
-                $(v).find('[data-toggle="popover"]').
-                    popover({
-                        title: 'Contact',
-                        trigger: 'hover',
-                        content: o.Email + '  ph: ' + o.Phone
-                    });
-
-
-                $(v).removeAttr('data-person');
-                o = JSON.parse($(v).attr('data-location'));
-                $(v).data('location', o);
-                $(v).removeAttr('data-location');
+                installPersonRow(v);
             });
             sortPersonTable();
         }
     };
+
+    function installPersonRow(v) {
+        var o = JSON.parse($(v).attr('data-person'));
+        $(v).data('person', o);
+        $(v).find('[data-toggle="popover"]').
+            popover({
+                title: 'Contact',
+                trigger: 'hover',
+                content: o.Email + '  ph: ' + o.Phone
+            });
+
+
+        $(v).removeAttr('data-person');
+        var p = JSON.parse($(v).attr('data-location'));
+        $(v).data('location', p);
+        $(v).removeAttr('data-location');
+        return o; //return the data
+    }
+
+
 
     function updateLocation(location) {
         cancelAssignmentMode();
@@ -172,10 +187,18 @@ var AdminApp = (function () {
         storedLocation({ update: true });
     }
 
+
     function storedLocation(o) {
 
         function ChangePersonAssigned(personId, LocationId) {
-            $('#people >tr[name="' + personId + '"]').attr('data-location', LocationId);
+            function toggleStar(icon, appear) {
+                $(personRowSelector(personId)).find('span').toggleClass(icon, appear);
+            }
+
+            var star = 'glyphicon-star';
+            $(personRowSelector(personId)).attr('data-location', LocationId);
+            toggleStar(star + '-empty', LocationId == 0);
+            toggleStar(star, LocationId > 0);
         }
 
         var me = storedLocation;
@@ -199,27 +222,30 @@ var AdminApp = (function () {
         if (o.update) {
             $(me.stored.element).data('location', me.stored.location);
             if (me.stored.ContactId) {
-                ChangePersonAssigned(me.stored.ContactId, "0"); // old no longer assigned to location 
+                ChangePersonAssigned(me.stored.ContactId, 0); // old no longer assigned to location 
             }
             if (me.stored.location.ContactId) {
                 ChangePersonAssigned(me.stored.location.ContactId, me.stored.location.Id);
             }
             me.stored.element.children[1].innerText = me.stored.personName;
             delete me.stored;
+            return;
         }
         return $.extend({}, me.stored);
     }
 
     function onUpdatePersonSuccess(html) {
 
-        var personId = $('#Id').val();
-        $('#people >tr[name="' + personId + '"]').remove();
-        $('#people').append(html);
+        var removePersonId = $('#Id').val();
+        $(personRowSelector(removePersonId)).remove(); //remove previous row for person if it exists
+
+        var newRow = $(html)[0];
+        var person = installPersonRow(newRow);
+
+        $('#people').append(newRow);
         sortPersonTable();
         //now update the person's name in the location table, if assigned to one
-        var locationId = $('#personForm').data('assignedToLocation');
-        if (locationId) {
-            var person = $('#people >tr[name="' + personId + '"]').data('person');
+        if (person.locationId) {
             var row = $('#locations tr[name="' + locationId + '"]')[0];
             row.children[1].innerText = person.FullName;
         }
@@ -227,16 +253,34 @@ var AdminApp = (function () {
         $('#modalEdit').modal('hide');
     }
 
+    function personData(id, data) {
+
+        if (data) {
+            $(personRowSelector(id)).data('person', data);
+        }
+        else {
+            return $(personRowSelector(id)).data('person');
+        }
+
+    }
+
+    function personRowSelector(id) {
+        return '#people >tr[name="' + id + '"]';
+    }
 
     function onDeletePersonSuccess(response) {
-        var person = JSON.parse(response.d);
+        var removePersonId = $('#Id').val();
+        $(personRowSelector(removePersonId)).remove(); //remove previous row for person
         $('#modalEdit').modal('hide');
     }
 
     function onUpdatePersonFailure(response) {
-        $('#serverError').text(parseResponse(response));
+        showEditError('Server Error',parseResponse(response));
+    }
+    function showEditError(prompt,message) {
+        $('#submitError span').text(message);
+        $('#submitError >strong').text(prompt + '  ');
         $('#submitError').show();
-
     }
 
     function cancelAssignmentMode() {
@@ -277,13 +321,29 @@ var AdminApp = (function () {
         $('#personForm .form-control').each(function (i, control) {
             name = control.getAttribute('name');
             if (control.type === 'checkbox') {
-                control.setAttribute('checked', person[name]);
+                control.checked = person[name];
             }
             else {
                 control.value = (person[name]);
             }
         });
         $('#personForm').data('assignedToLocation', person.AssignedToLocation); //needed for the new table row partial view being created on the server
+    }
+
+    function CollectJsonFormData() {
+        var name;
+        var person = {};
+        $('#personForm .form-control').each(function (i, control) {
+            name = control.getAttribute('name');
+            if (control.type === 'checkbox') {
+                person[name] = control.checked;
+            }
+            else {
+                person[name] = $.trim(control.value);
+            }
+        });
+        var assignedToLocation = $('#personForm').data('assignedToLocation') || 0;
+        return JSON.stringify({ person: person, assignedToLocation: assignedToLocation });
     }
 
     function sortPersonTable() {
@@ -323,22 +383,6 @@ var AdminApp = (function () {
 
     }
 
-    function CollectJsonFormData() {
-        var name;
-        var person = {};
-        $('#personForm .form-control').each(function (i, control) {
-            name = control.getAttribute('name');
-            if (control.type === 'checkbox') {
-                person[name] = control.getAttribute('checked');
-            }
-            else {
-                person[name] = control.value;
-            }
-        });
-        var assignedToLocation = $('#personForm').data('assignedToLocation');
-        var temp = JSON.stringify({ person: person, assignedToLocation: assignedToLocation });
-        return temp;
-    }
 
     function changeAlertBox(selector, message) {
         var o = $(selector);
@@ -357,6 +401,10 @@ var AdminApp = (function () {
         o.toggleClass('alert-info alert-warning');
     }
 
+    function spanIcon(icon) {
+        return '<span class="' + icon + '"></span>';
+    }
+
     function assignmentMode() {
         return ($('#cancelAssignment').has('a').length === 0);
     }
@@ -367,8 +415,15 @@ var AdminApp = (function () {
         $("#infoModal").modal();
     }
 
-    function fullName(person) {
-        return person.FirstName + ' ' + person.LastName;
+    function Person() {
+        this.FirstName = '';
+        this.LastName = '';
+        this.Id = 0;
+        this.Email = '';
+        this.Phone = '';
+        this.Available = true;
+        this.Instrument = '';
     }
+
 })();
 

@@ -12,6 +12,7 @@ namespace FestivalMVC.Controllers
     public class AdminController : Controller
     {
         // GET: Admin
+        [Authorize]
         public ActionResult Index()
         {
             LoginPerson theUser;
@@ -28,6 +29,7 @@ namespace FestivalMVC.Controllers
 
         }
         [HttpPost]
+        [Authorize]
         public ActionResult UpdateLocation(Location location)
         {
             SQLData.UpdateLocation(location);
@@ -35,25 +37,27 @@ namespace FestivalMVC.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult DeletePerson(Contact person)
         {
             SQLData.DeleteContact(person.Id);
-            return Json(person);
+            return Content(person.Id.ToString());
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult UpdatePerson(Contact person, int assignedToLocation)
         {
 
-            person.ParentLocation = Admin.LocationIdSecured;
-            if (person.Id == 0)
-            {
-                person.UserName = Admin.CreateUser(person);
-                person.Available = true;
-            }
-
             try
             {
+                person.ParentLocation = Admin.LocationIdSecured;
+                if (person.Id == 0)
+                {
+                    person.UserName = Admin.CreateUser(person);
+                    person.Available = true;
+                }
+
                 int ret = SQLData.UpdateContact(person);
 
                 if (person.Id == 0)

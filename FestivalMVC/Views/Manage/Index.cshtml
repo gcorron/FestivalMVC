@@ -1,87 +1,71 @@
-﻿@model FestivalMVC.Models.IndexViewModel
+﻿@model FestivalMVC.Models.ContactForSelf
 @{
-    ViewBag.Title = "Manage";
+    ViewBag.Title = "Your Account";
 }
 
 <h2>@ViewBag.Title.</h2>
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 <div>
-    <h4>Change your account settings</h4>
+    <h4>View or change your account settings</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>Password:</dt>
-        <dd>
-            [
-            @if (Model.HasPassword)
-            {
-                @Html.ActionLink("Change your password", "ChangePassword")
-            }
-            else
-            {
-                @Html.ActionLink("Create", "SetPassword")
-            }
-            ]
-        </dd>
-        <dt>External Logins:</dt>
-        <dd>
-            @Model.Logins.Count [
-            @Html.ActionLink("Manage", "ManageLogins") ]
-        </dd>
-        @*
-            Phone Numbers can used as a second factor of verification in a two-factor authentication system.
-             
-             See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication using SMS.
-             
-             Uncomment the following block after you have set up two-factor authentication
-        *@
-        @*  
-            <dt>Phone Number:</dt>
-            <dd>
-                @(Model.PhoneNumber ?? "None")
-                @if (Model.PhoneNumber != null)
+    <div class="well">
+        <div class="row">
+            <div class="col-sm-6">
+                <dl class="dl-horizontal">
+                    <dt>Name:</dt>
+                    <dd>@(Model.FirstName + " " + Model.LastName) </dd>
+                </dl>
+                <dl class="dl-horizontal">
+                    <dt>Phone:</dt>
+                    <dd>@Model.Phone</dd>
+                </dl>
+                <dl class="dl-horizontal">
+                    <dt>Email:</dt>
+                    <dd>@Model.Email</dd>
+                </dl>
+            </div>
+            <div class="col-sm-2">
+                <a class="btn btn-primary btn-block" onclick="showModal();">Change Contact Info</a>
+                <br />
+                <a class="btn btn-warning btn-block" href="@Url.Action("ChangePassword")">Change Password</a>
+                <br/>
+            </div>
+        </div>
+    </div>
+    <div id="modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                @using (Html.BeginForm("UpdateContactInfo", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
-                    <br />
-                    <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
-                    using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
-                    }
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">Change Contact Info</div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Email)
+                            @Html.TextBoxFor(model => model.Email)
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Phone)
+                            @Html.TextBoxFor(model => model.Phone)
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default">Submit</button>
+                        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+
+                    </div>
+                    @Html.HiddenFor(model => model.Id)
+                    @Html.HiddenFor(model => model.FirstName)
+                    @Html.HiddenFor(model => model.LastName)
+
                 }
-                else
-                {
-                    <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
-                }
-            </dd>
-        *@
-        <dt>Two-Factor Authentication:</dt>
-        <dd>
-            <p>
-                There are no two-factor authentication providers configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication.
-            </p>
-            @*@if (Model.TwoFactor)
-                {
-                    using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>Enabled
-                        <input type="submit" value="Disable" class="btn btn-link" />
-                        </text>
-                    }
-                }
-                else
-                {
-                    using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>Disabled
-                        <input type="submit" value="Enable" class="btn btn-link" />
-                        </text>
-                    }
-                }*@
-        </dd>
-    </dl>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    function showModal() {
+        $('#modal').modal();
+    }
+</script>

@@ -13,6 +13,22 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static void UpdateContactForAccount(ContactForSelf model)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("UpdateContactForAccount", model, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public static ContactForSelf SelectContactForAccount(string userName)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.QuerySingle<ContactForSelf>("SelectContactForAccount", new { userName }, commandType: CommandType.StoredProcedure);
+            }
+
+        }
         public static void UpdateLocation(Location location)
         {
             using (IDbConnection connection = GetDBConnection())

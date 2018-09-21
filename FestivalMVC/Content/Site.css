@@ -61,6 +61,10 @@ tr:nth-child(even) {
     text-align: center;
 }
 
+.left {
+    text-align: left;
+}
+
 .nodisplay, .blank {
     display: none;
 }
