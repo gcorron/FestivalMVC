@@ -23,6 +23,7 @@ namespace FestivalMVC.ErrorHandler
         {
             //write your handler implementation here.
 
+
         }
 
         #endregion

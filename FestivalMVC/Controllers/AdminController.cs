@@ -16,49 +16,25 @@ namespace FestivalMVC.Controllers
         public ActionResult Index()
         {
             LoginPerson theUser;
-            try
-            {
-                theUser = (LoginPerson)Session["TheUser"];
-                var ViewData = new AdminPageData(theUser);
-                return View("Index", ViewData);
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message); //TODO better reporting of error, session expired
-            }
+            theUser = (LoginPerson)Session["TheUser"];
+            var ViewData = new AdminPageData(theUser);
+            return View("Index", ViewData);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateLocation(Location location)
         {
-            try
-            {
-                SQLData.UpdateLocation(location);
-                return Json(0);
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message);
-            }
-
+            SQLData.UpdateLocation(location);
+            return Json(0);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult DeletePerson(Contact person)
         {
-            try
-            {
-                SQLData.DeleteContact(person.Id);
-                return Content(person.Id.ToString());
-            }
-            catch (Exception ex)
-            {
-                HttpContext.Response.StatusCode = (Int32)HttpStatusCode.BadRequest;
-                var message = ex.Message;
-                return Json(message);
-            }
-
+            SQLData.DeleteContact(person.Id);
+            return Json(0);
         }
 
         [HttpPost]
@@ -66,32 +42,69 @@ namespace FestivalMVC.Controllers
         public ActionResult UpdatePerson(Contact person, int assignedToLocation)
         {
 
-            try
+            person.ParentLocation = Admin.LocationIdSecured;
+            if (person.Id == 0)
             {
-                person.ParentLocation = Admin.LocationIdSecured;
-                if (person.Id == 0)
-                {
-                    person.UserName = Admin.CreateUser(person);
-                    person.Available = true;
-                }
-
-                int ret = SQLData.UpdateContact(person);
-
-                if (person.Id == 0)
-                    person.Id = ret;
-
-                var personOut = new ContactForView(person)
-                {
-                    AssignedToLocation = assignedToLocation
-                };
-
-                return PartialView("_Person", personOut);
+                person.UserName = Admin.CreateUser(person);
+                person.Available = true;
             }
-            catch (Exception ex)
+
+            int ret = SQLData.UpdateContact(person);
+
+            if (person.Id == 0)
+                person.Id = ret;
+
+            var personOut = new ContactForView(person)
             {
-                HttpContext.Response.StatusCode = (Int32)HttpStatusCode.BadRequest;
-                var message = ex.Message;
-                return Json(message);
+                AssignedToLocation = assignedToLocation
+            };
+
+            return PartialView("_Person", personOut);
+        }
+
+        //catch all unhandled exceptions that are thrown within scope of this controller
+        protected override void OnException(ExceptionContext filterContext)
+        {
+
+            if (filterContext.ExceptionHandled)
+                return;
+
+            if (filterContext.HttpContext.Request.IsAjaxRequest())
+            {
+                if (filterContext.Exception == null)
+                {
+                    base.OnException(filterContext);
+                }
+                else
+                {
+                    filterContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    filterContext.Result = new JsonResult
+                    {
+                        JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                        Data = new
+                        {
+                            filterContext.Exception.Message
+                        }
+                    };
+                    filterContext.ExceptionHandled = true;
+                }
+            }
+            else
+            {
+                filterContext.ExceptionHandled = true;
+
+                // Redirect on error:
+                //filterContext.Result = RedirectToAction("Index", "Error");
+
+                // OR set the result without redirection:
+                filterContext.Result = new ViewResult
+                {
+                    ViewName = "~/Views/Shared/Error.cshtml",
+                    ViewData = new ViewDataDictionary(filterContext.Controller.ViewData) //this view will use the exception as its model
+                    {
+                        Model = filterContext.Exception
+                    }
+                };
             }
         }
 

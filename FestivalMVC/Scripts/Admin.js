@@ -136,8 +136,8 @@ var AdminApp = (function () {
 
     };
 
-        // ajax functions
-       
+    // ajax functions
+
     function updatePersonAjax() {
         $.ajax({
             type: "POST",
@@ -165,7 +165,7 @@ var AdminApp = (function () {
         });
     }
 
-    function onUpdateLocationSuccess(response) {
+    function onUpdateLocationSuccess() {
         storedLocation({ update: true });
     }
 
@@ -188,37 +188,36 @@ var AdminApp = (function () {
         $('#modalEdit').modal('hide');
     }
 
-    function onDeletePersonSuccess(response) {
+    function onDeletePersonSuccess() {
         var removePersonId = $('#Id').val();
         $(personRowSelector(removePersonId)).remove(); //remove previous row for person
         $('#modalEdit').modal('hide');
     }
 
     function onUpdatePersonFailure(response) {
-        showEditError('Server Error',parseResponse(response));
+        showEditError('Server Error', parseResponse(response));
     }
 
     function onAJAXFailure(response) {
-        showInfoModal(parseResponse(response));
+        showInfoModal('Server Error', parseResponse(response));
     }
 
     function parseResponse(response) {
-        if (response.responseText > "") {
-            return response.responseText;
-        }
-        else if (response.d > "") {
-            try {
-                return JSON.parse(response.d);
-            }
-            catch (e) {
-                return response.d;
-            }
-        }
-        else if (response.responseJSON) {
+        var message;
+
+        if (response.responseJSON && response.responseJSON.Message)
             return response.responseJSON.Message;
+
+        message = response.d || response.responseText;
+
+        if (message == null)
+            return 'No details available';
+
+        try {
+            return JSON.parse(message);
         }
-        else {
-            return 'No response from server.';
+        catch (e) {
+            return message;
         }
     }
 
@@ -243,7 +242,7 @@ var AdminApp = (function () {
         return data;
     }
 
-//DOM functions
+    //DOM functions
     function sortPersonTable() {
         var table, rows, switching, i, shouldSwitch;
         var personx, persony, compared;
@@ -307,8 +306,8 @@ var AdminApp = (function () {
     }
 
     function showInfoModal(heading, message) {
-        $('#infoModal h4').text(heading);
-        $('#infoModal p').text(message);
+        $('#infoModal .modal-header h4').text(heading);
+        $('#infoModal .modal-body p').text(message);
         $("#infoModal").modal();
     }
 
@@ -341,7 +340,7 @@ var AdminApp = (function () {
         return o; //return the data
     }
 
-//processing and data functions
+    //processing and data functions
     function storedLocation(o) {
 
         function ChangePersonAssigned(personId, LocationId) {
@@ -417,7 +416,7 @@ var AdminApp = (function () {
         $('#personForm').data('assignedToLocation', person.AssignedToLocation); //needed for the new table row partial view being created on the server
     }
 
-//constructor for new person
+    //constructor for new person
     function Person() {
         this.FirstName = '';
         this.LastName = '';

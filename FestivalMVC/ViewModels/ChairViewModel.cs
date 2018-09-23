@@ -53,20 +53,9 @@ namespace FestivalMVC.ViewModels
         }
 
 
-        public bool HasEvents
-        {
-            get
-            {
-                return (_events.Count() > 0);
-            }
+        public bool HasEvents { get => (_events.Count() > 0); }
 
-        }
-        public Location Location
-        {
-            get
-            {
-                return _location;
-            }
-        }
+        public Location Location { get => _location; }
+
     }
 }

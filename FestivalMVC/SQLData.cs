@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Web;
 using Dapper;
-using Dapper.Contrib;
 using FestivalMVC.Models;
 
 namespace FestivalMVC

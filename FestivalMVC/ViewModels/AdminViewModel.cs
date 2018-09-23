@@ -8,7 +8,6 @@ using System.Web.Security;
 using System.Web.Configuration;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 
 namespace FestivalMVC.ViewModels
 {
@@ -69,12 +68,6 @@ namespace FestivalMVC.ViewModels
             }
         }
 
-
-        private static string Left(string s, int i)
-        {
-            return s.Length <= i ? s : s.Substring(0, i);
-        }
-
         public static string CreateUser(Contact person)
         {
             string seed = Left(person.FirstName, 1) + Left(person.LastName, 4);
@@ -97,5 +90,11 @@ namespace FestivalMVC.ViewModels
                 throw new Exception(result.Errors.FirstOrDefault());
             }
         }
+
+        private static string Left(string s, int i)
+        {
+            return s.Length <= i ? s : s.Substring(0, i);
+        }
+
     }
 }

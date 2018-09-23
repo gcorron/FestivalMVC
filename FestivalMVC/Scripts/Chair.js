@@ -83,15 +83,10 @@ var ChairApp = (function () {
             clearAlerts();
             ajaxUpdateEvent();
         },
-        onSelectedEvent: function () {
-            $('.selectFirst').show();
-            $('#prompt').text('Now you can go to Planning, Entries, or Results.');
-        }
-
-
-    };
+     };
 
     //private functions
+
 
     // UI
 
@@ -114,178 +109,161 @@ var ChairApp = (function () {
             $('#prompt2').show();
         }
     }
-
-
+    
     function showWarning(message) {
-    showAlert('.formWarning', message);
-}
-
-function showError(message) {
-    showAlert('.formError', message);
-}
-
-function showAlert(selector, message) {
-    clearAlerts();
-    $(selector + ' >span').text(message);
-    $(selector).show();
-}
-
-function clearAlerts() {
-    $('.no-new, .alert').hide();
-}
-
-function showInfoModal(heading, message) {
-    $('#infoModal h4').text(heading);
-    $('#infoModal p').text(message);
-    $("#infoModal").modal();
-}
-
-function onAJAXFailure(response) {
-    showInfoModal('Server Error', parseResponse(response));
-}
-
-function populateEventForm(id) {
-    var event;
-
-    if (id == 0)
-        event = new Event();
-    else
-        event = getEvent(id);
-
-    var mess;
-    var control;
-
-    if (!event) {
-        mess = 'event ' + id + ' not found!';
-        alert(mess);
-        throw mess;
+        showAlert('.formWarning', message);
     }
 
-    for (var name in event) {
-        control = $('#modalEventEdit #' + name);
-        if (control) {
-            if ($(control).attr('type') === 'checkbox')
-                control.prop('checked', event[name]);
-            else
-                control.val(event[name]);
+    function showError(message) {
+        showAlert('.formError', message);
+    }
+
+    function showAlert(selector, message) {
+        clearAlerts();
+        $(selector + ' >span').text(message);
+        $(selector).show();
+    }
+
+    function clearAlerts() {
+        $('.no-new, .alert').hide();
+    }
+
+    function showInfoModal(heading, message) {
+        $('#infoModal h4').text(heading);
+        $('#infoModal p').text(message);
+        $("#infoModal").modal();
+    }
+
+        function populateEventForm(id) {
+        var event;
+
+        if (id == 0)
+            event = new Event();
+        else
+            event = getEvent(id);
+
+        var mess;
+        var control;
+
+        if (!event) {
+            mess = 'event ' + id + ' not found!';
+            alert(mess);
+            throw mess;
+        }
+
+        for (var name in event) {
+            control = $('#modalEventEdit #' + name);
+            if (control) {
+                if ($(control).attr('type') === 'checkbox')
+                    control.prop('checked', event[name]);
+                else
+                    control.val(event[name]);
+            }
         }
     }
-}
 
-//utility
-function parseResponse(response) {
-    if (response.d) {
+    function installEventRow(v) {
+        var o = JSON.parse($(v).attr('data-event'));
+        $(v).data('event', o);
+        $(v).removeAttr('data-event');
+    }
+
+
+    function showEditError(prompt, message) {
+        $('#submitError span').text(message);
+        $('#submitError >strong').text(prompt + '  ');
+        $('#submitError').show();
+    }
+
+    //utility
+
+    function AddAntiForgeryToken(data) {
+        data.__RequestVerificationToken = $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
+        return data;
+    }
+
+    //AJAX
+
+    function onAJAXFailure(response) {
+        showInfoModal('Server Error', parseResponse(response));
+    }
+
+    function onUpdateEventFailure(response) {
+        showEditError('Server Error', parseResponse(response));
+    }
+
+    function ajaxUpdateEvent() {
+        $.ajax({
+            type: "POST",
+            url: "Chair/UpdateEvent",
+            data: CollectFormData(),
+            dataType: "json",
+            success: onUpdateEventSuccess,
+            failure: onUpdateEventFailure,
+            error: onUpdateEventFailure
+        });
+
+        function CollectFormData() {
+            var name;
+            var o = {};
+            $('#formEdit .form-control').each(function (i, control) {
+                name = control.getAttribute('name');
+                if (control.type === 'checkbox') {
+                    o[name] = control.checked;
+                }
+                else {
+                    o[name] = $.trim(control.value);
+                }
+            });
+            var temp = AddAntiForgeryToken({ theEvent: o }); //can't use event as parameter name because C# won't allow it
+            return temp;
+        }
+    }
+
+    function onUpdateEventSuccess(html) {
+        var removeEventId = $('#Id').val();
+        $('#events >tr[name="' + id + '"]').remove(); //remove previous row for event if it exists
+
+        var newRow = $(html)[0];
+        installEventRow(newRow);
+        // could try to insert it in the correct sort order
+        $('#events').append(newRow);
+        $('#modalEdit').modal('hide');
+    }
+
+    function parseResponse(response) {
+        var message;
+
+        if (response.responseJSON && response.responseJSON.Message)
+            return response.responseJSON.Message;
+
+        message = response.d || response.responseText;
+
+        if (message == null)
+            return 'No details available';
+
         try {
-            return JSON.parse(response.d);
+            return JSON.parse(message);
         }
         catch (e) {
-            return response.d;
+            return message;
         }
     }
-    else if (response.responseJSON) {
-        return response.responseJSON.Message;
-    }
-    else if (response.responseText) {
-        return response.responseText;
-    }
-    else {
-        return 'No response from server.';
-    }
-}
 
-function parseHelper(name, value) {
-    // Remove any values whose property name begins with an underscore
-    if (name[0] == '_') return undefined;
-    // If the value is a string in ISO 8601 date format convert it to a Date.
-    if (typeof value === "string" && /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/.test(value)) {
-        return new Date(value);
-    }
-    // Otherwise, return
-    return value;
-}
-
-//AJAX
-function ajaxUpdateEvent() {
-    $.ajax({
-        type: "POST",
-        url: "Chair/UpdateEvent",
-        data: CollectFormData(),
-        dataType: "json",
-        success: onUpdateEventSuccess,
-        failure: onUpdateEventFailure,
-        error: onUpdateEventFailure
-    });
-
-    function CollectFormData() {
-        var name;
-        var o = {};
-        $('#formEdit .form-control').each(function (i, control) {
-            name = control.getAttribute('name');
-            if (control.type === 'checkbox') {
-                o[name] = control.checked;
-            }
-            else {
-                o[name] = $.trim(control.value);
-            }
-        });
-        var temp = AddAntiForgeryToken({ theEvent: o }); //can't use event as parameter name because C# won't allow it
-        return temp;
-    }
-}
-
-function onUpdateEventSuccess(response) {
-
-    if (response.success == false) {
-        showEditError('Server Error', response.responseText);
-        return;
+    function Event() {
+        this.Id = 0;
+        this.Location = $('#events').data('location');
+        this.OpenDate = "";
+        this.CloseDate = "";
+        this.EventDate = "";
+        this.Instrument = "";
+        this.Status = "A";
+        this.Venue = "";
+        this.Notes = "";
     }
 
-    var html = response.view;
 
-    var removeEventId = $('#Id').val();
-    $('#events >tr[name="' + id + '"]').remove(); //remove previous row for event if it exists
-
-    var newRow = $(html)[0];
-    installEventRow(newRow);
-    // could try to insert it in the correct sort order
-    $('#events').append(newRow);
-    $('#modalEdit').modal('hide');
-}
-
-function installEventRow(v) {
-    var o = JSON.parse($(v).attr('data-event'));
-    $(v).data('event', o);
-    $(v).removeAttr('data-event');
-}
-
-function onUpdateEventFailure(reponse) {
-    showEditError('Server Error', parseResponse(response));
-}
-
-function showEditError(prompt, message) {
-    $('#submitError span').text(message);
-    $('#submitError >strong').text(prompt + '  ');
-    $('#submitError').show();
-}
-function AddAntiForgeryToken(data) {
-    data.__RequestVerificationToken = $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
-    return data;
-}
-
-function Event() {
-    this.Id = 0;
-    this.Location = $('#events').data('location');
-    this.OpenDate = "";
-    this.CloseDate = "";
-    this.EventDate = "";
-    this.Instrument = "";
-    this.Status = "A";
-    this.Venue = "";
-    this.Notes = "";
-}
-
-
-}) ();
+})();
 
 $(document).ready(function () {
     ChairApp.init();
