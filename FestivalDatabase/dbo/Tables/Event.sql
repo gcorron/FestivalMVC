@@ -6,8 +6,12 @@
     [EventDate]  SMALLDATETIME NOT NULL,
     [Instrument] CHAR (1)      NOT NULL,
     [Status]     CHAR (1)      NOT NULL,
+    [Venue]      NVARCHAR (50) NOT NULL,
+    [Notes]      VARCHAR (256) NOT NULL,
     CONSTRAINT [PK_Event] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

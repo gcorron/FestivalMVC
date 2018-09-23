@@ -1,7 +1,7 @@
 ﻿@model FestivalMVC.ViewModels.EventViewModel
 
 <tr id="@Model.Event.Id" data-event="@Json.Encode(Model.Event)">
-    <td><input type="radio" name="select" onclick="ChairApp.onSelectedEvent()"/></td>
+    <td><a onclick="ChairApp.planEvent()">Select</a></td>
     <td>@Model.Event.EventDate.ToLongDateString()</td>
     <td>@Model.Event.Venue</td>
     <td>@Model.InstrumentName</td>

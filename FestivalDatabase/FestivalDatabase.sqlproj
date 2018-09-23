@@ -96,6 +96,9 @@
     <Build Include="dbo\Stored Procedures\SelectDataForChairLocation.sql" />
     <Build Include="dbo\Stored Procedures\UpdateContactForAccount.sql" />
     <Build Include="dbo\Stored Procedures\SelectContactForAccount.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateEvent.sql" />
+    <Build Include="dbo\Stored Procedures\SelectEventsForDistrict.sql" />
+    <Build Include="dbo\Stored Procedures\SelectEventDataStage1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

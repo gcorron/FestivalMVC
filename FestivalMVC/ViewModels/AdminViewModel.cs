@@ -14,31 +14,21 @@ namespace FestivalMVC.ViewModels
 {
     public class AdminPageData
     {
-        private Dictionary<int, int> personIndex;
 
         public AdminPageData(LoginPerson theUser)
         {
             TheUser = theUser;
-            SQLData.SelectDataForLocation(theUser.LocationId, out ContactForView[] people, out Location[] locations);
+            SQLData.SelectDataForLocation(theUser.LocationId, out IEnumerable<ContactForView> people, out IEnumerable<Location> locations);
 
-            People = people;
             Locations = locations;
-            personIndex = new Dictionary<int, int>();
-
-            for (var i = 0; i < people.Length; i++)
-            {
-                people[i].AssignedToLocation = locations
-                    .Where<Location>(p => p.ContactId == people[i].Id)
-                    .Select(p => p.Id)
-                    .SingleOrDefault<int>();
-                personIndex.Add(people[i].Id, i);
-            }
+            People = people;
         }
 
         public LoginPerson TheUser { get; private set; }
-        public ContactForView[] People { get; private set; }
-        public Location[] Locations { get; private set; }
 
+        public IEnumerable<ContactForView> People { get; private set; }
+
+        public IEnumerable<Location> Locations { get; private set; }
 
         public string GetPersonName(int? id)
         {
@@ -50,9 +40,10 @@ namespace FestivalMVC.ViewModels
 
         public ContactForView GetPerson(int id)
         {
-            return People[personIndex[id]];
+            return (from p in People
+                    where p.Id == id
+                    select p).Single();
         }
-
     }
 
     public static class Admin
@@ -92,7 +83,8 @@ namespace FestivalMVC.ViewModels
             var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var user = new ApplicationUser() { UserName = userName, Email = person.Email };
             string password = WebConfigurationManager.AppSettings["NewUserPassword"];
-            if (string.IsNullOrEmpty(password)) {
+            if (string.IsNullOrEmpty(password))
+            {
                 throw new Exception("Server is not configured for new user password!");
             }
             IdentityResult result = manager.Create(user, password); //initial password, they can change it later
