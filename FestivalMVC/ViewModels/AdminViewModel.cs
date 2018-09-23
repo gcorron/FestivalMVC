@@ -55,9 +55,9 @@ namespace FestivalMVC.ViewModels
 
     }
 
-    public class Admin
+    public static class Admin
     {
-        public static int LocationIdSecured // call only from web methods
+        public static int LocationIdSecured
         {
             get
             {

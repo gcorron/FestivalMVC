@@ -54,6 +54,15 @@ namespace FestivalMVC
 
         }
 
+        public static int UpdateEvent(Event ev)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.QuerySingle<int>("UpdateEvent", ev, commandType: CommandType.StoredProcedure);
+            }
+
+        }
+
         public static void SelectDataForLocation(int location, out ContactForView[] contacts, out Location[] locations)
         {
             using (IDbConnection connection = GetDBConnection())
@@ -67,15 +76,16 @@ namespace FestivalMVC
 
         }
 
-        public static void SelectDataForChair(int location, out List<ContactForView> contacts, out List<Event> events, out List<TeacherEvent> teacherEvents)
+        public static void SelectEventsForDistrict(int locationId, out IEnumerable<Event> events,
+            out IEnumerable<Instrum> instruments, out Location location)
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                using (var multi = connection.QueryMultiple("SelectDataForChairLocation", new { location }, commandType: CommandType.StoredProcedure))
+                using (var multi = connection.QueryMultiple("SelectEventsForDistrict", new { location=locationId }, commandType: CommandType.StoredProcedure))
                 {
-                    contacts = multi.Read<ContactForView>().ToList<ContactForView>();
-                    events = multi.Read<Event>().ToList<Event>();
-                    teacherEvents = multi.Read<TeacherEvent>().ToList<TeacherEvent>();
+                    events = multi.Read<Event>();
+                    instruments = multi.Read<Instrum>();
+                    location = multi.ReadSingle<Location>();
                 }
             }
 

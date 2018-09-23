@@ -80,8 +80,10 @@ namespace FestivalMVC.Controllers
                 if (person.Id == 0)
                     person.Id = ret;
 
-                var personOut = new ContactForView(person);
-                personOut.AssignedToLocation = assignedToLocation;
+                var personOut = new ContactForView(person)
+                {
+                    AssignedToLocation = assignedToLocation
+                };
 
                 return PartialView("_Person", personOut);
             }

@@ -14,6 +14,8 @@ namespace FestivalMVC.Models
         public DateTime EventDate { get; set; }
         public char Instrument { get; set; }
         public char Status { get; set; }
+        public string Venue { get; set; }
+        public string Notes { get; set; }
     }
 
     public struct SelectedEvent
@@ -113,4 +115,5 @@ namespace FestivalMVC.Models
         public int Event { get; set; }
         public int Teacher { get; set; }
     }
+
 }

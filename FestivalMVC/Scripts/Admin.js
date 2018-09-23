@@ -1,9 +1,5 @@
 ﻿"use strict";
 
-$(document).ready(function () {
-    AdminApp.init();
-});
-
 var AdminApp = (function () {
 
 
@@ -433,3 +429,7 @@ var AdminApp = (function () {
     }
 
 })();
+
+$(document).ready(function () {
+    AdminApp.init();
+});
