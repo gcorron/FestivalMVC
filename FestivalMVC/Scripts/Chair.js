@@ -2,9 +2,7 @@
 
 var ChairApp = (function () {
 
-    var myStorage;
-
-    return {
+     return {
 
         //public functions
 
@@ -42,11 +40,7 @@ var ChairApp = (function () {
                 elt.name = elt.id;
             });
 
-            hideOrShowTable();
-            $('#prompt3').hide();
-            $('#events input').attr('checked', false);
-
-         
+        
             $('.hide').removeClass('hide');
 
 
@@ -108,12 +102,11 @@ var ChairApp = (function () {
             ajaxUpdateEvent();
         },
         selectEvent: function (elt) {
-            var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            var event = $(elt).closest('tr').data('event');
-            $('#shortEvent').text(MONTHS[event.EventDate.getMonth()] + ' ' + event.EventDate.getDate() + event.InstrumentName);
-            $('#prompt2').hide();
-            $('#prompt3').show();
+            var event = $(elt).data('event');
+            $('#selectedEvent').val(event.EventDescription);
+            $('#selectedEvent').data(event);
             $('.sel-event').removeClass('disabled');
+            nextPhase();
         }
      };
 
@@ -121,27 +114,32 @@ var ChairApp = (function () {
 
 
     // UI
+    function nextPhase() {
+        var form = document.createElement("form");
+        var event = $('#selectedEvent').data();
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/Chair/Index");
 
 
-    function hideOrShowTable() {
-        var rowCount = $('table tr').length;
-        var starting = false;
-        if (rowCount < 2)
-            starting = true;
 
-        if (starting) {
-            $('table').hide();
-            $('#prompt1').show();
-            $('#prompt2').hide();
+        for (var key in params) {
+            if (params.hasOwnProperty(key)) {
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", key);
+                hiddenField.setAttribute("value", params[key]);
+
+                form.appendChild(hiddenField);
+            }
         }
-        else {
 
-            $('table').show();
-            $('#prompt1').hide();
-            $('#prompt2').show();
-        }
+        document.body.appendChild(form);
+        form.submit();
+
+        window.location.assign('/Chair/NextPhase?id=Prepare');
     }
-    
+
+   
     function showWarning(message) {
         showAlert('.formWarning', message);
     }
@@ -193,13 +191,6 @@ var ChairApp = (function () {
             }
         }
     }
-
-    function installEventRow(v) {
-        var o = JSON.parse($(v).attr('data-event'));
-        $(v).data('event', o);
-        $(v).removeAttr('data-event');
-    }
-
 
     function showEditError(prompt, message) {
         $('#submitError span').text(message);
@@ -253,14 +244,8 @@ var ChairApp = (function () {
     }
 
     function onUpdateEventSuccess(html) {
-        var removeEventId = $('#Id').val();
-        $('#events >tr[name="' + id + '"]').remove(); //remove previous row for event if it exists
-
-        var newRow = $(html)[0];
-        installEventRow(newRow);
-        // could try to insert it in the correct sort order
-        $('#events').append(newRow);
         $('#modalEdit').modal('hide');
+        nextPhase();
     }
 
     function parseResponse(response) {

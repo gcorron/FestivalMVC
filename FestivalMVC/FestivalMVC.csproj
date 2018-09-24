@@ -299,8 +299,11 @@
     <Content Include="Views\Shared\NoRole.cshtml" />
     <Content Include="Views\Shared\_Person.cshtml" />
     <Content Include="Views\Chair\Index.cshtml" />
-    <Content Include="Views\Shared\_Event.cshtml" />
     <Content Include="Views\Shared\_ChairLayout.cshtml" />
+    <Content Include="Views\Chair\Prepare.cshtml" />
+    <Content Include="Views\Chair\Entries.cshtml" />
+    <Content Include="Views\Chair\Ratings.cshtml" />
+    <Content Include="Views\Chair\Schedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

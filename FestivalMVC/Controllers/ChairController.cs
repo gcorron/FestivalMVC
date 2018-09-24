@@ -18,6 +18,50 @@ namespace FestivalMVC.Controllers
             return View(new EventsViewModel());
         }
 
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult NextPhase(SelectedEvent theEvent)
+        {
+            Session["TheEvent"] = theEvent;
+
+            if (theEvent.CanRate)
+            {
+                return RedirectToAction("Ratings");
+            }
+            if (theEvent.CanSchedule)
+            {
+                return RedirectToAction("Schedule");
+            }
+            if (theEvent.CanEnroll)
+            {
+                return RedirectToAction("Entries");
+            }
+            return RedirectToAction("Prepare");
+        }
+
+        public ActionResult Prepare()
+        {
+            return View();
+        }
+
+        public ActionResult Entries()
+        {
+            return View();
+        }
+
+        public ActionResult Schedule()
+        {
+            return View();
+        }
+
+        public ActionResult Ratings()
+        {
+            return View();
+        }
+
+
+
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult UpdateEvent(Event theEvent)
@@ -27,7 +71,7 @@ namespace FestivalMVC.Controllers
             var id = SQLData.UpdateEvent(theEvent);
             if (theEvent.Id == 0)
                 theEvent.Id = id;
-            return View("_Event", theEvent);
+            return Json(theEvent);
         }
 
         //catch all unhandled exceptions that are thrown within scope of this controller

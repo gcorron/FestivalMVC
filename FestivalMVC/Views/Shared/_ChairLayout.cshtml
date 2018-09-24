@@ -6,12 +6,15 @@
     <title>@ViewBag.Title - Festival Entry Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @{ string ActiveTitle(string name) {
+            return ViewBag.Title == name ? "active" : "";
+        } }
 
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <div class="navbar-header">
+            <div class="navbar-header active">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -19,12 +22,17 @@
                 </button>
             </div>
             <div class="navbar-collapse collapse">
+                <form class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <input id="selectedEvent" type="text" class="form-control" placeholder="(None Selected)" readonly/>
+                    </div>
+                </form>
                 <ul class="nav navbar-nav">
-                    <p id="shortEvent"class="navbar-text">Nov 30 Event</p>
-                    <li>@Html.ActionLink("Events", "Index", "Chair")</li>
-                    <li class="disabled sel-event"><a onclick="">Prepare</a></li>
-                    <li class="disabled sel-event"><a onclick="">Entries</a></li>
-                    <li class="disabled sel-event"><a onclick="">Rating</a></li>
+                    <li class="@ActiveTitle("Index") sel-event"><a onclick="">Events</a></li>
+                    <li class="@ActiveTitle("Prepare") disabled sel-event"><a onclick="">Prepare</a></li>
+                    <li class="@ActiveTitle("Entries") disabled sel-event"><a onclick="">Entries</a></li>
+                    <li class="@ActiveTitle("Schedule") disabled sel-event"><a onclick="">Schedule</a></li>
+                    <li class="@ActiveTitle("Ratings") disabled sel-event"><a onclick="">Ratings</a></li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

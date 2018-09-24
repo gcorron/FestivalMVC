@@ -47,6 +47,19 @@ namespace FestivalMVC.ViewModels
 
     public static class Admin
     {
+        public static string RealUserName()
+        {
+            try
+            {
+                LoginPerson theUser = (LoginPerson)HttpContext.Current.Session["TheUser"];
+                return theUser.FullName;
+            }
+            catch
+            {
+                return " --- ";
+            }
+        }
+
         public static int LocationIdSecured
         {
             get

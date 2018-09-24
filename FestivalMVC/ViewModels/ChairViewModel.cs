@@ -19,6 +19,7 @@ namespace FestivalMVC.ViewModels
 
         public Event Event { get; }
         public string InstrumentName { get; }
+        public string EventDescription { get => string.Format("{0:MMM d}",Event.EventDate) + " " + InstrumentName; }
     }
 
     public class EventsViewModel

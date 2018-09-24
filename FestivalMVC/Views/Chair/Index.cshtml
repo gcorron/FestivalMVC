@@ -15,146 +15,135 @@
         <div class="row">
             <div class="col-sm-8">
                 <!-- script will reveal after load -->
+                <h3>
+                    @if (Model.Events.Count() == 0)
+                    {
+                        @:No events yet for this year. Add one to get started.
+                    }
+                    else
+                    {
+                        @:First, Add or Select an event.
+                    }
+                </h3>
+                <br />
                 <div class="row">
-                    <div class="col-sm-2">
-                        
-                    </div>
-                    <div class="col-sm-10">
-                        <h3>
-                            <span id="prompt3" class="hide">Now you can manage this event. Select the page needed from the menu bar.</span>
-                            <span id="prompt2" class="hide">First, Add or Select an event.</span>
-                            <span id="prompt1" class="hide">No events yet for this year. <a onclick="ChairApp.editEvent(0)" class="btn btn-primary">Add</a> to get started.</span>
-                        </h3>
-                        <br />
+                    <div class="col-sm-6">
+                        @foreach (var ev in Model.Events)
+                        {
+                            <h4><a data-event="@Json.Encode(ev)" onclick="ChairApp.selectEvent(this)">@ev.EventDescription</a></h4>
+                        }
 
-                        <table class="hide">
-                            <!-- script will show it if it has anything in it -->
-                            <thead>
-                                <tr>
-                                    <th> <a onclick="ChairApp.editEvent(0)" class="btn btn-primary btn-sm">Add</a></th>
-                                    <th>Event Date</th>
-                                    <th>Venue</th>
-                                    <th>Instruments</th>
-                                </tr>
-                            </thead>
-                            <tbody id="events" data-location="@Model.Location.Id">
-                                @foreach (var ev in Model.Events)
-                                {
-                                    Html.RenderPartial("_Event", ev);
-                                }
-                            </tbody>
-                        </table>
+                    </div>
+                    <div class="col-sm-6">
+                        <h4><a onclick="ChairApp.editEvent(0)">Add New Event</a></h4>
                     </div>
                 </div>
-
-            </div>
         </div>
     </div>
-</div>
 
-<!-- Edit Event modal -->
-<div class="modal fade" id="modalEventEdit" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form id="formEdit">
-                <div class="well">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <input type="hidden" class="form-control" id="Id" />
+    <!-- Edit Event modal -->
+    <div class="modal fade" id="modalEventEdit" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="formEdit">
+                    <div class="well">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <input type="hidden" class="form-control" id="Id" />
 
-                            <div class="form-group">
-                                <label for="OpenDate">Sign-up Opening Date:</label>
-                                <input type="date" class="form-control" id="OpenDate" required>
+                                <div class="form-group">
+                                    <label for="OpenDate">Sign-up Opening Date:</label>
+                                    <input type="date" class="form-control" id="OpenDate" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="CloseDate">Sign-up Closed Date:</label>
+                                    <input type="date" class="form-control" id="CloseDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="EventDate">Audition Date:</label>
+                                    <input type="date" class="form-control" id="EventDate" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div id="instrumentGroup" class="form-group">
+                                    <label class="control-label" for="Instrument">Instrument Category:</label>
+                                    <select class="form-control" id="Instrument" required>
+                                        <option value="" disabled selected hidden>Select ...</option>
+                                        <option value="P">Piano</option>
+                                        <option value="S">Strings</option>
+                                        <option value="V">Voice</option>
+                                        <option value="W">Winds</option>
+                                    </select>
+                                </div>
+
+                                <div id="statusGroup" class="form-group">
+                                    <label class="control-label" for="Status">Event Status:</label>
+                                    <select class="form-control" id="Status" required>
+                                        <option value="" disabled selected hidden>Select ...</option>
+                                        <option value="A">Automatic (by dates)</option>
+                                        <option value="B">Open (override dates)</option>
+                                        <option value="C">Closed (override dates)</option>
+                                        <option value="D">Completed</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label" for="Venue">Venue:</label>
+                                    <input class="form-control" type="text" id="Venue" required maxlength="50" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label" for="Notes">Notes:</label>
+                                    <textarea class="form-control" id="Notes" maxlength="255"></textarea>
+
+                                </div>
+
                             </div>
 
-                            <div class="form-group">
-                                <label for="CloseDate">Sign-up Closed Date:</label>
-                                <input type="date" class="form-control" id="CloseDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="EventDate">Audition Date:</label>
-                                <input type="date" class="form-control" id="EventDate" required>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div id="instrumentGroup" class="form-group">
-                                <label class="control-label" for="Instrument">Instrument Category:</label>
-                                <select class="form-control" id="Instrument" required>
-                                    <option value="" disabled selected hidden>Select ...</option>
-                                    <option value="P">Piano</option>
-                                    <option value="S">Strings</option>
-                                    <option value="V">Voice</option>
-                                    <option value="W">Winds</option>
-                                </select>
-                            </div>
-
-                            <div id="statusGroup" class="form-group">
-                                <label class="control-label" for="Status">Event Status:</label>
-                                <select class="form-control" id="Status" required>
-                                    <option value="" disabled selected hidden>Select ...</option>
-                                    <option value="A">Automatic (by dates)</option>
-                                    <option value="B">Open (override dates)</option>
-                                    <option value="C">Closed (override dates)</option>
-                                    <option value="D">Completed</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label" for="Venue">Venue:</label>
-                                <input class="form-control" type="text" id="Venue" required maxlength="50" />
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label" for="Notes">Notes:</label>
-                                <textarea class="form-control" id="Notes" maxlength="255"></textarea>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <a class="btn btn-default" onclick="ChairApp.updateEvent()">Save</a>
+                                    <a class="btn btn-default" onclick="$('#modalEventEdit').modal('hide')" title="Close">Cancel</a>
+                                    <a id="deleteButton" class="btn btn-warning" onclick="ChairApp.deleteEvent()" title="Delete"
+                                       data-toggle="popover" data-trigger="hover" data-content="You can delete only events that have no entries.">Delete</a>
+                                </div>
+                                <div class="alert alert-danger" id="submitError">
+                                    <strong>Server error! </strong><span id="serverError"></span>
+                                </div>
 
                             </div>
-
-                        </div>
-
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <a class="btn btn-default" onclick="ChairApp.updateEvent()">Save</a>
-                                <a class="btn btn-default" onclick="$('#modalEventEdit').modal('hide')" title="Close">Cancel</a>
-                                <a id="deleteButton" class="btn btn-warning" onclick="ChairApp.deleteEvent()" title="Delete"
-                                   data-toggle="popover" data-trigger="hover" data-content="You can delete only events that have no entries.">Delete</a>
-                            </div>
-                            <div class="alert alert-danger" id="submitError">
-                                <strong>Server error! </strong><span id="serverError"></span>
-                            </div>
-
                         </div>
                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="infoModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
                 </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="infoModal" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Header</h4>
-            </div>
-            <div class="modal-body">
-                <p>This is a small modal.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <div class="modal-body">
+                    <p>This is a small modal.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<div class="clear"></div>
+    <div class="clear"></div>
 
-@section Scripts
+    @section Scripts
 {
 
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/Scripts/Chair.js")
-}
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/Scripts/Chair.js")
+    }
