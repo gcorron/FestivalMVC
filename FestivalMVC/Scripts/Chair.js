@@ -9,6 +9,18 @@ var ChairApp = (function () {
         //public functions
 
         init: function () {
+            function dateTimeReviver (key, value) {
+                var a;
+                if (typeof value === 'string') {
+                    a = /\/Date\((\d*)\)\//.exec(value);
+                    if (a) {
+                        return new Date(+a[1]);
+                    }
+                }
+                return value;
+            }
+            var o;
+
             $(document).ajaxStart(function () {
                 document.body.style.cursor = 'wait';
             });
@@ -18,14 +30,26 @@ var ChairApp = (function () {
             });
 
 
+            $('#events tr').each(function (i, v) {
+                o = JSON.parse($(v).attr('data-event'), dateTimeReviver);
+                $(v).data('event', o);
+                $(v).removeAttr('data-event');
+            });
+
+
 
             $('.form-control').each(function (i, elt) { // jQuery validation needs an unique name field to work
                 elt.name = elt.id;
             });
 
             hideOrShowTable();
+            $('#prompt3').hide();
             $('#events input').attr('checked', false);
+
+         
             $('.hide').removeClass('hide');
+
+
         },
 
 
@@ -83,6 +107,14 @@ var ChairApp = (function () {
             clearAlerts();
             ajaxUpdateEvent();
         },
+        selectEvent: function (elt) {
+            var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var event = $(elt).closest('tr').data('event');
+            $('#shortEvent').text(MONTHS[event.EventDate.getMonth()] + ' ' + event.EventDate.getDate() + event.InstrumentName);
+            $('#prompt2').hide();
+            $('#prompt3').show();
+            $('.sel-event').removeClass('disabled');
+        }
      };
 
     //private functions

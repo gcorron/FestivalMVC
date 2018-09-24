@@ -82,6 +82,8 @@ namespace FestivalMVC.Controllers
             {
                 case SignInStatus.Success:
 
+
+
                     string nextAction="";
                     LoginPerson theUser;
                     theUser = SQLData.GetLoginPerson(model.UserName);

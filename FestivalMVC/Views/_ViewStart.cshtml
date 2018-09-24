@@ -1,3 +1,13 @@
 ﻿@{
+
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    if (!(Session["TheUser"] is null))
+    {
+        FestivalMVC.Models.LoginPerson theUser = (FestivalMVC.Models.LoginPerson)Session["TheUser"];
+        if (theUser.RoleType == 'E')
+        {
+            Layout = "~/Views/Shared/_ChairLayout.cshtml";
+        }
+    }
 }
