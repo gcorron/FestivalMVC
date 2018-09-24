@@ -21,23 +21,15 @@ namespace FestivalMVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult NextPhase(SelectedEvent theEvent)
+        public ActionResult Index(int id)
         {
-            Session["TheEvent"] = theEvent;
+            var dataEvent = SQLData.SelectEvent(id, out string instrumentName);
+            var theEvent = new EventViewModel(dataEvent, instrumentName);
 
-            if (theEvent.CanRate)
-            {
-                return RedirectToAction("Ratings");
-            }
-            if (theEvent.CanSchedule)
-            {
-                return RedirectToAction("Schedule");
-            }
-            if (theEvent.CanEnroll)
-            {
-                return RedirectToAction("Entries");
-            }
-            return RedirectToAction("Prepare");
+            Session["SelectedEvent"] = theEvent;
+
+            return Json(new { redirect = "/Chair/" + theEvent.NextPage });
+
         }
 
         public ActionResult Prepare()

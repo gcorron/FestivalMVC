@@ -4,8 +4,9 @@
     ViewBag.Title = "Index";
 }
 
-<!-- for ajax in AddAntiForgeryToken()-->
-<form id="__AjaxAntiForgeryForm" action="#" method="post">@Html.AntiForgeryToken()</form>
+<form id="__AjaxAntiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
 
 <h2>Events for @Model.Location.LocationName</h2>
 

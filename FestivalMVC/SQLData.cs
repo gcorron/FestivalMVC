@@ -10,6 +10,19 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static Event SelectEvent(int id, out string instrumentName)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                using (var multi=connection.QueryMultiple("SelectEvent", new { id }, commandType: CommandType.StoredProcedure))
+                {
+                    var ev = multi.ReadSingle<Event>();
+                    instrumentName = multi.ReadSingle<string>();
+                    return ev;
+                }
+            }
+        }
+
         public static void UpdateContactForAccount(ContactForSelf model)
         {
             using (IDbConnection connection = GetDBConnection())

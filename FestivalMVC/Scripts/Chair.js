@@ -2,12 +2,12 @@
 
 var ChairApp = (function () {
 
-     return {
+    return {
 
         //public functions
 
         init: function () {
-            function dateTimeReviver (key, value) {
+            function dateTimeReviver(key, value) {
                 var a;
                 if (typeof value === 'string') {
                     a = /\/Date\((\d*)\)\//.exec(value);
@@ -28,7 +28,7 @@ var ChairApp = (function () {
             });
 
 
-            $('#events tr').each(function (i, v) {
+            $('a[data-event]').each(function (i, v) {
                 o = JSON.parse($(v).attr('data-event'), dateTimeReviver);
                 $(v).data('event', o);
                 $(v).removeAttr('data-event');
@@ -40,7 +40,7 @@ var ChairApp = (function () {
                 elt.name = elt.id;
             });
 
-        
+
             $('.hide').removeClass('hide');
 
 
@@ -101,45 +101,20 @@ var ChairApp = (function () {
             clearAlerts();
             ajaxUpdateEvent();
         },
+
         selectEvent: function (elt) {
             var event = $(elt).data('event');
-            $('#selectedEvent').val(event.EventDescription);
-            $('#selectedEvent').data(event);
-            $('.sel-event').removeClass('disabled');
-            nextPhase();
+            var data = AddAntiForgeryToken({ id: event.Event.Id });
+            ajaxSelectEvent(data);
         }
-     };
+    };
 
     //private functions
 
 
     // UI
-    function nextPhase() {
-        var form = document.createElement("form");
-        var event = $('#selectedEvent').data();
-        form.setAttribute("method", "post");
-        form.setAttribute("action", "/Chair/Index");
 
 
-
-        for (var key in params) {
-            if (params.hasOwnProperty(key)) {
-                var hiddenField = document.createElement("input");
-                hiddenField.setAttribute("type", "hidden");
-                hiddenField.setAttribute("name", key);
-                hiddenField.setAttribute("value", params[key]);
-
-                form.appendChild(hiddenField);
-            }
-        }
-
-        document.body.appendChild(form);
-        form.submit();
-
-        window.location.assign('/Chair/NextPhase?id=Prepare');
-    }
-
-   
     function showWarning(message) {
         showAlert('.formWarning', message);
     }
@@ -164,7 +139,7 @@ var ChairApp = (function () {
         $("#infoModal").modal();
     }
 
-        function populateEventForm(id) {
+    function populateEventForm(id) {
         var event;
 
         if (id == 0)
@@ -206,8 +181,23 @@ var ChairApp = (function () {
     }
 
     //AJAX
+    function ajaxSelectEvent(data) {
+        $.ajax({
+            type: "POST",
+            url: "/Chair/Index",
+            data: data,
+            dataType: "json",
+            success: onAjaxSelectEventSuccess,
+            failure: onAjaxFailure,
+            error: onAjaxFailure
+        });
+    }
 
-    function onAJAXFailure(response) {
+    function onAjaxSelectEventSuccess(response) {
+        window.location = response.redirect;
+    }
+
+    function onAjaxFailure(response) {
         showInfoModal('Server Error', parseResponse(response));
     }
 
@@ -238,7 +228,7 @@ var ChairApp = (function () {
                     o[name] = $.trim(control.value);
                 }
             });
-            var temp = AddAntiForgeryToken({ theEvent: o }); //can't use event as parameter name because C# won't allow it
+            var temp = AddAntiForgeryToken({ theEvent: o }); //can't use 'event' as parameter name because C# won't allow it
             return temp;
         }
     }
