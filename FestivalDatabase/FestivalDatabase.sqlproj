@@ -99,6 +99,7 @@
     <Build Include="dbo\Stored Procedures\UpdateEvent.sql" />
     <Build Include="dbo\Stored Procedures\SelectEventsForDistrict.sql" />
     <Build Include="dbo\Stored Procedures\SelectEventDataStage1.sql" />
+    <Build Include="dbo\Stored Procedures\SelectEvent.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

@@ -26,22 +26,29 @@ namespace FestivalMVC.ViewModels
         public string InstrumentName { get; }
         public string EventDescription { get => string.Format("{0:MMM d}", Event.EventDate) + " " + InstrumentName; }
 
-        public bool CanRate
+        private bool CanRate
         {
             get
             {
-                return (CurrentTime.CompareTo(Event.EventDate) > 0);
+                if (Event.Status == automatic)
+                    return (CurrentTime.CompareTo(Event.EventDate) > 0);
+                else
+                    return Event.Status == closed;
             }
         }
 
-        public bool CanSchedule
+        private bool CanSchedule
         {
             get
             {
-                return (CurrentTime.CompareTo(Event.CloseDate) > 0);
+                if (Event.Status == automatic)
+                    return (CurrentTime.CompareTo(Event.CloseDate) > 0);
+                else
+                    return Event.Status == closed;
             }
         }
-        public bool CanEnroll
+
+        private bool CanEnroll
         {
             get
             {
@@ -52,6 +59,14 @@ namespace FestivalMVC.ViewModels
                 if (Event.Status == automatic)
                     return ComputeIfOpen();
                 return false;
+            }
+        }
+
+        private bool CanPrepare
+        {
+            get
+            {
+                return Event.Status != complete;
             }
         }
 
@@ -89,7 +104,7 @@ namespace FestivalMVC.ViewModels
         {
             get
             {
-                return (CanRate ? "R" : "") + (CanSchedule ? "S" : "") + (CanEnroll ? "E" : "");
+                return (CanPrepare ? "P" : "") + (CanRate ? "R" : "") + (CanSchedule ? "S" : "") + (CanEnroll ? "E" : "");
             }
         }
 

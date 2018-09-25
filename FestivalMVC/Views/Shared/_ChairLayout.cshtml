@@ -6,41 +6,6 @@
     <title>@ViewBag.Title - Festival Entry Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    @{
-        string ActiveTitle(string name)
-        {
-            string key = name.Substring(0, 1);
-            bool disabled;
-            if ("IP".IndexOf(key) >= 0)
-            {
-                disabled = false;
-            }
-            else
-            {
-                if (Session["SelectedEvent"] is null)
-                {
-                    disabled = true;
-                }
-                else
-                {
-                    var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
-                    disabled = (theEvent.MenuKey.IndexOf(key) < 0);
-                }
-            }
-
-            return (ViewBag.Title == name ? "active" : "") + (disabled ? " disabled" : "");
-        } }
-    @{ 
-        string EventDesc()
-        {
-            if (Session["SelectedEvent"] is null)
-            {
-                return "";
-            }
-            var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
-            return theEvent.EventDescription;
-        }
-    }
 
 
 </head>
@@ -58,15 +23,25 @@
                 <form class="navbar-form navbar-left">
                     <div class="form-group">
                         <input id="selectedEvent" type="text" class="form-control" placeholder="(None Selected)"
-                               readonly value="@EventDesc()"/>
+                               readonly value="@EventDesc()" />
                     </div>
                 </form>
                 <ul class="nav navbar-nav">
-                    <li class="@ActiveTitle("Index")">@Html.ActionLink("Events","Index","Chair")</li>
-                    <li class="@ActiveTitle("Prepare")">@Html.ActionLink("Prepare","Prepare", "Chair")</li>
-                    <li class="@ActiveTitle("Entries")">@Html.ActionLink("Entries", "Entries","Chair")</li>
-                    <li class="@ActiveTitle("Schedule")">@Html.ActionLink("Schedule", "Schedule", "Chair")</li>
-                    <li class="@ActiveTitle("Ratings")">@Html.ActionLink("Ratings", "Ratings", "Chair")</li>
+                    <li class="@LinkClass("Index")">@Html.ActionLink("Events", "Index", "Chair")</li>
+
+                    @foreach (string page in new string[] { "Prepare", "Entries", "Schedule", "Ratings" })
+                    {
+                    <li class="@LinkClass(page)">
+                        @if (IsDisabled(page.Substring(0, 1)))
+                        {
+                            @:<a href="#">@page</a>
+                        }
+                        else
+                        {
+                            @:<a href="/Chair/@page">@page</a>
+                        }
+                    </li>
+                    }
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -86,3 +61,44 @@
 </body>
 </html>
 
+@{
+    string LinkClass(string page)
+    {
+        string key = page.Substring(0, 1);
+        bool disabled = IsDisabled(key);
+
+        return (ViewBag.Title == page ? "active" : "") + (disabled ? " disabled" : "");
+    }
+    bool IsDisabled(string key)
+    {
+        if ("I" == key)
+        {
+            return false;
+        }
+        else
+        {
+            if (Session["SelectedEvent"] is null)
+            {
+                return true;
+            }
+            else
+            {
+                var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
+                return (theEvent.MenuKey.IndexOf(key) < 0);
+            }
+        }
+
+    }
+
+    }
+@{
+    string EventDesc()
+    {
+        if (Session["SelectedEvent"] is null)
+        {
+            return "";
+        }
+        var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
+        return theEvent.EventDescription;
+    }
+}
