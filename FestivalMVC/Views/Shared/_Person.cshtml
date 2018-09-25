@@ -3,8 +3,8 @@
 @{string icon; }
 <tr name="@Model.Id" data-location="@Model.AssignedToLocation" data-person="@Json.Encode(Model)" class="mousePointer">
     <td>
-        <a onclick="AdminApp.editPerson($(this).closest('tr').data('person'),
-                                    $(this).closest('tr').data('location'))" data-toggle="popover">@Model.FullName</a>
+        <a onclick="PersonApp.editPerson($(this).closest('tr').data('person'),
+                                    $(this).closest('tr').data('location')==0)" data-toggle="popover">@Model.FullName</a>
                                 </td>
                                 @{if (Model.AssignedToLocation > 0)
                                     {
@@ -19,5 +19,6 @@
                                         icon = "";
                                     }
                                 }
-                                <td class="centered"><span class="@icon"></span></td>
+                                <td class="centered" onclick="PersonApp.assignPerson($(this).closest('tr').data('person'),
+                                    $(this).closest('tr').data('location'))"><span class="@icon"></span></td>
                             </tr>

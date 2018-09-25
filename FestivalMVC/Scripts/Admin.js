@@ -1,95 +1,59 @@
 ﻿"use strict";
 
-var AdminApp = (function () {
-
-
-    var personAvailIcon = 'glyphicon glyphicon-star-empty';
-    var personBusyIcon = 'glyphicon glyphicon-star';
+var PersonApp = (function () {
+    var assignFunction = null;
 
     return {
-
-        //public functions
-
-        fillOrVacate: function (elt) {
-
-            if (assignmentMode()) {
-                cancelAssignmentMode();
-                return;
-            }
-
-            var blob = storedLocation({ element: elt, begin: true });
-            if (blob.location.ContactId) {
-                if (confirm('Remove ' + blob.personName + ' from ' + blob.location.LocationName + '?')) {
-                    blob.location.ContactId = 0;
-                    blob.personName = '';
-                    storedLocation(blob);
-                    updateLocation(blob.location);
-                }
-            }
-            else { //changed mode, update the UI
-                changeAlertBox('#locationsAlert', 'Now, select a person with a ' + personAvailIcon + ' or click the cancel link.');
-                changeAlertBox('#peopleAlert', 'You are selecting a person for ' + location.LocationName + '.');
-                $('#addPerson').hide();
-                $(elt).children('td')[1].append($('#cancelAssignment > a')[0]); //move the the cancel link out of the invisible div
-                return;
-            }
+        init: function () {
+            $('#people tr').each(function (i, v) {
+                installPersonRow(v);
+            });
+            sortPersonTable();
         },
 
-        addPerson: function () {
-            var person = new Person();
-            AdminApp.editPerson(person, 0);
+        canAssignPerson: function () {
+            return assignFunction !== null;
         },
 
-        editPerson: function (person, assignedToLocation) {
+        assignPerson: function (person, currentAssignment) {
+            if (!assignFunction)
+                return;
+            assignFunction(person, currentAssignment);
+        },
 
-            var canDelete = !assignedToLocation && person.Id;
+        ChangePersonAssigned: function (personId, LocationId) {
 
-            if (assignmentMode()) {
+            function toggleStar(icon, appear) {
+                $(personRowSelector(personId)).find('span').toggleClass(icon, appear);
+            }
 
-                var blob = storedLocation({});
+            var star = 'glyphicon-star';
+            $(personRowSelector(personId)).attr('data-location', LocationId);
+            toggleStar(star + '-empty', LocationId == 0);
+            toggleStar(star, LocationId > 0);
+        },
 
-                if (!person.Available) {
-                    showInfoModal('Assign Person', person.FullName + ' does not have Available status. (You can change that.)');
-                    return;
-                }
+        editPerson: function (person, canDelete) {
+            populatePersonForm(person);
+            $('.no-new').hide();
+            $('#submitError').hide();
 
-                if (assignedToLocation > 0) {
-                    showInfoModal('Assign Person', person.FullName + ' is already assigned to another location.');
-                    return;
-                }
+            if (person.Id !== 0) {
+                $('.no-new').show();
+            }
 
-                if (confirm('Assign ' + person.FullName + ' to ' + blob.location.LocationName + '?')) {
-                    blob.location.ContactId = person.Id;
-                    blob.personName = person.FullName;
-                    storedLocation(blob);
-                    updateLocation(blob.location);
-                    return;
-                }
+            if (canDelete) {
+                $('#deleteButton').removeAttr('disabled');
             }
             else {
+                $('#deleteButton').attr('disabled', 'disabled');
+            }
 
-                populatePersonForm(person);
-                $('.no-new').hide();
-                $('#submitError').hide();
-
-                if (person.Id !== 0) {
-                    $('.no-new').show();
-                }
-
-                if (canDelete) {
-                    $('#deleteButton').removeAttr('disabled');
-                }
-                else {
-                    $('#deleteButton').attr('disabled', 'disabled');
-                }
-
-                $('#instrumentGroup').hide();
-                if ($('#RoleType').val() === 'E') {
-                    $('#instrumentGroup').show();
-                }
+            $('#instrumentGroup').hide();
+            if ($('#RoleType').val() === 'E') {
+                $('#instrumentGroup').show();
             }
             $("#modalEdit").modal();
-
         },
 
         deletePerson: function () {
@@ -106,24 +70,13 @@ var AdminApp = (function () {
             }
         },
 
+        setAssignFunction: function (fn) {
+            assignFunction = fn; // if null then it won't be called
+        },
 
-        init: function () {
-            $('#starsKey').attr('data-content', '<p>' + spanIcon(personBusyIcon) + ' means the person has been assigned to one of your locations.</p>' +
-                '<p>' + spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>' +
-                '<p> No star means the person has been designated not available to be assigned.</p>').popover();
-
-            //parse all the table row json objects, replace them with JQuery data objects
-            var o;
-            $('#locations tr').each(function (i, v) {
-                o = JSON.parse($(v).attr('data-location'));
-                $(v).data('location', o);
-                $(v).removeAttr('data-location');
-            });
-
-            $('#people tr').each(function (i, v) {
-                installPersonRow(v);
-            });
-            sortPersonTable();
+        addPerson: function () {
+            var person = new Person();
+            PersonApp.editPerson(person, 0);
         },
 
         updatePerson: function () {
@@ -136,8 +89,6 @@ var AdminApp = (function () {
 
     };
 
-    // ajax functions
-
     function updatePersonAjax() {
         $.ajax({
             type: "POST",
@@ -149,24 +100,21 @@ var AdminApp = (function () {
             error: onUpdatePersonFailure
         });
 
-    }
-
-    function updateLocation(location) {
-        cancelAssignmentMode();
-
-        $.ajax({
-            type: "POST",
-            url: "Admin/UpdateLocation",
-            data: AddAntiForgeryToken({ location }),
-            dataType: "json",
-            success: onUpdateLocationSuccess,
-            failure: onAJAXFailure,
-            error: onAJAXFailure
-        });
-    }
-
-    function onUpdateLocationSuccess() {
-        storedLocation({ update: true });
+        function CollectFormData() {
+            var name;
+            var person = {};
+            $('#personForm .form-control').each(function (i, control) {
+                name = control.getAttribute('name');
+                if (control.type === 'checkbox') {
+                    person[name] = control.checked;
+                }
+                else {
+                    person[name] = $.trim(control.value);
+                }
+            });
+            var assignedToLocation = $('#personForm').data('assignedToLocation') || 0;
+            return AddAntiForgeryToken({ person: person, assignedToLocation: assignedToLocation });
+        }
     }
 
     function onUpdatePersonSuccess(html) {
@@ -198,49 +146,6 @@ var AdminApp = (function () {
         showEditError('Server Error', parseResponse(response));
     }
 
-    function onAJAXFailure(response) {
-        showInfoModal('Server Error', parseResponse(response));
-    }
-
-    function parseResponse(response) {
-        var message;
-
-        if (response.responseJSON && response.responseJSON.Message)
-            return response.responseJSON.Message;
-
-        message = response.d || response.responseText;
-
-        if (message == null)
-            return 'No details available';
-
-        try {
-            return JSON.parse(message);
-        }
-        catch (e) {
-            return message;
-        }
-    }
-
-    function CollectFormData() {
-        var name;
-        var person = {};
-        $('#personForm .form-control').each(function (i, control) {
-            name = control.getAttribute('name');
-            if (control.type === 'checkbox') {
-                person[name] = control.checked;
-            }
-            else {
-                person[name] = $.trim(control.value);
-            }
-        });
-        var assignedToLocation = $('#personForm').data('assignedToLocation') || 0;
-        return AddAntiForgeryToken({ person: person, assignedToLocation: assignedToLocation });
-    }
-
-    function AddAntiForgeryToken(data) {
-        data.__RequestVerificationToken = $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
-        return data;
-    }
 
     //DOM functions
     function sortPersonTable() {
@@ -280,6 +185,160 @@ var AdminApp = (function () {
 
     }
 
+    function installPersonRow(v) {
+        var o = JSON.parse($(v).attr('data-person'));
+        $(v).data('person', o);
+        $(v).find('[data-toggle="popover"]').
+            popover({
+                title: 'Contact',
+                trigger: 'hover',
+                content: o.Email + '  ph: ' + o.Phone
+            });
+        $(v).removeAttr('data-person');
+        var p = JSON.parse($(v).attr('data-location'));
+        $(v).data('location', p);
+        $(v).removeAttr('data-location');
+        return o; //return the data
+    }
+
+    function personRowSelector(id) {
+        return '#people >tr[name="' + id + '"]';
+    }
+
+    function populatePersonForm(person) {
+        var name;
+        $('#personForm .form-control').each(function (i, control) {
+            name = control.getAttribute('name');
+            if (control.type === 'checkbox') {
+                control.checked = person[name];
+            }
+            else {
+                control.value = (person[name]);
+            }
+        });
+        $('#personForm').data('assignedToLocation', person.AssignedToLocation); //needed for the new table row partial view being created on the server
+    }
+
+    function showEditError(prompt, message) {
+        $('#submitError span').text(message);
+        $('#submitError >strong').text(prompt + '  ');
+        $('#submitError').show();
+    }
+
+    //constructor for new person
+    function Person() {
+        this.FirstName = '';
+        this.LastName = '';
+        this.Id = 0;
+        this.Email = '';
+        this.Phone = '';
+        this.Available = true;
+        this.Instrument = '';
+    }
+
+
+
+})();
+
+var AdminApp = (function () {
+
+    var personAvailIcon = 'glyphicon glyphicon-star-empty';
+    var personBusyIcon = 'glyphicon glyphicon-star';
+
+    return {
+
+        //public functions
+
+        fillOrVacate: function (elt) {
+
+            if (PersonApp.canAssignPerson()) {
+                cancelAssignmentMode();
+                return;
+            }
+
+            var blob = storedLocation({ element: elt, begin: true });
+            if (blob.location.ContactId) {
+                if (confirm('Remove ' + blob.personName + ' from ' + blob.location.LocationName + '?')) {
+                    blob.location.ContactId = 0;
+                    blob.personName = '';
+                    storedLocation(blob);
+                    updateLocation(blob.location);
+                }
+            }
+            else { //changed mode, update the UI
+                changeAlertBox('#locationsAlert', 'Now, select a person with a ' + spanIcon(personAvailIcon) + ' or click the cancel link.');
+                changeAlertBox('#peopleAlert', 'You are selecting a person for ' + blob.location.LocationName + '.');
+                $('#addPerson').hide();
+                $(elt).children('td')[1].append($('#cancelAssignment > a')[0]); //move the the cancel link out of the invisible div
+                PersonApp.setAssignFunction(assignToLocation);
+                return;
+            }
+        },
+
+
+        init: function () {
+            $('#starsKey').attr('data-content', '<p>' + spanIcon(personBusyIcon) + ' means the person has been assigned to one of your locations.</p>' +
+                '<p>' + spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>' +
+                '<p> No star means the person has been designated not available to be assigned.</p>').popover();
+
+            //parse all the table row json objects, replace them with JQuery data objects
+            var o;
+            $('#locations tr').each(function (i, v) {
+                o = JSON.parse($(v).attr('data-location'));
+                $(v).data('location', o);
+                $(v).removeAttr('data-location');
+            });
+        }
+    };
+
+    // ajax functions
+
+    function updateLocation(location) {
+        cancelAssignmentMode();
+
+        $.ajax({
+            type: "POST",
+            url: "Admin/UpdateLocation",
+            data: AddAntiForgeryToken({ location }),
+            dataType: "json",
+            success: onUpdateLocationSuccess,
+            failure: onAJAXFailure,
+            error: onAJAXFailure
+        });
+    }
+
+    function onUpdateLocationSuccess() {
+        storedLocation({ update: true });
+    }
+
+    function onAJAXFailure(response) {
+        showInfoModal('Server Error', parseResponse(response));
+    }
+
+    function parseResponse(response) {
+        var message;
+
+        if (response.responseJSON && response.responseJSON.Message)
+            return response.responseJSON.Message;
+
+        message = response.d || response.responseText;
+
+        if (message == null)
+            return 'No details available';
+
+        try {
+            return JSON.parse(message);
+        }
+        catch (e) {
+            return message;
+        }
+    }
+
+    function AddAntiForgeryToken(data) {
+        data.__RequestVerificationToken = $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
+        return data;
+    }
+
     function changeAlertBox(selector, message) {
         var o = $(selector);
         // save the original message to restore later
@@ -301,58 +360,44 @@ var AdminApp = (function () {
         return '<span class="' + icon + '"></span>';
     }
 
-    function assignmentMode() {
-        return ($('#cancelAssignment').has('a').length === 0);
-    }
-
     function showInfoModal(heading, message) {
         $('#infoModal .modal-header h4').text(heading);
         $('#infoModal .modal-body p').text(message);
         $("#infoModal").modal();
     }
 
-    function showEditError(prompt, message) {
-        $('#submitError span').text(message);
-        $('#submitError >strong').text(prompt + '  ');
-        $('#submitError').show();
+    function assignToLocation(person, assignedToLocation) {
+        var blob = storedLocation({});
+
+        if (!person.Available) {
+            showInfoModal('Assign Person', person.FullName + ' does not have Available status. (You can change that.)');
+            return;
+        }
+
+        if (assignedToLocation > 0) {
+            showInfoModal('Assign Person', person.FullName + ' is already assigned to another location.');
+            return;
+        }
+
+        if (confirm('Assign ' + person.FullName + ' to ' + blob.location.LocationName + '?')) {
+            blob.location.ContactId = person.Id;
+            blob.personName = person.FullName;
+            storedLocation(blob);
+            updateLocation(blob.location);
+            return;
+        }
     }
 
     function cancelAssignmentMode() {
         $('#cancelAssignment').append($('#locations').find('a')[0]); // move the cancel link back into invisible div
+        PersonApp.setAssignFunction(null);
         restoreAlertBox('#locationsAlert');
         restoreAlertBox('#peopleAlert');
         $('#addPerson').show();
     }
 
-    function installPersonRow(v) {
-        var o = JSON.parse($(v).attr('data-person'));
-        $(v).data('person', o);
-        $(v).find('[data-toggle="popover"]').
-            popover({
-                title: 'Contact',
-                trigger: 'hover',
-                content: o.Email + '  ph: ' + o.Phone
-            });
-        $(v).removeAttr('data-person');
-        var p = JSON.parse($(v).attr('data-location'));
-        $(v).data('location', p);
-        $(v).removeAttr('data-location');
-        return o; //return the data
-    }
-
     //processing and data functions
     function storedLocation(o) {
-
-        function ChangePersonAssigned(personId, LocationId) {
-            function toggleStar(icon, appear) {
-                $(personRowSelector(personId)).find('span').toggleClass(icon, appear);
-            }
-
-            var star = 'glyphicon-star';
-            $(personRowSelector(personId)).attr('data-location', LocationId);
-            toggleStar(star + '-empty', LocationId == 0);
-            toggleStar(star, LocationId > 0);
-        }
 
         var me = storedLocation;
 
@@ -375,10 +420,10 @@ var AdminApp = (function () {
         if (o.update) {
             $(me.stored.element).data('location', me.stored.location);
             if (me.stored.ContactId) {
-                ChangePersonAssigned(me.stored.ContactId, 0); // old no longer assigned to location 
+                PersonApp.ChangePersonAssigned(me.stored.ContactId, 0); // old no longer assigned to location 
             }
             if (me.stored.location.ContactId) {
-                ChangePersonAssigned(me.stored.location.ContactId, me.stored.location.Id);
+                PersonApp.ChangePersonAssigned(me.stored.location.ContactId, me.stored.location.Id);
             }
             me.stored.element.children[1].innerText = me.stored.personName;
             delete me.stored;
@@ -387,48 +432,10 @@ var AdminApp = (function () {
         return $.extend({}, me.stored);
     }
 
-    function personData(id, data) {
-
-        if (data) {
-            $(personRowSelector(id)).data('person', data);
-        }
-        else {
-            return $(personRowSelector(id)).data('person');
-        }
-
-    }
-
-    function personRowSelector(id) {
-        return '#people >tr[name="' + id + '"]';
-    }
-
-    function populatePersonForm(person) {
-        var name;
-        $('#personForm .form-control').each(function (i, control) {
-            name = control.getAttribute('name');
-            if (control.type === 'checkbox') {
-                control.checked = person[name];
-            }
-            else {
-                control.value = (person[name]);
-            }
-        });
-        $('#personForm').data('assignedToLocation', person.AssignedToLocation); //needed for the new table row partial view being created on the server
-    }
-
-    //constructor for new person
-    function Person() {
-        this.FirstName = '';
-        this.LastName = '';
-        this.Id = 0;
-        this.Email = '';
-        this.Phone = '';
-        this.Available = true;
-        this.Instrument = '';
-    }
 
 })();
 
 $(document).ready(function () {
+    PersonApp.init();
     AdminApp.init();
 });

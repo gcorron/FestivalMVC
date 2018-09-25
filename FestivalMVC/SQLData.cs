@@ -10,11 +10,32 @@ namespace FestivalMVC
     public class SQLData
     {
 
+
+        public static void DeleteEvent(int id)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("DeleteEvent", new { id }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public static void SelectTeachersForEvent(int id, out IEnumerable<Contact> teachers, out IEnumerable<Judge> judges)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                using (var multi = connection.QueryMultiple("SelectTeachersForEvent", new { id }, commandType: CommandType.StoredProcedure))
+                {
+                    teachers = multi.Read<Contact>();
+                    judges = multi.Read<Judge>();
+                }
+            }
+        }
+
         public static Event SelectEvent(int id, out string instrumentName)
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                using (var multi=connection.QueryMultiple("SelectEvent", new { id }, commandType: CommandType.StoredProcedure))
+                using (var multi = connection.QueryMultiple("SelectEvent", new { id }, commandType: CommandType.StoredProcedure))
                 {
                     var ev = multi.ReadSingle<Event>();
                     instrumentName = multi.ReadSingle<string>();
@@ -91,7 +112,7 @@ namespace FestivalMVC
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                using (var multi = connection.QueryMultiple("SelectEventsForDistrict", new { location=locationId }, commandType: CommandType.StoredProcedure))
+                using (var multi = connection.QueryMultiple("SelectEventsForDistrict", new { location = locationId }, commandType: CommandType.StoredProcedure))
                 {
                     events = multi.Read<Event>();
                     instruments = multi.Read<Instrum>();

@@ -1,14 +1,25 @@
-﻿
-<!DOCTYPE html>
+﻿@model FestivalMVC.ViewModels.PreparePageViewModel
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title></title>
-</head>
-<body>
-    <div>
-    <h1>Prepare</h1>
-    </div>
-</body>
-</html>
+@{
+    var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
+    var theUser = (FestivalMVC.Models.LoginPerson)Session["TheUser"];
+    var dataEvent = theEvent.Event;
+}
+
+<form id="__AjaxAntiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
+<div>
+    <h4 class="pull-right">@($"{theUser.LocationName} {@theEvent.EventDescription}")</h4>
+</div>
+<div class="clear"></div>
+
+@{Html.RenderPartial("_Event",theEvent);}
+@{Html.RenderPartial("_EventEdit");}
+@section Scripts
+{
+
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/EventEdit.js")
+}

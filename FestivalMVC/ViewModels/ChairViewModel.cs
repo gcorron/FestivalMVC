@@ -78,15 +78,18 @@ namespace FestivalMVC.ViewModels
             }
         }
 
-        private string StatusDesc()
+        public string StatusDesc
         {
-            switch (Event.Status)
+            get
             {
-                case automatic: return $"Automatic ({ComputeStatus()}) ";
-                case open: return "Open";
-                case closed: return "Closed";
-                case complete: return "Complete";
-                default: return "Invalid Data";
+                switch (Event.Status)
+                {
+                    case automatic: return $"Automatic ({ComputeStatus()}) ";
+                    case open: return "Open";
+                    case closed: return "Closed";
+                    case complete: return "Complete";
+                    default: return "Invalid Data";
+                }
             }
         }
 
@@ -166,4 +169,44 @@ namespace FestivalMVC.ViewModels
         public Location Location { get => _location; }
 
     }
+
+
+    public struct PreparePageViewModel
+    {
+        // Constructor
+        public PreparePageViewModel(int eventId)
+        {
+            IEnumerable<Contact> teachers;
+            IEnumerable<Judge> judges;
+
+            SQLData.SelectTeachersForEvent(eventId, out teachers, out judges);
+
+            Teachers = teachers;
+            Judges = judges;
+        }
+
+        private IEnumerable<Contact> Teachers { get; set; }
+        public IEnumerable<Judge> Judges { get; private set; }
+        public IEnumerable<Contact> Participants
+        {
+            get
+            {
+                return from teacher in Teachers
+                       where teacher.Available
+                       select teacher;
+            }
+        }
+
+        public IEnumerable<Contact> NonParticipants
+        {
+            get
+            {
+                return from teacher in Teachers
+                       where !teacher.Available
+                       select teacher;
+            }
+        }
+
+    }
+
 }

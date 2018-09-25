@@ -1,24 +1,13 @@
 ﻿"use strict";
 
-var ChairApp = (function () {
+var EventEdit = (function () {
 
     return {
 
         //public functions
 
         init: function () {
-            function dateTimeReviver(key, value) {
-                var a;
-                if (typeof value === 'string') {
-                    a = /\/Date\((\d*)\)\//.exec(value);
-                    if (a) {
-                        return new Date(+a[1]);
-                    }
-                }
-                return value;
-            }
-            var o;
-
+  
             $(document).ajaxStart(function () {
                 document.body.style.cursor = 'wait';
             });
@@ -28,40 +17,37 @@ var ChairApp = (function () {
             });
 
 
-            $('a[data-event]').each(function (i, v) {
-                o = JSON.parse($(v).attr('data-event'), dateTimeReviver);
-                $(v).data('event', o);
-                $(v).removeAttr('data-event');
-            });
-
-
-
             $('.form-control').each(function (i, elt) { // jQuery validation needs an unique name field to work
                 elt.name = elt.id;
             });
 
-
-            $('.hide').removeClass('hide');
-
+            $('[data-toggle=popover]').popover();
 
         },
 
 
-        editEvent: function (id) {
-            populateEventForm(id);
+        editEvent: function (event) {
+
+            if (event == null) {
+                $('#deleteButton').hide();
+                event = new Event();
+            }
+            else {
+                $('#deleteButton').show();
+                event = JSON.parse(event, dateTimeReviver);
+            }
+
+            populateEventForm(event);
             clearAlerts();
 
-            //if (id !== 0) {
-            //    $('.no-new').show();
-            //}
 
-            //if (canDelete) {
-            //    $('#deleteButton').removeAttr('disabled');
-            //}
-            //else {
-            //    $('#deleteButton').attr('disabled', 'disabled');
-            //}
             $("#modalEventEdit").modal();
+        },
+
+        deleteEvent: function () {
+            if (!confirm("Delete this event. Are you sure?"))
+                return;
+            ajaxDeleteEvent();
         },
 
         updateEvent: function () {
@@ -100,20 +86,10 @@ var ChairApp = (function () {
             }
             clearAlerts();
             ajaxUpdateEvent();
-        },
-
-        selectEvent: function (elt) {
-            var event = $(elt).data('event');
-            var data = AddAntiForgeryToken({ id: event.Event.Id });
-            ajaxSelectEvent(data);
         }
     };
 
-    //private functions
-
-
     // UI
-
 
     function showWarning(message) {
         showAlert('.formWarning', message);
@@ -133,34 +109,17 @@ var ChairApp = (function () {
         $('.no-new, .alert').hide();
     }
 
-    function showInfoModal(heading, message) {
-        $('#infoModal h4').text(heading);
-        $('#infoModal p').text(message);
-        $("#infoModal").modal();
-    }
+    function populateEventForm(event) {
 
-    function populateEventForm(id) {
-        var event;
-
-        if (id == 0)
-            event = new Event();
-        else
-            event = getEvent(id);
-
-        var mess;
         var control;
-
-        if (!event) {
-            mess = 'event ' + id + ' not found!';
-            alert(mess);
-            throw mess;
-        }
 
         for (var name in event) {
             control = $('#modalEventEdit #' + name);
             if (control) {
-                if ($(control).attr('type') === 'checkbox')
+                if (control.prop('type') === 'checkbox')
                     control.prop('checked', event[name]);
+                else if (control.prop('type') === 'date')
+                    control.val(event[name].toISOString().split('T')[0]);
                 else
                     control.val(event[name]);
             }
@@ -180,38 +139,42 @@ var ChairApp = (function () {
         return data;
     }
 
+    function dateTimeReviver(key, value) {
+        var a;
+        if (typeof value === 'string') {
+            a = /\/Date\((\d*)\)\//.exec(value);
+            if (a) {
+                return new Date(+a[1]);
+            }
+        }
+        return value;
+    }
+
     //AJAX
-    function ajaxSelectEvent(data) {
-        $.ajax({
-            type: "POST",
-            url: "/Chair/Index",
-            data: data,
-            dataType: "json",
-            success: onAjaxSelectEventSuccess,
-            failure: onAjaxFailure,
-            error: onAjaxFailure
-        });
-    }
-
-    function onAjaxSelectEventSuccess(response) {
-        window.location = response.redirect;
-    }
-
-    function onAjaxFailure(response) {
-        showInfoModal('Server Error', parseResponse(response));
-    }
 
     function onUpdateEventFailure(response) {
         showEditError('Server Error', parseResponse(response));
     }
 
-    function ajaxUpdateEvent() {
+    function ajaxDeleteEvent() {
         $.ajax({
             type: "POST",
-            url: "Chair/UpdateEvent",
+            url: "/Chair/DeleteEvent",
+            data: AddAntiForgeryToken({ id: $('#Id').val() }),
+            dataType: "json",
+            success: onAjaxUpdateEventSuccess,
+            failure: onUpdateEventFailure,
+            error: onUpdateEventFailure
+        });
+    }
+
+        function ajaxUpdateEvent() {
+        $.ajax({
+            type: "POST",
+            url: "/Chair/UpdateEvent",
             data: CollectFormData(),
             dataType: "json",
-            success: onUpdateEventSuccess,
+            success: onAjaxUpdateEventSuccess,
             failure: onUpdateEventFailure,
             error: onUpdateEventFailure
         });
@@ -233,9 +196,8 @@ var ChairApp = (function () {
         }
     }
 
-    function onUpdateEventSuccess(html) {
-        $('#modalEdit').modal('hide');
-        nextPhase();
+    function onAjaxUpdateEventSuccess(response) {
+        window.location = response.redirect;
     }
 
     function parseResponse(response) {
@@ -273,5 +235,5 @@ var ChairApp = (function () {
 })();
 
 $(document).ready(function () {
-    ChairApp.init();
+    EventEdit.init();
 }); 

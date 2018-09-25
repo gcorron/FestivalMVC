@@ -72,3 +72,8 @@ tr:nth-child(even) {
 .formError, .formWarning {
     text-align: inherit;
 }
+dl {
+    padding: 2px;
+    margin-bottom: 2px; /* Reduced from whatever it currently is */
+    margin-top: 2px; /* Reduced from whatever it currently is */
+}
