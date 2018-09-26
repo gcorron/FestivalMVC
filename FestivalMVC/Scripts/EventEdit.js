@@ -21,8 +21,6 @@ var EventEdit = (function () {
                 elt.name = elt.id;
             });
 
-            $('[data-toggle=popover]').popover();
-
         },
 
 

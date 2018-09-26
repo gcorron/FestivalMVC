@@ -176,36 +176,17 @@ namespace FestivalMVC.ViewModels
         // Constructor
         public PreparePageViewModel(int eventId)
         {
-            IEnumerable<Contact> teachers;
+            IEnumerable<ContactForView> teachers;
             IEnumerable<Judge> judges;
 
             SQLData.SelectTeachersForEvent(eventId, out teachers, out judges);
 
-            Teachers = teachers;
+            PeopleViewModel = new PeopleViewModel(teachers, "Teachers");
             Judges = judges;
         }
 
-        private IEnumerable<Contact> Teachers { get; set; }
+        public PeopleViewModel PeopleViewModel { get; private set; }
         public IEnumerable<Judge> Judges { get; private set; }
-        public IEnumerable<Contact> Participants
-        {
-            get
-            {
-                return from teacher in Teachers
-                       where teacher.Available
-                       select teacher;
-            }
-        }
-
-        public IEnumerable<Contact> NonParticipants
-        {
-            get
-            {
-                return from teacher in Teachers
-                       where !teacher.Available
-                       select teacher;
-            }
-        }
 
     }
 

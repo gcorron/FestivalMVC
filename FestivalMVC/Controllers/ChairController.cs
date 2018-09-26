@@ -107,6 +107,53 @@ namespace FestivalMVC.Controllers
             return theEvent.NextPage;
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateTeacherEventAssignment(int id, bool participate)
+        {
+            var theEvent = (EventViewModel)Session["SelectedEvent"];
+            var eventId = theEvent.Event.Id;
+            SQLData.UpdateTeacherEvent(id, eventId, participate);
+            if (!participate)
+                eventId = 0;
+
+            return Json(new { id, eventId});
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdatePerson(Contact person, int assignedToLocation)
+        {
+
+            person.ParentLocation = Admin.LocationIdSecured;
+            
+            var theEvent = (EventViewModel)Session["SelectedEvent"];
+            person.Instrument = theEvent.Event.Instrument;
+            person.Available = true; //always true for events
+
+            if (person.Id == 0)
+            {
+                person.UserName = Admin.CreateUser(person);
+                assignedToLocation = theEvent.Event.Id;
+            }
+
+
+            int ret = SQLData.UpdateContact(person);
+
+            if (person.Id == 0)
+            {
+                person.Id = ret;
+                SQLData.UpdateTeacherEvent(person.Id, assignedToLocation, true);
+            }
+
+            var personOut = new ContactForView(person)
+            {
+                AssignedToLocation = assignedToLocation
+            };
+
+            return PartialView("_Person", personOut);
+        }
+
 
         //catch all unhandled exceptions that are thrown within scope of this controller
         protected override void OnException(ExceptionContext filterContext)

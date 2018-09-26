@@ -50,6 +50,7 @@
         Html.RenderPartial("_People", Model.PeopleViewModel);
     }
 
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="infoModal" role="dialog">
@@ -83,8 +84,8 @@
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/Scripts/Admin.js")
     @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/Admin.js")
     @Scripts.Render("~/Scripts/PersonApp.js")
 
 }

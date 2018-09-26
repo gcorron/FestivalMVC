@@ -11,6 +11,15 @@ namespace FestivalMVC
     {
 
 
+        public static void UpdateTeacherEvent(int teacher, int ev, bool participate)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("UpdateTeacherEvent", new { teacher, ev, participate }, commandType: CommandType.StoredProcedure);
+            }
+
+        }
+
         public static void DeleteEvent(int id)
         {
             using (IDbConnection connection = GetDBConnection())
@@ -19,13 +28,13 @@ namespace FestivalMVC
             }
         }
 
-        public static void SelectTeachersForEvent(int id, out IEnumerable<Contact> teachers, out IEnumerable<Judge> judges)
+        public static void SelectTeachersForEvent(int id, out IEnumerable<ContactForView> teachers, out IEnumerable<Judge> judges)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 using (var multi = connection.QueryMultiple("SelectTeachersForEvent", new { id }, commandType: CommandType.StoredProcedure))
                 {
-                    teachers = multi.Read<Contact>();
+                    teachers = multi.Read<ContactForView>();
                     judges = multi.Read<Judge>();
                 }
             }

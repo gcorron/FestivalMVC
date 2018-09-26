@@ -15,11 +15,23 @@
 </div>
 <div class="clear"></div>
 
-@{Html.RenderPartial("_Event",theEvent);}
-@{Html.RenderPartial("_EventEdit");}
+<div class="row">
+
+
+    @{Html.RenderPartial("_Event", theEvent);}
+    @{Html.RenderPartial("_EventEdit");}
+
+    @{ Html.RenderPartial("_People", Model.PeopleViewModel);}
+
+
+</div>
+
 @section Scripts
 {
 
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/Scripts/EventEdit.js")
+    @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/PersonApp.js")
+    @Scripts.Render("~/Scripts/PreparePage.js")
 }

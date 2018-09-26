@@ -15,7 +15,7 @@ namespace FestivalMVC.Models
         public string Email { get => email; set => email = value.Trim(); }
         public string Phone { get => phone; set => phone = value.Trim(); }
         public string UserName { get; set; }
-        public string Instrument { get; set; }
+        public char Instrument { get; set; }
         public Boolean Available { get; set; }
         public int ParentLocation { get; set; }
     }
@@ -41,7 +41,7 @@ namespace FestivalMVC.Models
         public string Phone { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
-        public string Instrument { get; set; }
+        public char Instrument { get; set; }
         public Boolean Available { get; set; }
         public int ParentLocation { get; set; }
         public int AssignedToLocation { get; set; }

@@ -2,6 +2,8 @@
 
 var PersonApp = (function () {
     var assignFunction = null;
+    var personAvailIcon = 'glyphicon glyphicon-star-empty';
+    var personBusyIcon = 'glyphicon glyphicon-star';
 
     return {
         init: function () {
@@ -9,6 +11,9 @@ var PersonApp = (function () {
                 installPersonRow(v);
             });
             sortPersonTable();
+            $('#starsKey').attr('data-content', '<p>' + FestivalLib.spanIcon(personBusyIcon) + ' means the person has been assigned to an event or location.</p>' +
+                '<p>' + FestivalLib.spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>' +
+                '<p> No star means the person has been designated not available to be assigned.</p>').popover();
         },
 
         canAssignPerson: function () {
@@ -21,25 +26,23 @@ var PersonApp = (function () {
             assignFunction(person, currentAssignment);
         },
 
-        ChangePersonAssigned: function (personId, LocationId) {
-
-            function toggleStar(icon, appear) {
-                $(personRowSelector(personId)).find('span').toggleClass(icon, appear);
-            }
+        changePersonAssigned: function (personId, LocationId) {
 
             var star = 'glyphicon-star';
-            $(personRowSelector(personId)).attr('data-location', LocationId);
-            toggleStar(star + '-empty', LocationId == 0);
-            toggleStar(star, LocationId > 0);
+            var tr = $(personRowSelector(personId))[0];
+            $(tr).data('location',LocationId);
+            var span = $(tr).find('span')[0];
+            $(span).toggleClass(star + '-empty', LocationId == 0);
+            $(span).toggleClass(star, LocationId > 0);
         },
 
         editPerson: function (person, canDelete) {
             populatePersonForm(person);
-            $('.no-new').hide();
-            $('#submitError').hide();
+            $('#personForm .no-new').hide();
+            $('#personForm #submitError').hide();
 
             if (person.Id !== 0) {
-                $('.no-new').show();
+                $('#personForm .no-new').show();
             }
 
             if (canDelete) {
@@ -49,14 +52,13 @@ var PersonApp = (function () {
                 $('#deleteButton').attr('disabled', 'disabled');
             }
 
-            $('#instrumentGroup').hide();
-            if ($('#RoleType').val() === 'E') {
-                $('#instrumentGroup').show();
-            }
             $("#modalEdit").modal();
         },
 
         deletePerson: function () {
+            if ($('#deleteButton').attr('disabled')) {
+                return;
+            }
             if (confirm('Delete, are you sure?')) {
                 $.ajax({
                     type: "POST",
@@ -76,6 +78,9 @@ var PersonApp = (function () {
 
         addPerson: function () {
             var person = new Person();
+            var instrument = $('#eventInstrument').val();
+            if (instrument)
+                person.Instrument = instrument;
             PersonApp.editPerson(person, 0);
         },
 
@@ -86,13 +91,12 @@ var PersonApp = (function () {
             }
             updatePersonAjax();
         }
-
     };
 
     function updatePersonAjax() {
         $.ajax({
             type: "POST",
-            url: "Admin/UpdatePerson",
+            url: "UpdatePerson",
             data: CollectFormData(),
             dataType: "html",
             success: onUpdatePersonSuccess,
@@ -188,7 +192,7 @@ function sortPersonTable() {
 function installPersonRow(v) {
     var o = JSON.parse($(v).attr('data-person'));
     $(v).data('person', o);
-    $(v).find('[data-toggle="popover"]').
+    $(v).find('a').
         popover({
             title: 'Contact',
             trigger: 'hover',
@@ -233,7 +237,7 @@ function Person() {
     this.Email = '';
     this.Phone = '';
     this.Available = true;
-    this.Instrument = '';
+    this.Instrument = '-';
 }
 
 

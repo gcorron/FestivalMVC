@@ -3,6 +3,7 @@
 var FestivalLib = (function () {
 
     return {
+
         parseResponse: function (response) {
             var message;
 
@@ -31,6 +32,14 @@ var FestivalLib = (function () {
             $('#infoModal .modal-header h4').text(heading);
             $('#infoModal .modal-body p').text(message);
             $("#infoModal").modal();
+        },
+
+        onAjaxFailure: function (response) {
+            FestivalLib.showInfoModal('Server Error', FestivalLib.parseResponse(response));
+        },
+
+        spanIcon: function (icon) {
+            return '<span class="' + icon + '"></span>';
         }
     };
 })();

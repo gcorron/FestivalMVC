@@ -7,9 +7,11 @@
     [Phone]          NVARCHAR (50) NOT NULL,
     [ParentLocation] INT           NULL,
     [Available]      BIT           NOT NULL,
-    [Instrument]     CHAR (1)      NULL,
+    [Instrument]     CHAR (1)      NOT NULL,
     CONSTRAINT [PK_Contact] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

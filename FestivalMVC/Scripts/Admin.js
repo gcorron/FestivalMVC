@@ -26,7 +26,7 @@ var AdminApp = (function () {
                 }
             }
             else { //changed mode, update the UI
-                changeAlertBox('#locationsAlert', 'Now, select a person with a ' + spanIcon(personAvailIcon) + ' or click the cancel link.');
+                changeAlertBox('#locationsAlert', 'Now, select a person with a ' + FestivalLib.spanIcon(personAvailIcon) + ' or click the cancel link.');
                 changeAlertBox('#peopleAlert', 'You are selecting a person for ' + blob.location.LocationName + '.');
                 $('#addPerson').hide();
                 $(elt).children('td')[1].append($('#cancelAssignment > a')[0]); //move the the cancel link out of the invisible div
@@ -37,9 +37,6 @@ var AdminApp = (function () {
 
 
         init: function () {
-            $('#starsKey').attr('data-content', '<p>' + spanIcon(personBusyIcon) + ' means the person has been assigned to one of your locations.</p>' +
-                '<p>' + spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>' +
-                '<p> No star means the person has been designated not available to be assigned.</p>').popover();
 
             //parse all the table row json objects, replace them with JQuery data objects
             var o;
@@ -62,20 +59,14 @@ var AdminApp = (function () {
             data: FestivalLib.addAntiForgeryToken({ location }),
             dataType: "json",
             success: onUpdateLocationSuccess,
-            failure: onAJAXFailure,
-            error: onAJAXFailure
+            failure: FestivalLib.onAjaxFailure,
+            error: FestivalLib.onAjaxFailure
         });
     }
 
     function onUpdateLocationSuccess() {
         storedLocation({ update: true });
     }
-
-    function onAJAXFailure(response) {
-        FestivalLib.showInfoModal('Server Error', FestivalLib.parseResponse(response));
-    }
-
-
 
     function changeAlertBox(selector, message) {
         var o = $(selector);
@@ -94,9 +85,7 @@ var AdminApp = (function () {
         o.toggleClass('alert-info alert-warning');
     }
 
-    function spanIcon(icon) {
-        return '<span class="' + icon + '"></span>';
-    }
+
 
     function assignToLocation(person, assignedToLocation) {
         var blob = storedLocation({});
@@ -152,10 +141,10 @@ var AdminApp = (function () {
         if (o.update) {
             $(me.stored.element).data('location', me.stored.location);
             if (me.stored.ContactId) {
-                PersonApp.ChangePersonAssigned(me.stored.ContactId, 0); // old no longer assigned to location 
+                PersonApp.changePersonAssigned(me.stored.ContactId, 0); // old no longer assigned to location 
             }
             if (me.stored.location.ContactId) {
-                PersonApp.ChangePersonAssigned(me.stored.location.ContactId, me.stored.location.Id);
+                PersonApp.changePersonAssigned(me.stored.location.ContactId, me.stored.location.Id);
             }
             me.stored.element.children[1].innerText = me.stored.personName;
             delete me.stored;
