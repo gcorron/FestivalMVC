@@ -17,8 +17,11 @@
     [AwardRating]         CHAR (1)      NOT NULL,
     [AwardPoints]         TINYINT       NOT NULL,
     [Judge]               INT           NOT NULL,
-    [AuditionTime]        SMALLDATETIME NOT NULL
+    [AuditionTime]        SMALLDATETIME NOT NULL,
+    [Status]              CHAR (1)      NOT NULL
 );
+
+
 
 
 

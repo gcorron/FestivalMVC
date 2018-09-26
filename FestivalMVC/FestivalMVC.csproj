@@ -252,6 +252,7 @@
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\EventsPage.js" />
     <Content Include="Scripts\EventEdit.js" />
+    <Content Include="Scripts\FestivalLib.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -262,6 +263,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\PersonApp.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -307,6 +309,7 @@
     <Content Include="Views\Chair\Schedule.cshtml" />
     <Content Include="Views\Chair\_Event.cshtml" />
     <None Include="Views\Chair\_EventEdit.cshtml" />
+    <Content Include="Views\Shared\_People.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

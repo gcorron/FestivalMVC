@@ -20,12 +20,12 @@ namespace FestivalMVC.ViewModels
             SQLData.SelectDataForLocation(theUser.LocationId, out IEnumerable<ContactForView> people, out IEnumerable<Location> locations);
 
             Locations = locations;
-            People = people;
+            PeopleViewModel = new PeopleViewModel(people, theUser.LocationRoleAssignments);
         }
 
+        public PeopleViewModel PeopleViewModel { get; private set; }
         public LoginPerson TheUser { get; private set; }
 
-        public IEnumerable<ContactForView> People { get; private set; }
 
         public IEnumerable<Location> Locations { get; private set; }
 
@@ -39,10 +39,27 @@ namespace FestivalMVC.ViewModels
 
         public ContactForView GetPerson(int id)
         {
-            return (from p in People
+            return (from p in PeopleViewModel.People
                     where p.Id == id
                     select p).Single();
         }
+
+    }
+
+    public class PeopleViewModel
+    {
+
+        public PeopleViewModel(IEnumerable<ContactForView> people, string peopleDescription)
+        {
+            People = people;
+            PeopleDescription = peopleDescription;
+        }
+
+        public string PeopleDescription { get; private set; }
+        public IEnumerable<ContactForView> People { get; private set; }
+
+
+
     }
 
     public static class Admin

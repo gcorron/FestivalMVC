@@ -1,15 +1,14 @@
 ﻿CREATE TABLE [dbo].[TeacherEvent] (
-    [Location] INT      NOT NULL,
-    [Event]    INT      NOT NULL,
-    [Teacher]  INT      NOT NULL,
-    [Status]   CHAR (1) NOT NULL,
-    CONSTRAINT [PK_TeacherEvent] PRIMARY KEY CLUSTERED ([Location] ASC)
+    [Teacher] INT NOT NULL,
+    [Event]   INT NOT NULL,
+    CONSTRAINT [PK_TeacherEvent] PRIMARY KEY CLUSTERED ([Teacher] ASC, [Event] ASC)
 );
 
 
+
+
 GO
-CREATE NONCLUSTERED INDEX [IX_TeacherEvent_1]
-    ON [dbo].[TeacherEvent]([Teacher] ASC);
+
 
 
 GO
