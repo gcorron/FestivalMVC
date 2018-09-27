@@ -91,8 +91,6 @@ namespace FestivalMVC.ViewModels
                     throw new Exception("Session expired. Please log in again to continue.");
                 }
                 string role = userData.Substring(0, 1);
-                if (!("ABCDE".Contains(role)))
-                    throw new Exception("Security Role Violation!");
                 string id = userData.Substring(1);
                 return int.Parse(id);
             }

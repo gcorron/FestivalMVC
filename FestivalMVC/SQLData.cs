@@ -10,6 +10,13 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static IEnumerable<Judge> UpdateJudge(Judge judge)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.Query<Judge>("UpdateJudge", judge, commandType: CommandType.StoredProcedure);
+            }
+        }
 
         public static void UpdateTeacherEvent(int teacher, int ev, bool participate)
         {
@@ -128,8 +135,22 @@ namespace FestivalMVC
                     location = multi.ReadSingle<Location>();
                 }
             }
-
         }
+
+        public static void SelectEventsForTeacher(int parentLocation, DateTime currentTime, out IEnumerable<Event> events,
+            out IEnumerable<Instrum> instruments, out Location location)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                using (var multi = connection.QueryMultiple("SelectEventsForTeacher", new { parentLocation, currentTime }, commandType: CommandType.StoredProcedure))
+                {
+                    events = multi.Read<Event>();
+                    instruments = multi.Read<Instrum>();
+                    location = multi.ReadSingle<Location>();
+                }
+            }
+        }
+
 
         public static LoginPerson GetLoginPerson(string userName)
         {

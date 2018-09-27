@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Views/Teacher/_TeacherLayout.cshtml";
+}
+
+@model FestivalMVC.ViewModels.EventsViewModel
+
+<form id="__AjaxAntiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
+<h2>Events for @Model.Location.LocationName</h2>
+
+<!-- Select Event -->
+<div id="contents" class="container">
+    <div class="content well">
+        <div class="row">
+            <div class="col-sm-8">
+                <!-- script will reveal after load -->
+                <h3>
+                    @if (Model.Events.Count() == 0)
+                    {
+                        @:No events available at this time.
+                    }
+                    else
+                    {
+                        @:First, select an event.
+                    }
+                </h3>
+                <br />
+                <div class="row">
+                    <div class="col-sm-6">
+                        @foreach (var ev in Model.Events)
+                        {
+                            <h4><a data-event="@Json.Encode(ev)" onclick="EventsPage.selectEvent(this)">@ev.EventDescription</a></h4>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clear"></div>
+
+        @section Scripts
+{
+
+            @Scripts.Render("~/bundles/jqueryval")
+            @Scripts.Render("~/Scripts/EventsPage.js")
+        }

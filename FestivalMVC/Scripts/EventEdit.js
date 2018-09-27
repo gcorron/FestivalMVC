@@ -17,8 +17,9 @@ var EventEdit = (function () {
             });
 
 
-            $('.form-control').each(function (i, elt) { // jQuery validation needs an unique name field to work
-                elt.name = elt.id;
+            $('#formEdit .form-control').each(function (i, elt) { // jQuery validation needs an unique name field to work
+                if (!elt.name)
+                    elt.name = elt.id;
             });
 
         },
@@ -110,16 +111,17 @@ var EventEdit = (function () {
     function populateEventForm(event) {
 
         var control;
-
+        var val;
         for (var name in event) {
             control = $('#modalEventEdit #' + name);
             if (control) {
+                val = event[name];
                 if (control.prop('type') === 'checkbox')
-                    control.prop('checked', event[name]);
-                else if (control.prop('type') === 'date')
-                    control.val(event[name].toISOString().split('T')[0]);
+                    control.prop('checked', val);
+                else if (val && control.prop('type') === 'date')
+                    control.val(val.toISOString().split('T')[0]);
                 else
-                    control.val(event[name]);
+                    control.val(val);
             }
         }
     }

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<FestivalMVC.Models.Judge>
+
+<div id="judges" class="well well-sm">
+    <div class="row">
+        <div class="col-sm-6">
+            <h4>Judges</h4>
+        </div>
+        <div class="col-sm-6">
+            <a class="btn btn-primary btn-sm pull-right" onclick="PreparePageApp.editJudge(this)">Add</a>
+        </div>
+    </div>
+    <table class="table">
+        @{foreach (var judge in Model)
+            {
+                <tr><td><a onclick="PreparePageApp.editJudge(this)" data-judge="@Json.Encode(judge)">@judge.Name</a></td></tr>
+            }
+        }
+    </table>
+</div>

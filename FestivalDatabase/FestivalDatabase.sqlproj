@@ -102,6 +102,8 @@
     <Build Include="dbo\Stored Procedures\SelectTeachersForEvent.sql" />
     <Build Include="dbo\Stored Procedures\DeleteEvent.sql" />
     <Build Include="dbo\Stored Procedures\UpdateTeacherEvent.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateJudge.sql" />
+    <Build Include="dbo\Stored Procedures\SelectEventsForTeacher.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

@@ -6,14 +6,18 @@ var PersonApp = (function () {
     var personBusyIcon = 'glyphicon glyphicon-star';
 
     return {
-        init: function () {
+        init: function (forTeacher) {
             $('#people tr').each(function (i, v) {
                 installPersonRow(v);
             });
             sortPersonTable();
             $('#starsKey').attr('data-content', '<p>' + FestivalLib.spanIcon(personBusyIcon) + ' means the person has been assigned to an event or location.</p>' +
-                '<p>' + FestivalLib.spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>' +
-                '<p> No star means the person has been designated not available to be assigned.</p>').popover();
+                '<p>' + FestivalLib.spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>'
+                + (forTeacher ? '' : '<p> No star means the person has been designated not available to be assigned.</p>')).popover();
+            if (forTeacher) {
+                $('#personForm [name=Available]').closest('div').hide().removeClass('no-new');
+            }
+
         },
 
         canAssignPerson: function () {
@@ -63,7 +67,7 @@ var PersonApp = (function () {
                 $.ajax({
                     type: "POST",
                     url: "Admin/DeletePerson",
-                    data: CollectFormData(),
+                    data: personFormData(),
                     dataType: "json",
                     success: onDeletePersonSuccess,
                     failure: onUpdatePersonFailure,
@@ -97,26 +101,16 @@ var PersonApp = (function () {
         $.ajax({
             type: "POST",
             url: "UpdatePerson",
-            data: CollectFormData(),
+            data: personFormData(),
             dataType: "html",
             success: onUpdatePersonSuccess,
             failure: onUpdatePersonFailure,
             error: onUpdatePersonFailure
         });
     }
-    
-    function CollectFormData() {
-        var name;
-        var person = {};
-        $('#personForm .form-control').each(function (i, control) {
-            name = control.getAttribute('name');
-            if (control.type === 'checkbox') {
-                person[name] = control.checked;
-            }
-            else {
-                person[name] = $.trim(control.value);
-            }
-        });
+
+    function personFormData () {
+        person = FestivalLib.collectFormData('person', false);
         var assignedToLocation = $('#personForm').data('assignedToLocation') || 0;
         return FestivalLib.addAntiForgeryToken({ person: person, assignedToLocation: assignedToLocation });
     }
@@ -210,16 +204,7 @@ function personRowSelector(id) {
 }
 
 function populatePersonForm(person) {
-    var name;
-    $('#personForm .form-control').each(function (i, control) {
-        name = control.getAttribute('name');
-        if (control.type === 'checkbox') {
-            control.checked = person[name];
-        }
-        else {
-            control.value = (person[name]);
-        }
-    });
+    FestivalLib.populateForm('person',person);
     $('#personForm').data('assignedToLocation', person.AssignedToLocation); //needed for the new table row partial view being created on the server
 }
 

@@ -157,6 +157,6 @@ var AdminApp = (function () {
 })();
 
 $(document).ready(function () {
-    PersonApp.init();
+    PersonApp.init(false);
     AdminApp.init();
 });

@@ -23,6 +23,57 @@ var FestivalLib = (function () {
             }
         },
 
+        //form routines expect form to look like this (formNamePart = 'judge')
+
+        //  <form id="judgeForm">
+        //      < div class="modal fade" id = "judgeModal" role = "dialog" >
+        //          <div class="modal-dialog modal-sm">
+
+        //and to have a div for reporting errors, like this:
+
+        //  <div class="alert alert-danger" name="submitError">
+        //      < strong > Server error! </strong > <span></span>
+        //  </div >
+
+        //and each element in the form will have class="form-control"
+
+        collectFormData: function (formNamePart, addAntiForgery) {
+            var name;
+            var o = {};
+            $('#' + formNamePart + 'Form .form-control').each(function (i, control) {
+                name = control.getAttribute('name');
+                if (control.type === 'checkbox') {
+                    o[name] = control.checked;
+                }
+                else {
+                    o[name] = $.trim(control.value);
+                }
+            });
+            if (addAntiForgery)
+                return FestivalLib.addAntiForgeryToken(o);
+            else
+                return o;
+        },
+
+        //pass a string like '#personForm' and the object with the data
+        populateForm(formNamePart,o) {
+            var name;
+            $('#' + formNamePart + 'Form .form-control').each(function (i, control) {
+                name = control.getAttribute('name');
+                if (control.type === 'checkbox') {
+                    control.checked = o[name];
+                }
+                else {
+                    control.value = (o[name]);
+                }
+            });
+        },
+        popupForm(formNamePart, o) {
+            FestivalLib.populateForm(formNamePart, o);
+            $(formErrorDiv(formNamePart)).hide();
+            $('#' + formNamePart + 'Modal').modal();
+        },
+
         addAntiForgeryToken: function (data) {
             data.__RequestVerificationToken = $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
             return data;
@@ -38,8 +89,19 @@ var FestivalLib = (function () {
             FestivalLib.showInfoModal('Server Error', FestivalLib.parseResponse(response));
         },
 
+        ajaxFormFailure: function (formNamePart,response) {
+            var div = formErrorDiv(formNamePart);
+            var span = $(div).find('span');
+            $(span).text(FestivalLib.parseResponse(response));
+            $(div).show();
+        },
+
         spanIcon: function (icon) {
             return '<span class="' + icon + '"></span>';
         }
     };
+
+    function formErrorDiv(formNamePart) {
+        return $('#' + formNamePart + 'Form div[name=submitError]')[0];
+    }
 })();

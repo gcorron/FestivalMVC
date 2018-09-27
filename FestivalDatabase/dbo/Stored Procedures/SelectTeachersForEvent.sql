@@ -26,9 +26,10 @@ set nocount on
 		and instrument=@instrument
 	order by lastName,FirstName
 
-	select id,name
+	select id,event,name
 		from judge
 	where event=@id
+	order by name
 
 
 

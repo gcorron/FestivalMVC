@@ -15,7 +15,7 @@ namespace FestivalMVC.Controllers
         // GET: Chair
         public ActionResult Index()
         {
-            return View(new EventsViewModel());
+            return View(new EventsViewModel(false));
         }
 
 
@@ -96,7 +96,7 @@ namespace FestivalMVC.Controllers
         }
 
 
-            private string RefreshSelectedEventSessionData(int id)
+        private string RefreshSelectedEventSessionData(int id)
         {
             var dataEvent = SQLData.SelectEvent(id, out string instrumentName);
 
@@ -117,7 +117,7 @@ namespace FestivalMVC.Controllers
             if (!participate)
                 eventId = 0;
 
-            return Json(new { id, eventId});
+            return Json(new { id, eventId });
         }
 
         [HttpPost]
@@ -126,7 +126,7 @@ namespace FestivalMVC.Controllers
         {
 
             person.ParentLocation = Admin.LocationIdSecured;
-            
+
             var theEvent = (EventViewModel)Session["SelectedEvent"];
             person.Instrument = theEvent.Event.Instrument;
             person.Available = true; //always true for events
@@ -154,6 +154,14 @@ namespace FestivalMVC.Controllers
             return PartialView("_Person", personOut);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateJudge(Judge judge)
+        {
+            EventViewModel theEvent = (EventViewModel)Session["SelectedEvent"];
+            judge.Event = theEvent.Event.Id;
+            return PartialView("_Judges", SQLData.UpdateJudge(judge));
+        }
 
         //catch all unhandled exceptions that are thrown within scope of this controller
         protected override void OnException(ExceptionContext filterContext)

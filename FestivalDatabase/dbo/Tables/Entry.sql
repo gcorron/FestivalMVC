@@ -18,8 +18,11 @@
     [AwardPoints]         TINYINT       NOT NULL,
     [Judge]               INT           NOT NULL,
     [AuditionTime]        SMALLDATETIME NOT NULL,
-    [Status]              CHAR (1)      NOT NULL
+    [Status]              CHAR (1)      NOT NULL,
+    CONSTRAINT [FK_Entry_Judge] FOREIGN KEY ([Judge]) REFERENCES [dbo].[Judge] ([Id])
 );
+
+
 
 
 

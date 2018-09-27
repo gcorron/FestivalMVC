@@ -26,50 +26,6 @@ namespace FestivalMVC.ViewModels
         public string InstrumentName { get; }
         public string EventDescription { get => string.Format("{0:MMM d}", Event.EventDate) + " " + InstrumentName; }
 
-        private bool CanRate
-        {
-            get
-            {
-                if (Event.Status == automatic)
-                    return (CurrentTime.CompareTo(Event.EventDate) > 0);
-                else
-                    return Event.Status == closed;
-            }
-        }
-
-        private bool CanSchedule
-        {
-            get
-            {
-                if (Event.Status == automatic)
-                    return (CurrentTime.CompareTo(Event.CloseDate) > 0);
-                else
-                    return Event.Status == closed;
-            }
-        }
-
-        private bool CanEnroll
-        {
-            get
-            {
-                if (CanRate)
-                    return false;
-                if (Event.Status == open)
-                    return true;
-                if (Event.Status == automatic)
-                    return ComputeIfOpen();
-                return false;
-            }
-        }
-
-        private bool CanPrepare
-        {
-            get
-            {
-                return Event.Status != complete;
-            }
-        }
-
         private DateTime CurrentTime
         {
             get
@@ -107,21 +63,31 @@ namespace FestivalMVC.ViewModels
         {
             get
             {
-                return (CanPrepare ? "P" : "") + (CanRate ? "R" : "") + (CanSchedule ? "S" : "") + (CanEnroll ? "E" : "");
+                if (CurrentTime.CompareTo(Event.CloseDate) > 0 || Event.Status == closed)
+                    return "IPESR";
+                else if (CurrentTime.CompareTo(Event.OpenDate) > 0 || Event.Status == open)
+                    return "IPE";
+                else
+                    return "IP";
+
             }
+
+               // return  (CanPrepare ? "P" : "") + (CanRate ? "R" : "") + (CanSchedule ? "S" : "") + (CanEnroll ? "E" : "");
+            //}
         }
 
         public string NextPage
         {
             get
             {
-                if (CanRate)
+                var menuKey = MenuKey;
+                if (CurrentTime.CompareTo(Event.EventDate)>0)
                     return "Ratings";
 
-                if (CanSchedule)
+                if (CurrentTime.CompareTo(Event.CloseDate) > 0)
                     return "Schedule";
 
-                if (CanEnroll)
+                if (CurrentTime.CompareTo(Event.OpenDate) > 0)
                     return "Entries";
 
                 return "Prepare";
@@ -138,11 +104,17 @@ namespace FestivalMVC.ViewModels
         private readonly IEnumerable<Instrum> _instruments;
         private readonly Location _location;
 
-        public EventsViewModel()
+        public EventsViewModel(bool forTeacher)
         {
             var location = Admin.LocationIdSecured;
-            SQLData.SelectEventsForDistrict(location, out _events, out _instruments, out _location);
-
+            if (forTeacher)
+            {
+                SQLData.SelectEventsForTeacher(location, DateTime.Now, out _events, out _instruments, out _location);
+            }
+            else
+            { 
+                SQLData.SelectEventsForDistrict(location, out _events, out _instruments, out _location);
+            }
 
         }
 
@@ -164,8 +136,7 @@ namespace FestivalMVC.ViewModels
         }
 
 
-        public bool HasEvents { get => (_events.Count() > 0); }
-
+        public int EventCount { get => _events.Count(); }
         public Location Location { get => _location; }
 
     }
@@ -176,10 +147,8 @@ namespace FestivalMVC.ViewModels
         // Constructor
         public PreparePageViewModel(int eventId)
         {
-            IEnumerable<ContactForView> teachers;
-            IEnumerable<Judge> judges;
 
-            SQLData.SelectTeachersForEvent(eventId, out teachers, out judges);
+            SQLData.SelectTeachersForEvent(eventId, out IEnumerable<ContactForView> teachers, out IEnumerable<Judge> judges);
 
             PeopleViewModel = new PeopleViewModel(teachers, "Teachers");
             Judges = judges;

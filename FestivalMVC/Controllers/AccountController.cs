@@ -81,17 +81,17 @@ namespace FestivalMVC.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-
-
+                    int locationId;
 
                     string nextAction="";
                     LoginPerson theUser;
                     theUser = SQLData.GetLoginPerson(model.UserName);
-
+                    locationId = theUser.LocationId;
                     switch (theUser.RoleType)
                     {
                         case 'T':
                             nextAction = "Teacher";
+                            locationId = theUser.ParentLocationId;
                             break;
                         case 'A':
                         case 'B':
@@ -111,7 +111,7 @@ namespace FestivalMVC.Controllers
                     FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(authCookie.Value);
                     FormsAuthenticationTicket newTicket =
                         new FormsAuthenticationTicket(ticket.Version, ticket.Name, ticket.IssueDate, ticket.Expiration, ticket.IsPersistent,
-                        theUser.RoleType + theUser.LocationId.ToString());
+                        theUser.RoleType + locationId.ToString());
 
                     string encryptedTicket = FormsAuthentication.Encrypt(newTicket);
                     var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket)

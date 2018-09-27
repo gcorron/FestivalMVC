@@ -1,36 +1,36 @@
 ﻿@model FestivalMVC.ViewModels.EventViewModel
 
-<div class="col-sm-6">
-    <div class="well">
-        <dl class="dl-horizontal">
-            <dt>Event Status:</dt>
-            <dd>@Model.StatusDesc</dd>
-        </dl>
-        <dl class="dl-horizontal">
-            <dt>Enrollment Begins:</dt>
-            <dd>@formatDate(Model.Event.OpenDate)</dd>
-        </dl>
-        <dl class="dl-horizontal">
-            <dt>Enrollment Closed:</dt>
-            <dd>@formatDate(Model.Event.CloseDate)</dd>
-        </dl>
-        <dl class="dl-horizontal">
-            <dt>Audition Date:</dt>
-            <dd>@formatDate(Model.Event.EventDate)</dd>
-        </dl>
-        <dl class="dl-horizontal">
-            <dt>Venue:</dt>
-            <dd>@Model.Event.Venue</dd>
-        </dl>
-        <dl class="dl-horizontal">
-            <dt>Notes:</dt>
-            <dd>@Model.Event.Notes</dd>
-        </dl>
-        <dl class="dl-horizontal">
-            <dt><a data-event="@Json.Encode(Model.Event)" class="btn btn-primary btn-sm test" onclick="EventEdit.editEvent($(this).attr('data-event'))">Edit</a> </dt>
-            <dd></dd>
-        </dl>
-    </div>
+
+<div class="well">
+    <h4>Event</h4>
+    <dl class="dl-horizontal">
+        <dt>Event Status:</dt>
+        <dd>@Model.StatusDesc</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>Enrollment Begins:</dt>
+        <dd>@formatDate(Model.Event.OpenDate)</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>Enrollment Closed:</dt>
+        <dd>@formatDate(Model.Event.CloseDate)</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>Audition Date:</dt>
+        <dd>@formatDate(Model.Event.EventDate)</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>Venue:</dt>
+        <dd>@Model.Event.Venue</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>Notes:</dt>
+        <dd>@Model.Event.Notes</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt><a data-event="@Json.Encode(Model.Event)" class="btn btn-primary btn-sm test" onclick="EventEdit.editEvent($(this).attr('data-event'))">Edit</a> </dt>
+        <dd></dd>
+    </dl>
 </div>
 <form>
     <input id="eventInstrument" type="hidden" value="@Model.Event.Instrument" />

@@ -81,7 +81,7 @@ namespace FestivalMVC.Models
         public string LocationName { get; set; }
         public int LocationId { get; set; }
         public string ParentLocationName { get; set; }
-        public int ParentLocaitonId { get; set; }
+        public int ParentLocationId { get; set; }
         public char RoleType { get; set; }
 
         public string FullName { get => $"{FirstName} {LastName}"; }
