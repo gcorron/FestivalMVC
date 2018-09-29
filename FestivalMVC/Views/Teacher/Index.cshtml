@@ -31,7 +31,7 @@
                     <div class="col-sm-6">
                         @foreach (var ev in Model.Events)
                         {
-                            <h4><a data-event="@Json.Encode(ev)" onclick="EventsPage.selectEvent(this)">@ev.EventDescription</a></h4>
+                        <h4><a data-event="@Json.Encode(ev)" onclick="EventsPage.selectEvent(this)">@ev.EventDescription</a>&nbsp;@ev.StatusDesc</h4>
                         }
 
                     </div>

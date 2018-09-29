@@ -2,7 +2,6 @@
 
 
 <div class="well">
-    <h4>Event</h4>
     <dl class="dl-horizontal">
         <dt>Event Status:</dt>
         <dd>@Model.StatusDesc</dd>
@@ -27,10 +26,13 @@
         <dt>Notes:</dt>
         <dd>@Model.Event.Notes</dd>
     </dl>
+    @if (Model.CanEdit)
+    { 
     <dl class="dl-horizontal">
         <dt><a data-event="@Json.Encode(Model.Event)" class="btn btn-primary btn-sm test" onclick="EventEdit.editEvent($(this).attr('data-event'))">Edit</a> </dt>
         <dd></dd>
     </dl>
+    }
 </div>
 <form>
     <input id="eventInstrument" type="hidden" value="@Model.Event.Instrument" />

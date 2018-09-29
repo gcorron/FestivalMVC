@@ -5,7 +5,7 @@ BEGIN
 -- used for the currently logged in user only
 -- selects by ASP identity userName, not Id, for simplicity
 
-	select b.LastName, b.FirstName, b.Instrument,
+	select b.Id, b.LastName, b.FirstName, b.Instrument,
 		c.id as ParentLocationId,c.locationName as ParentLocationName,
 		d.id as LocationId, d.LocationName,
 		case c.LocationType when 'E' then 'T' else isnull(d.LocationType,'-') end as RoleType

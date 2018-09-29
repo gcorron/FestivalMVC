@@ -235,6 +235,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\ChairViewModel.cs" />
+    <Compile Include="ViewModels\EventViewModel.cs" />
     <Compile Include="ViewModels\TeacherViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -311,12 +312,13 @@
     <Content Include="Views\Chair\Entries.cshtml" />
     <Content Include="Views\Chair\Ratings.cshtml" />
     <Content Include="Views\Chair\Schedule.cshtml" />
-    <Content Include="Views\Chair\_Event.cshtml" />
+    <Content Include="Views\Shared\_Event.cshtml" />
     <None Include="Views\Chair\_EventEdit.cshtml" />
     <Content Include="Views\Shared\_People.cshtml" />
     <Content Include="Views\Chair\_Judges.cshtml" />
     <Content Include="Views\Teacher\Index.cshtml" />
     <Content Include="Views\Teacher\_TeacherLayout.cshtml" />
+    <Content Include="Views\Teacher\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

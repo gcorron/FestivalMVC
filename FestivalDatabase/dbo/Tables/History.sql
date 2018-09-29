@@ -1,12 +1,21 @@
 ﻿CREATE TABLE [dbo].[History] (
-    [Id]                INT      IDENTITY (1, 1) NOT NULL,
-    [Event]             INT      NOT NULL,
-    [Teacher]           INT      NOT NULL,
-    [Student]           INT      NOT NULL,
-    [AccumulatedPoints] TINYINT  NOT NULL,
-    [AwardRating]       CHAR (1) NOT NULL,
-    [AwardPoints]       TINYINT  NOT NULL
+    [Student]             INT          IDENTITY (1, 1) NOT NULL,
+    [ClassType]           CHAR (1)     NOT NULL,
+    [MostRecent]          BIT          NOT NULL,
+    [Event]               INT          NOT NULL,
+    [ClassAbbr]           VARCHAR (10) NOT NULL,
+    [AwardRating]         CHAR (1)     NOT NULL,
+    [AwardPoints]         TINYINT      NOT NULL,
+    [ConsecutiveSuperior] TINYINT      NOT NULL,
+    [AccumulatedPoints]   TINYINT      NOT NULL
 );
 
 
+
+
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_History]
+    ON [dbo].[History]([Student] ASC, [ClassType] ASC);
 

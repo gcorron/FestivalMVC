@@ -100,7 +100,7 @@ namespace FestivalMVC.Controllers
         {
             var dataEvent = SQLData.SelectEvent(id, out string instrumentName);
 
-            var theEvent = new EventViewModel(dataEvent, instrumentName);
+            var theEvent = new EventViewModel(dataEvent, instrumentName,true);
 
             Session["SelectedEvent"] = theEvent;
 

@@ -29,7 +29,7 @@
                 <ul class="nav navbar-nav">
                     <li class="@LinkClass("Index")">@Html.ActionLink("Events", "Index", "Chair")</li>
 
-                    @foreach (string page in new string[] { "Prepare", "Entries"})
+                    @foreach (string page in new string[] { "Register", "Entries"})
                     {
                         <li class="@LinkClass(page)">
                             @if (IsDisabled(page.Substring(0, 1)))

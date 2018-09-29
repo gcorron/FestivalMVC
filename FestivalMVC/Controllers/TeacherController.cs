@@ -19,7 +19,7 @@ namespace FestivalMVC.Controllers
             if (eventsVM.EventCount==1)
             {
                 Session["SelectedEvent"] = (EventViewModel)eventsVM.Events.First();
-                return RedirectToAction("Prepare");
+                return RedirectToAction("Register");
             }
 
             return View();
@@ -33,19 +33,21 @@ namespace FestivalMVC.Controllers
 
             ViewBag.Title = "Events";
 
-            RefreshSelectedEventSessionData(id);
-
-            return RedirectToAction("Prepare");
-        }
-
-        private void RefreshSelectedEventSessionData(int id)
-        {
             var dataEvent = SQLData.SelectEvent(id, out string instrumentName);
 
-            var theEvent = new EventViewModel(dataEvent, instrumentName);
+            var theEvent = new EventViewModel(dataEvent, instrumentName,false);
 
             Session["SelectedEvent"] = theEvent;
 
+            return RedirectToAction("TeacherEvent");
+        }
+
+        public ActionResult Register()
+        {
+            ViewBag.Title = "Register";
+            var theEvent = (EventViewModel)Session["SelectedEvent"];
+            var theUser = (LoginPerson)Session["TheUser"];
+            return View(new TeacherRegisterViewModel(theEvent.Event.Id,theUser.Id));
         }
 
         //catch all unhandled exceptions that are thrown within scope of this controller

@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "~/Views/Teacher/_TeacherLayout.cshtml";
+}
+
+@model FestivalMVC.ViewModels.TeacherRegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Teacher/_TeacherLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-sm-6">
+        @{Html.RenderPartial("_Event", Model.EventVM);}
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="well well-sm">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>History</th>
+                        <th>Registration</th>
+                    </tr>
+                </thead>
+                <tbody id="students">
+                    @{ 
+                        foreach(var student in Model.Students)
+                        {
+                            <tr>
+                                <td>
+                                    <a></a>
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
