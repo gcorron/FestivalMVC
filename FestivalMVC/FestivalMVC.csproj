@@ -308,7 +308,7 @@
     <Content Include="Views\Shared\NoRole.cshtml" />
     <Content Include="Views\Shared\_Person.cshtml" />
     <Content Include="Views\Chair\Index.cshtml" />
-    <Content Include="Views\Shared\_ChairLayout.cshtml" />
+    <Content Include="Views\Chair\_ChairLayout.cshtml" />
     <Content Include="Views\Chair\Prepare.cshtml" />
     <Content Include="Views\Chair\Entries.cshtml" />
     <Content Include="Views\Chair\Ratings.cshtml" />

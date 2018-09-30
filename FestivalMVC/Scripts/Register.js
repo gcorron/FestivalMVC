@@ -2,11 +2,17 @@
 
 var RegisterApp = (function () {
     return {
-        editStudent: function (student, isRegistered) {
-            if (student == null)
+        editStudent: function (student) {
+            var canDelete;
+            if (student == null) {
                 student = new Student();
-
-            FestivalLib.popupForm('student', student, false);
+                canDelete = false;
+            }
+            else {
+                canDelete = student.Enrolled;
+                student = student.Student; //student data contained in ViewModel
+            }
+            FestivalLib.popupForm('student', student ,canDelete);
         },
         updateStudent: function () {
             jQuery.validator.addMethod("beforeDate", function (value, element, params) {
@@ -49,10 +55,10 @@ var RegisterApp = (function () {
         if (removeId != 0)
             $('#students td').remove('name = [' + removeId + ']');
 
-        var newelt = $(html)[0];
-        var student = FestivalLib.convertJqueryData(newelt, 'student');
+        var tr = $(html)[0];
+        var student = FestivalLib.convertJqueryData(tr, 'student');
 
-        $('#students').append(newRow);
+        $('#students').append(tr);
 
         FestivalLib.sortTableForPerson('student');
 

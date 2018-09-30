@@ -3,11 +3,11 @@
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE SelectEvent @id int 
+CREATE PROCEDURE [dbo].[SelectEvent] @id int 
 AS
 BEGIN
 
-	select id, openDate, closeDate,eventDate,instrument,status,
+	select id, openDate, closeDate,eventDate,instrument,status,classTypes,
 		venue,notes
 			from event
 	where id=@id

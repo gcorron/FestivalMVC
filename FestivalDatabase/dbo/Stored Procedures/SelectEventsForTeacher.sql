@@ -1,7 +1,7 @@
-﻿CREATE PROCEDURE SelectEventsForTeacher @parentLocation int, @currentTime smalldatetime
+﻿CREATE PROCEDURE [dbo].[SelectEventsForTeacher] @parentLocation int, @currentTime smalldatetime
 AS
 BEGIN
-	select id, openDate, closeDate,eventDate,instrument,status,
+	select id, openDate, closeDate,eventDate,instrument,status,classTypes,
 		venue,notes
 			from event
 	where location=@parentLocation

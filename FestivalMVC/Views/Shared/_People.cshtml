@@ -35,7 +35,7 @@
                 </th>
             </tr>
         </thead>
-        <tbody id="people">
+        <tbody id="persons">
             @{foreach (var person in Model.People)
                 {
                     Html.RenderPartial("_Person", person);
@@ -56,22 +56,22 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label" for="first">First Name:</label>
-                                <input class="form-control" type="text" id="FirstName" placeholder="Enter First Name"
+                                <input class="form-control" type="text" placeholder="Enter First Name"
                                        name="FirstName" maxlength="50" required>
                             </div>
                             <div class="form-group">
                                 <label class="control-label" for="last">Last Name:</label>
-                                <input class="form-control" type="text" id="LastName" placeholder="Enter Last Name"
+                                <input class="form-control" type="text" placeholder="Enter Last Name"
                                        name="LastName" minlength="2" maxlength="50" required>
                             </div>
                             <div class="form-group">
                                 <label class="control-label" for="email">Email:</label>
-                                <input class="form-control" type="email" id="Email" placeholder="Enter Email"
+                                <input class="form-control" type="email" placeholder="Enter Email"
                                        name="Email" maxlength="50" required>
                             </div>
                             <div class="form-group">
                                 <label class="control-label" for="phone">Phone:</label>
-                                <input class="form-control" type="tel" id="Phone" placeholder="Enter Phone"
+                                <input class="form-control" type="tel" placeholder="Enter Phone"
                                        name="Phone" maxlength="50" required>
                             </div>
 
@@ -80,22 +80,22 @@
                             <!-- RH half -->
                             <div class="panel panel=default no-new">
                                 <label class="radio">
-                                    <input type="checkbox" class="form-control" name="Available" id="Available">Active
+                                    <input type="checkbox" class="form-control" name="Available">Active
                                 </label>
                             </div>
-                            <input type="hidden" id="Id" name="Id" class="form-control" />
-                            <input type="hidden" id="Instrument" name="Instrument" class="form-control" value="-" />
+                            <input type="hidden" name="Id" class="form-control" />
+                            <input type="hidden" name="Instrument" class="form-control" value="-" />
 
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <a class="btn btn-default" onclick="PersonApp.updatePerson()">Save</a>
                                 <a class="btn btn-default" onclick="$('#modalEdit').modal('hide')" title="Close">Cancel</a>
-                                <a id="deleteButton" class="btn btn-warning no-new" onclick="PersonApp.deletePerson()" title="Delete"
+                                <a name="deleteButton" class="btn btn-warning no-new" onclick="PersonApp.deletePerson()" title="Delete"
                                    data-toggle="popover" data-trigger="hover" data-content="You can delete only people who have no records or assignments.">Delete</a>
                             </div>
-                            <div class="alert alert-danger" id="submitError">
-                                <strong>Server error! </strong><span id="serverError"></span>
+                            <div class="alert alert-danger" name="submitError">
+                                <strong>Server error! </strong><span></span>
                             </div>
                         </div>
                     </div>

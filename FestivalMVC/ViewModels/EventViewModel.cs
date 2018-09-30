@@ -40,11 +40,37 @@ namespace FestivalMVC.ViewModels
             {
                 switch (Event.Status)
                 {
-                    case automatic: return $"Automatic ({ComputeStatus()}) ";
-                    case open: return "Open";
-                    case closed: return "Closed";
                     case complete: return "Complete";
+                    case automatic: return ComputeStatus();
+                    case open: return "( Open )";
+                    case closed: return "( Closed )";
                     default: return "Invalid Data";
+                }
+            }
+        }
+
+        public string EventTypesDesc
+        {
+            get
+            {
+                string ret = "";
+                for (var i = 0; i < Event.ClassTypes.Length; i++)
+                {
+                    ret = ret + "," + eventTypeDesc(Event.ClassTypes[i]);
+                }
+                if (ret.Length > 0)
+                    ret = ret.Substring(1);
+
+                return ret;
+
+                string eventTypeDesc(char c)
+                {
+                    switch (c)
+                    {
+                        case 'C': return "Concerto";
+                        case 'S': return "Solo";
+                        default: return "???";
+                    }
                 }
             }
         }

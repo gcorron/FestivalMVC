@@ -19,6 +19,7 @@ namespace FestivalMVC.Models
         public char Status { get; set; }
         public string Venue { get => _venue; set => _venue=value.Trim(); }
         public string Notes { get => _notes; set => _notes=value.Trim(); }
+        public string ClassTypes { get; set; }
     }
 
     public struct Judge

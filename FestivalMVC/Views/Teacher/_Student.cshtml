@@ -1,7 +1,9 @@
 ﻿@model FestivalMVC.ViewModels.StudentViewModel
 
-<td name="@Model.Student.Id" data-student="@Json.Encode(Model.Student)">
-    <a onclick="RegisterApp.editStudent($(this).closest('td').data('student'),$(this).closest('td').data('registered'))">@Model.FullName</a>
-    <br />
-    <p>@($"Age {Model.Age}")</p>
-</td>
+<tr name="@Model.Student.Id" data-student="@Json.Encode(Model)">
+    <td>
+        <a onclick="RegisterApp.editStudent($(this).closest('tr').data('student'))">@Model.FullName</a>
+        <br />
+        <p>@($"Age {Model.Age}")</p>
+    </td>
+</tr>

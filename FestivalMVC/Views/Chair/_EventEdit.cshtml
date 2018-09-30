@@ -2,30 +2,30 @@
 <div class="modal fade" id="modalEventEdit" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="formEdit">
+            <form id="eventForm">
                 <div class="well">
                     <div class="row">
                         <div class="col-sm-4">
-                            <input type="hidden" class="form-control" id="Id" />
+                            <input type="hidden" class="form-control" name="Id" />
 
                             <div class="form-group">
                                 <label for="OpenDate">Sign-up Opening Date:</label>
-                                <input type="date" class="form-control" id="OpenDate" required>
+                                <input type="date" class="form-control" name="OpenDate" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="CloseDate">Sign-up Closed Date:</label>
-                                <input type="date" class="form-control" id="CloseDate" required>
+                                <input type="date" class="form-control" name="CloseDate" required>
                             </div>
                             <div class="form-group">
                                 <label for="EventDate">Audition Date:</label>
-                                <input type="date" class="form-control" id="EventDate" required>
+                                <input type="date" class="form-control" name="EventDate" required>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div id="instrumentGroup" class="form-group">
                                 <label class="control-label" for="Instrument">Instrument Category:</label>
-                                <select class="form-control" id="Instrument" required>
+                                <select class="form-control" name="Instrument" required>
                                     <option value="" disabled selected hidden>Select ...</option>
                                     <option value="P">Piano</option>
                                     <option value="S">Strings</option>
@@ -34,9 +34,26 @@
                                 </select>
                             </div>
 
-                            <div id="statusGroup" class="form-group">
+                            <div name="classTypeSelect" class="form-group">
+                                <label class="control-label" for="ClassTypes[]">Class Types</label>
+                                <div>
+                                    <span>
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" name="ClassTypes[]" value="S">
+                                            Solo
+                                        </label>
+                                    </span>
+                                    <br />
+                                    <span>
+                                        <input class="form-check-input" type="checkbox" name="ClassTypes[]" value="C">
+                                        <label class="form-check-label">Concerto</label>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div name="statusGroup" class="form-group">
                                 <label class="control-label" for="Status">Event Status:</label>
-                                <select class="form-control" id="Status" required>
+                                <select class="form-control" name="Status" required>
                                     <option value="" disabled selected hidden>Select ...</option>
                                     <option value="A">Automatic (by dates)</option>
                                     <option value="B">Open (override dates)</option>
@@ -47,12 +64,12 @@
 
                             <div class="form-group">
                                 <label class="control-label" for="Venue">Venue:</label>
-                                <input class="form-control" type="text" id="Venue" required maxlength="50" />
+                                <input class="form-control" type="text" name="Venue" required maxlength="50" />
                             </div>
 
                             <div class="form-group">
                                 <label class="control-label" for="Notes">Notes:</label>
-                                <textarea class="form-control" id="Notes" maxlength="255"></textarea>
+                                <textarea class="form-control" name="Notes" maxlength="255"></textarea>
 
                             </div>
 
@@ -66,8 +83,8 @@
                                    data-toggle="popover" data-trigger="hover" data-placement="left"
                                    data-content="You can delete only events that have no entries.">Delete</a>
                             </div>
-                            <div class="alert alert-danger" id="submitError">
-                                <strong>Server error! </strong><span id="serverError"></span>
+                            <div class="alert alert-danger" name="submitError">
+                                <strong>Server error! </strong><span name="serverError"></span>
                             </div>
 
                         </div>

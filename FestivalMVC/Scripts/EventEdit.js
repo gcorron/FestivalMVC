@@ -1,13 +1,12 @@
 ﻿"use strict";
 
 var EventEdit = (function () {
-
     return {
 
         //public functions
 
         init: function () {
-  
+
             $(document).ajaxStart(function () {
                 document.body.style.cursor = 'wait';
             });
@@ -15,28 +14,22 @@ var EventEdit = (function () {
             $(document).ajaxStop(function () {
                 document.body.style.cursor = 'default';
             });
-
-
-            $('#formEdit .form-control').each(function (i, elt) { // jQuery validation needs an unique name field to work
-                if (!elt.name)
-                    elt.name = elt.id;
-            });
-
         },
 
 
         editEvent: function (event) {
 
+            var $elt = $formElt('deleteButton');
             if (event == null) {
-                $('#deleteButton').hide();
+                $elt.hide();
                 event = new Event();
             }
             else {
-                $('#deleteButton').show();
+                $elt.show();
                 event = JSON.parse(event, dateTimeReviver);
             }
 
-            populateEventForm(event);
+            FestivalLib.populateForm('event',event);
             clearAlerts();
 
 
@@ -55,31 +48,51 @@ var EventEdit = (function () {
                 return this.optional(element) || value < params[0];
             }, jQuery.validator.format("Date must be before {1}."));
 
-            $('#formEdit').validate({
+            $('#eventForm').validate({
+                errorClass: 'bg-danger',
+                errorPlacement: function (error, element) {
+                    if (element.attr("name") == "ClassTypes[]")
+                        error.appendTo($formElt('classTypeSelect'));
+                    else
+                        error.insertAfter(element);
+                },
+
                 rules: {
                     OpenDate: {
                         required: true,
                         beforeDate: {
-                            param: [$('#CloseDate').val(), 'Closed Date'],
+                            param: [$formElt('CloseDate').val(), 'Closed Date'],
                             depends: function (element) {
-                                return $('#CloseDate').val();
+                                return $formElt('CloseDate').val();
                             }
                         }
                     },
                     CloseDate: {
                         required: true,
                         beforeDate: {
-                            param: [$('#EventDate').val(), 'Audition Date'],
+                            param: [$formElt('EventDate').val(), 'Audition Date'],
                             depends: function (element) {
-                                return $('#EventDate').val();
+                                return $formElt('EventDate').val();
                             }
                         }
-
+                    },
+                    "ClassTypes[]": {
+                        required: function (element) {
+                            var boxes = $formElt('ClassTypes[]');
+                            if (boxes.filter(':checked').length == 0) {
+                                return true;
+                            }
+                            return false;
+                        },
+                        minlength: 1
                     }
+                },
+
+                messages: {
+                    "ClassTypes[]": 'Please select at least one Class Type.'
                 }
             });
-
-            if (!$('#formEdit').valid()) {
+            if (!$('#eventForm').valid()) {
                 showWarning('Please make corrections first.');
                 return;
             }
@@ -108,35 +121,19 @@ var EventEdit = (function () {
         $('.no-new, .alert').hide();
     }
 
-    function populateEventForm(event) {
 
-        var control;
-        var val;
-        for (var name in event) {
-            control = $('#modalEventEdit #' + name);
-            if (control) {
-                val = event[name];
-                if (control.prop('type') === 'checkbox')
-                    control.prop('checked', val);
-                else if (val && control.prop('type') === 'date')
-                    control.val(val.toISOString().split('T')[0]);
-                else
-                    control.val(val);
-            }
-        }
-    }
-
+  
     function showEditError(prompt, message) {
-        $('#submitError span').text(message);
-        $('#submitError >strong').text(prompt + '  ');
-        $('#submitError').show();
+        var $errdiv = $formElt('submitError');
+        $errdiv.find('span').text(message);
+        $errdiv.find('strong').text(prompt + '  ');
+        $errdiv.show();
     }
 
     //utility
 
-    function AddAntiForgeryToken(data) {
-        data.__RequestVerificationToken = $('#__AjaxAntiForgeryForm input[name=__RequestVerificationToken]').val();
-        return data;
+    function $formElt(name) {
+        return $('#eventForm [name="' + name + '"]');
     }
 
     function dateTimeReviver(key, value) {
@@ -160,7 +157,7 @@ var EventEdit = (function () {
         $.ajax({
             type: "POST",
             url: "/Chair/DeleteEvent",
-            data: AddAntiForgeryToken({ id: $('#Id').val() }),
+            data: FestivalLib.AddAntiForgeryToken({ id: $formElt('Id').val() }),
             dataType: "json",
             success: onAjaxUpdateEventSuccess,
             failure: onUpdateEventFailure,
@@ -168,32 +165,16 @@ var EventEdit = (function () {
         });
     }
 
-        function ajaxUpdateEvent() {
+    function ajaxUpdateEvent() {
         $.ajax({
             type: "POST",
             url: "/Chair/UpdateEvent",
-            data: CollectFormData(),
+            data: FestivalLib.collectFormData('event',true),
             dataType: "json",
             success: onAjaxUpdateEventSuccess,
             failure: onUpdateEventFailure,
             error: onUpdateEventFailure
         });
-
-        function CollectFormData() {
-            var name;
-            var o = {};
-            $('#formEdit .form-control').each(function (i, control) {
-                name = control.getAttribute('name');
-                if (control.type === 'checkbox') {
-                    o[name] = control.checked;
-                }
-                else {
-                    o[name] = $.trim(control.value);
-                }
-            });
-            var temp = AddAntiForgeryToken({ theEvent: o }); //can't use 'event' as parameter name because C# won't allow it
-            return temp;
-        }
     }
 
     function onAjaxUpdateEventSuccess(response) {

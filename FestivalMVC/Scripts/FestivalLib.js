@@ -16,7 +16,8 @@ var FestivalLib = (function () {
                 return 'No details available';
 
             try {
-                return JSON.parse(message);
+                var o = JSON.parse(message);
+                return o.Message;
             }
             catch (e) {
                 return message;
@@ -40,9 +41,17 @@ var FestivalLib = (function () {
         collectFormData: function (formNamePart, addAntiForgery) {
             var name;
             var o = {};
-            $('#' + formNamePart + 'Form .form-control').each(function (i, control) {
+            $('#' + formNamePart + 'Form .form-control, .form-check-input').each(function (i, control) {
                 name = control.getAttribute('name');
-                if (control.type === 'checkbox') {
+                if (name.match(/[[\]]/)) {
+                    if (control.checked) {
+                        name = name.replace(/[[\]]/g, "");
+                        if (!o[name])
+                            o[name] = '';
+                        o[name] = o[name] + control.value;
+                    }
+                }
+                else if (control.type === 'checkbox') {
                     o[name] = control.checked;
                 }
                 else {
@@ -55,16 +64,26 @@ var FestivalLib = (function () {
                 return o;
         },
 
-        //pass a string like '#personForm' and the object with the data
-        populateForm(formNamePart,o) {
+        //pass a string like 'person' and the object with the data
+        populateForm: function (formNamePart, o) {
             var name;
-            $('#' + formNamePart + 'Form .form-control').each(function (i, control) {
-                name = control.getAttribute('name');
-                if (control.type === 'checkbox') {
-                    control.checked = o[name];
+            $('#' + formNamePart + 'Form .form-control, .form-check-input').each(function (i, control) {
+                name = control.name;
+                var isMulti = name.match(/[[\]]/);
+                if (isMulti)
+                    name = name.replace(/[[\]]/g, "");
+                var val = o[name];
+
+                if (isMulti) {
+                    control.checked = val.indexOf(control.value) >= 0;
                 }
+                else if (control.type === 'checkbox') {
+                    control.checked = val;
+                }
+                else if (val && control.type === 'date')
+                    control.value = val.toISOString().split('T')[0];
                 else {
-                    control.value = (o[name]);
+                    control.value = val;
                 }
             });
         },
@@ -86,6 +105,16 @@ var FestivalLib = (function () {
             return data;
         },
 
+        initAjaxCursor: function () {
+            $(document).ajaxStart(function () {
+                document.body.style.cursor = 'wait';
+            });
+
+            $(document).ajaxStop(function () {
+                document.body.style.cursor = 'default';
+            });
+        },
+
         showInfoModal: function (heading, message) {
             $('#infoModal .modal-header h4').text(heading);
             $('#infoModal .modal-body p').text(message);
@@ -96,7 +125,7 @@ var FestivalLib = (function () {
             FestivalLib.showInfoModal('Server Error', FestivalLib.parseResponse(response));
         },
 
-        ajaxFormFailure: function (formNamePart,response) {
+        ajaxFormFailure: function (formNamePart, response) {
             var div = formErrorDiv(formNamePart);
             var span = $(div).find('span');
             $(span).text(FestivalLib.parseResponse(response));
@@ -107,49 +136,60 @@ var FestivalLib = (function () {
             return '<span class="' + icon + '"></span>';
         },
 
-        convertJqueryData(elt,name) {
-            var o = JSON.parse($(elt).attr('data-' + name));
+        convertJqueryData(elt, name) {
+            var o = JSON.parse($(elt).attr('data-' + name), dateTimeReviver);
             $(elt).data(name, o);
             $(elt).removeAttr('data-' + name);
             return o;
         },
 
         sortTableForPerson(rowName) {
-                var table, rows, switching, i, shouldSwitch;
-                var personx, persony, compared;
-                table = document.getElementById(rowName + 's');
-                switching = true;
-                while (switching) {
-                    switching = false;
-                    rows = table.rows;
-                    for (i = 0; i < (rows.length - 1); i++) {
-                        shouldSwitch = false;
-                        personx = $(rows[i]).data(rowName);
-                        persony = $(rows[i + 1]).data(rowName);
-                        compared = compare(personx.LastName, persony.LastName);
-                        if (compared === 0)
-                            compared = compare(personx.FirstName, persony.FirstName);
-                        if (compared > 0) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    }
-                    if (shouldSwitch) {
-                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                        switching = true;
+            var table, rows, switching, i, shouldSwitch;
+            var personx, persony, compared;
+            table = document.getElementById(rowName + 's');
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 0; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    personx = $(rows[i]).data(rowName);
+                    persony = $(rows[i + 1]).data(rowName);
+                    compared = compare(personx.LastName, persony.LastName);
+                    if (compared === 0)
+                        compared = compare(personx.FirstName, persony.FirstName);
+                    if (compared > 0) {
+                        shouldSwitch = true;
+                        break;
                     }
                 }
-                function compare(x, y) {
-                    var cx = x.toLowerCase();
-                    var cy = y.toLowerCase();
-                    if (cx > cy)
-                        return 1;
-                    if (cx < cy)
-                        return -1;
-                    return 0;
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
                 }
             }
+            function compare(x, y) {
+                var cx = x.toLowerCase();
+                var cy = y.toLowerCase();
+                if (cx > cy)
+                    return 1;
+                if (cx < cy)
+                    return -1;
+                return 0;
+            }
+        }
     };
+
+    function dateTimeReviver(key, value) {
+        var a;
+        if (typeof value === 'string') {
+            a = /\/Date\((\d*)\)\//.exec(value);
+            if (a) {
+                return new Date(+a[1]);
+            }
+        }
+        return value;
+    }
 
     function formErrorDiv(formNamePart) {
         return $('#' + formNamePart + 'Form div[name=submitError]')[0];

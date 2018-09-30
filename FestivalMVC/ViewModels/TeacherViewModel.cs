@@ -24,13 +24,15 @@ namespace FestivalMVC.ViewModels
 
             AllStudents = from p in students
                        orderby p.LastName, p.FirstName
-                       select new StudentViewModel { Student = p };
+                       select new StudentViewModel { Student = p, Enrolled=enrolls.Any(q => q.Student == p.Id) };
 
-
-            foreach(var e in enrolls)
+            foreach (var e in enrolls)
             {
                 enrollment.Add(e.ClassType + e.Student.ToString(), e);
             }
+
+
+
         }
         public EventViewModel EventVM { get; }
         public IEnumerable<StudentViewModel> AllStudents { get; set; }
@@ -70,6 +72,7 @@ namespace FestivalMVC.ViewModels
         public Student Student { get; set; }
         public string FullName { get => $"{Student.FirstName} {Student.LastName}"; }
         public string Age { get => (DateTime.Now.Subtract(Student.BirthDate).Days / 365.25d).ToString(); }
+        public bool Enrolled { get; set; }
 
     }
 

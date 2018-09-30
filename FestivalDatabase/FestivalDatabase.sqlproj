@@ -63,6 +63,7 @@
     <Folder Include="dbo\Tables\" />
     <Folder Include="Security\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\Views\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Entry.sql" />
@@ -113,6 +114,7 @@
     <Build Include="dbo\Stored Procedures\UpdateEntry.sql" />
     <Build Include="dbo\Stored Procedures\TransferStudent.sql" />
     <Build Include="dbo\Stored Procedures\RemoveStudentFromTeacher.sql" />
+    <Build Include="dbo\Views\EntryView.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

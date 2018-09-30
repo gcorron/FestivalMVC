@@ -27,21 +27,9 @@
                 </thead>
                 <tbody id="students">
                     @{
-                        foreach (var student in Model.Students)
+                        foreach (var student in Model.AllStudents)
                         {
-                            <tr>
-                                @{Html.RenderPartial("_Student", student.StudentVM);}
-
-                                <td>
-                                    <p>@($"Acc. Points: {student.History.AccumulatedPoints}")</p>
-                                </td>
-                                <td>
-                                    Not registered.
-                                </td>
-                            </tr>
-
-
-
+                                @{Html.RenderPartial("_Student", student.Student);}
                         }
                     }
                 </tbody>

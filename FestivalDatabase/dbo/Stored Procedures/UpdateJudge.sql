@@ -8,7 +8,7 @@ BEGIN
 	END
 	else if @id<0
 	BEGIN
-		if exists(Select * from entry where event=@event and judge=judge)
+		if exists(Select * from entryview where event=@event and judge=judge)
 			RAISERROR('This judge has been assigned to entries and cannot be deleted.',11,1,'UpdateJudge')
 		delete judge where id=-@id
 
