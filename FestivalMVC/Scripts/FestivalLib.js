@@ -68,9 +68,16 @@ var FestivalLib = (function () {
                 }
             });
         },
-        popupForm(formNamePart, o) {
+        popupForm(formNamePart, o, canDelete) {
             FestivalLib.populateForm(formNamePart, o);
             $(formErrorDiv(formNamePart)).hide();
+            $('#submitError').hide();
+
+            if (canDelete)
+                $('#deleteButton').show();
+            else
+                $('#deleteButton').hide();
+
             $('#' + formNamePart + 'Modal').modal();
         },
 
@@ -98,7 +105,50 @@ var FestivalLib = (function () {
 
         spanIcon: function (icon) {
             return '<span class="' + icon + '"></span>';
-        }
+        },
+
+        convertJqueryData(elt,name) {
+            var o = JSON.parse($(elt).attr('data-' + name));
+            $(elt).data(name, o);
+            $(elt).removeAttr('data-' + name);
+            return o;
+        },
+
+        sortTableForPerson(rowName) {
+                var table, rows, switching, i, shouldSwitch;
+                var personx, persony, compared;
+                table = document.getElementById(rowName + 's');
+                switching = true;
+                while (switching) {
+                    switching = false;
+                    rows = table.rows;
+                    for (i = 0; i < (rows.length - 1); i++) {
+                        shouldSwitch = false;
+                        personx = $(rows[i]).data(rowName);
+                        persony = $(rows[i + 1]).data(rowName);
+                        compared = compare(personx.LastName, persony.LastName);
+                        if (compared === 0)
+                            compared = compare(personx.FirstName, persony.FirstName);
+                        if (compared > 0) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                    }
+                }
+                function compare(x, y) {
+                    var cx = x.toLowerCase();
+                    var cy = y.toLowerCase();
+                    if (cx > cy)
+                        return 1;
+                    if (cx < cy)
+                        return -1;
+                    return 0;
+                }
+            }
     };
 
     function formErrorDiv(formNamePart) {

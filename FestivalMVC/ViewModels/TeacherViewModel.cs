@@ -9,47 +9,68 @@ namespace FestivalMVC.ViewModels
 {
     public class TeacherRegisterViewModel
     {
-        private readonly IEnumerable<Student> _students;
-        private readonly IEnumerable<Enroll> _enrolls;
-        private readonly IEnumerable<History> _history;
+        private Dictionary<string, Enroll> enrollment = new Dictionary<string, Enroll>();
 
         //constructor
         public TeacherRegisterViewModel(int ev, int teacher)
         {
-            SQLData.SelectDataForTeacherEvent(ev, teacher, out _students, out _history, out _enrolls,
-                out Event eventModel, out string instrumentName);
-            EventVM = new EventViewModel(eventModel, instrumentName,false);
-        }
+            SQLData.SelectDataForTeacherEvent(ev, teacher,
+                out IEnumerable<Student> students,
+                out IEnumerable<Enroll> enrolls,
+                out Event eventModel,
+                out string instrumentName);
 
-        public EventViewModel EventVM { get; }
+            EventVM = new EventViewModel(eventModel, instrumentName, false);
 
-        public IEnumerable<StudentViewModel> Students {
-            get
-            {
-                return from p in _students
+            AllStudents = from p in students
                        orderby p.LastName, p.FirstName
-                    select new StudentViewModel { Student = p };
+                       select new StudentViewModel { Student = p };
+
+
+            foreach(var e in enrolls)
+            {
+                enrollment.Add(e.ClassType + e.Student.ToString(), e);
             }
         }
+        public EventViewModel EventVM { get; }
+        public IEnumerable<StudentViewModel> AllStudents { get; set; }
+        public IEnumerable<EnrollViewModel> Enrolls { get; set; }
 
-        public IEnumerable<Enroll>GetStudentEnrolls(int Id)
+        public IEnumerable<EnrollViewModel> GetEnrolls(char classType)
         {
-            return from p in _enrolls
-                   where p.Student == Id
-                   select p;
-        }
-        public History GetStudentHistory(int Id)
-        {
-            return (from p in _history
-                   where p.Student == Id
-                   select p).Single<History>();
-        }
+            return from p in AllStudents
+                   let key = classType + p.Student.Id.ToString()
+                   let enroll = getEnroll(key)
+                   where !(enroll is null)
+                   select new EnrollViewModel { Id = p.Student.Id, FullName = p.FullName, Enroll = (Enroll)enroll };
+
+
+            Enroll ? getEnroll(string key)
+            {
+                if (enrollment.TryGetValue(key, out var enroll))
+                    return enroll;
+                else
+                    return null;
+            }
+        }   
+
+
     }
 
-    public class StudentViewModel
+
+    public struct EnrollViewModel
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public Enroll Enroll { get; set; }
+    }
+
+    public struct StudentViewModel
     {
         public Student Student { get; set; }
         public string FullName { get => $"{Student.FirstName} {Student.LastName}"; }
         public string Age { get => (DateTime.Now.Subtract(Student.BirthDate).Days / 365.25d).ToString(); }
+
     }
-}
+
+ }

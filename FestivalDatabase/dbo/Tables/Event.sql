@@ -8,8 +8,11 @@
     [Status]     CHAR (1)      NOT NULL,
     [Venue]      NVARCHAR (50) NOT NULL,
     [Notes]      VARCHAR (256) NOT NULL,
+    [ClassTypes] VARCHAR (5)   NOT NULL,
     CONSTRAINT [PK_Event] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

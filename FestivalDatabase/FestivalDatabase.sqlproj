@@ -109,6 +109,10 @@
     <Build Include="dbo\Stored Procedures\UpdateStudentRegistration.sql" />
     <Build Include="dbo\Stored Procedures\UpdateStudent.sql" />
     <Build Include="dbo\Stored Procedures\SelectDataForTeacherEvent.sql" />
+    <Build Include="dbo\Tables\PastHistory.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateEntry.sql" />
+    <Build Include="dbo\Stored Procedures\TransferStudent.sql" />
+    <Build Include="dbo\Stored Procedures\RemoveStudentFromTeacher.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

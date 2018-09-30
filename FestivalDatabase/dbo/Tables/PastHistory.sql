@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[History] (
+﻿CREATE TABLE [dbo].[PastHistory] (
     [Student]             INT          IDENTITY (1, 1) NOT NULL,
     [ClassType]           CHAR (1)     NOT NULL,
     [Event]               INT          NOT NULL,
@@ -6,18 +6,11 @@
     [AwardRating]         CHAR (1)     NOT NULL,
     [AwardPoints]         TINYINT      NOT NULL,
     [ConsecutiveSuperior] TINYINT      NOT NULL,
-    [AccumulatedPoints]   TINYINT      NOT NULL,
-    CONSTRAINT [PK_History] PRIMARY KEY CLUSTERED ([Student] ASC, [ClassType] ASC)
+    [AccumulatedPoints]   TINYINT      NOT NULL
 );
 
 
-
-
-
-
-
-
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_History]
-    ON [dbo].[History]([Student] ASC, [ClassType] ASC);
+CREATE NONCLUSTERED INDEX [IX_PastHistory]
+    ON [dbo].[PastHistory]([Student] ASC);
 

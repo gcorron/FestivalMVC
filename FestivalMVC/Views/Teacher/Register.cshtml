@@ -16,6 +16,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="well well-sm">
+            <a class="btn btn-sm btn-primary" onclick="RegisterApp.editStudent(null)">Add Student</a>
             <table>
                 <thead>
                     <tr>
@@ -25,20 +26,22 @@
                     </tr>
                 </thead>
                 <tbody id="students">
-                    @{ 
-                        foreach(var student in Model.Students)
+                    @{
+                        foreach (var student in Model.Students)
                         {
                             <tr>
+                                @{Html.RenderPartial("_Student", student.StudentVM);}
+
                                 <td>
-                                    <a></a>
+                                    <p>@($"Acc. Points: {student.History.AccumulatedPoints}")</p>
                                 </td>
                                 <td>
-
-                                </td>
-                                <td>
-
+                                    Not registered.
                                 </td>
                             </tr>
+
+
+
                         }
                     }
                 </tbody>
@@ -46,3 +49,63 @@
         </div>
     </div>
 </div>
+
+<!-- Edit People modal -->
+<form id="studentForm">
+    <div class="modal fade" id="studentModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="well">
+                    <div class="row">
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label" for="first">First Name:</label>
+                                <input class="form-control" type="text" placeholder="Enter First Name"
+                                       name="FirstName" maxlength="50" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="last">Last Name:</label>
+                                <input class="form-control" type="text" placeholder="Enter Last Name"
+                                       name="LastName" minlength="2" maxlength="50" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="birthdate">Birth Date:</label>
+                                <input class="form-control" type="date" placeholder="Enter Birth Date"
+                                       name="birthdate" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" for="phone">Phone:</label>
+                                <input class="form-control" type="tel" id="Phone" placeholder="Enter Phone"
+                                       name="Phone" maxlength="50" required>
+                            </div>
+                            <input class="form-control" type="hidden" name="id" />
+                            <input class="form-control" type="hidden" name="instrument" />
+                            <input class="form-control" type="hidden" name="teacher" />
+
+                        </div>
+                        <!-- RH half -->
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <a class="btn btn-default" onclick="RegisterApp.updateStudent()">Save</a>
+                                <a class="btn btn-default" onclick="$('#studentModal').modal('hide')" title="Close">Cancel</a>
+                                <a id="deleteButton" class="btn btn-warning no-new" onclick="RegisterApp.removeStudent()" title="Remove"
+                                   data-toggle="popover" data-trigger="hover" data-content="You can remove only students who have no registrations for this event.">Remove</a>
+                            </div>
+                            <div class="alert alert-danger" id="submitError">
+                                <strong>Server error! </strong><span id="serverError"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/Register.js")
+}
+

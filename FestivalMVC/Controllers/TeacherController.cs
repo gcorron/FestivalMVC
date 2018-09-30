@@ -50,6 +50,24 @@ namespace FestivalMVC.Controllers
             return View(new TeacherRegisterViewModel(theEvent.Event.Id,theUser.Id));
         }
 
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult UpdateStudent(Student student )
+        {
+            var theEvent = (EventViewModel)Session["SelectedEvent"];
+            var theUser = (LoginPerson)Session["TheUser"];
+            student.Teacher = theUser.Id;
+            student.Instrument = theEvent.Event.Instrument;
+            int id = SQLData.UpdateStudent(student);
+            if (student.Id == 0)
+                student.Id = id;
+            return View("_Student", student);
+
+        }
+
+
+
+
         //catch all unhandled exceptions that are thrown within scope of this controller
         protected override void OnException(ExceptionContext filterContext)
         {

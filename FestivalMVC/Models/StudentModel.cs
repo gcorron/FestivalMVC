@@ -19,18 +19,12 @@ namespace FestivalMVC.Models
     public struct Enroll
     {
         public int Student { get; set; }
-        public int Teacher { get; set; }
-        public int Event { get; set; }
         public char ClassType { get; set; }
         public string ClassAbbr { get; set; }
-    }
+        public char Status { get; set; }
 
-    public struct History
-    {
-        public int Student { get; set; }
-        public char ClassType { get; set; }
-        public string ClassAbbr { get; set; }
-        public char AwardRating { get; set; }
+        public string LastClassAbbr { get; set; }
+        public char LastAwardRating { get; set; }
         public int ConsecutiveSuperior { get; set; }
         public int AccumulatedPoints { get; set; }
     }

@@ -269,6 +269,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\PersonApp.js" />
     <Content Include="Scripts\PreparePage.js" />
+    <Content Include="Scripts\Register.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -319,6 +320,7 @@
     <Content Include="Views\Teacher\Index.cshtml" />
     <Content Include="Views\Teacher\_TeacherLayout.cshtml" />
     <Content Include="Views\Teacher\Register.cshtml" />
+    <Content Include="Views\Teacher\_Student.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

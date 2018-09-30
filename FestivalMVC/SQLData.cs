@@ -10,16 +10,22 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static int UpdateStudent(Student student)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.QuerySingle<int>("UpdateStudent", student, commandType: CommandType.StoredProcedure);
+            }
+        }
 
         public static void SelectDataForTeacherEvent(int ev,int teacher, out IEnumerable<Student> students
-            , out IEnumerable<History> history, out IEnumerable<Enroll> enrolls, out Event eventModel, out string instrumentName)
+            , out IEnumerable<Enroll> enrolls, out Event eventModel, out string instrumentName)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 using (var multi = connection.QueryMultiple("SelectDataForTeacherEvent", new { ev, teacher }, commandType: CommandType.StoredProcedure))
                 {
                     students = multi.Read<Student>();
-                    history = multi.Read<History>();
                     enrolls = multi.Read<Enroll>();
                     eventModel = multi.ReadSingle<Event>();
                     instrumentName = multi.ReadSingle<string>();
