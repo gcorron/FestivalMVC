@@ -2,14 +2,12 @@
 
 var AdminApp = (function () {
 
-    var personAvailIcon = 'glyphicon glyphicon-star-empty';
-    var personBusyIcon = 'glyphicon glyphicon-star';
 
     return {
 
-        //public functions
-
         fillOrVacate: function (elt) {
+
+            var personAvailIcon = 'glyphicon glyphicon-star-empty';
 
             if (PersonApp.canAssignPerson()) {
                 cancelAssignmentMode();
@@ -35,15 +33,9 @@ var AdminApp = (function () {
             }
         },
 
-
         init: function () {
-
-            //parse all the table row json objects, replace them with JQuery data objects
-            var o;
             $('#locations tr').each(function (i, v) {
-                o = JSON.parse($(v).attr('data-location'));
-                $(v).data('location', o);
-                $(v).removeAttr('data-location');
+                FestivalLib.convertJqueryData(v, 'location');
             });
         }
     };
@@ -52,16 +44,7 @@ var AdminApp = (function () {
 
     function updateLocation(location) {
         cancelAssignmentMode();
-
-        $.ajax({
-            type: "POST",
-            url: "Admin/UpdateLocation",
-            data: FestivalLib.addAntiForgeryToken({ location }),
-            dataType: "json",
-            success: onUpdateLocationSuccess,
-            failure: FestivalLib.onAjaxFailure,
-            error: FestivalLib.onAjaxFailure
-        });
+        FestivalLib.postAjax('Admin/UpdateLocation', { location }, false, onUpdateLocationSuccess,null);
     }
 
     function onUpdateLocationSuccess() {
@@ -84,8 +67,6 @@ var AdminApp = (function () {
         o.text(message);
         o.toggleClass('alert-info alert-warning');
     }
-
-
 
     function assignToLocation(person, assignedToLocation) {
         var blob = storedLocation({});

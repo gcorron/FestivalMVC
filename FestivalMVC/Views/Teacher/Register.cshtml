@@ -8,11 +8,23 @@
     Layout = "~/Views/Teacher/_TeacherLayout.cshtml";
 }
 
+<form id="__AjaxAntiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
 <div class="row">
     <div class="col-sm-6">
         @{Html.RenderPartial("_Event", Model.EventVM);}
     </div>
 </div>
+
+@{ if (!Model.EventVM.ComputeIfOpen())
+    {
+        <h3>Registration is closed. No registratoins or changes will be accpeted.</h3>
+    }
+
+}
+
 <div class="row">
     <div class="col-sm-12">
         <div class="well well-sm">
@@ -29,7 +41,7 @@
                     @{
                         foreach (var student in Model.AllStudents)
                         {
-                                @{Html.RenderPartial("_Student", student.Student);}
+                            Html.RenderPartial("_Student", student);
                         }
                     }
                 </tbody>
@@ -58,19 +70,19 @@
                                        name="LastName" minlength="2" maxlength="50" required>
                             </div>
                             <div class="form-group">
-                                <label class="control-label" for="birthdate">Birth Date:</label>
+                                <label class="control-label" for="BirthDate">Birth Date:</label>
                                 <input class="form-control" type="date" placeholder="Enter Birth Date"
-                                       name="birthdate" required>
+                                       name="BirthDate" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="control-label" for="phone">Phone:</label>
-                                <input class="form-control" type="tel" id="Phone" placeholder="Enter Phone"
+                                <input class="form-control" type="tel" placeholder="Enter Phone"
                                        name="Phone" maxlength="50" required>
                             </div>
-                            <input class="form-control" type="hidden" name="id" />
-                            <input class="form-control" type="hidden" name="instrument" />
-                            <input class="form-control" type="hidden" name="teacher" />
+                            <input class="form-control" type="hidden" name="Id" />
+                            <input class="form-control" type="hidden" name="Instrument" />
+                            <input class="form-control" type="hidden" name="Teacher" />
 
                         </div>
                         <!-- RH half -->
@@ -78,11 +90,11 @@
                             <div class="form-group">
                                 <a class="btn btn-default" onclick="RegisterApp.updateStudent()">Save</a>
                                 <a class="btn btn-default" onclick="$('#studentModal').modal('hide')" title="Close">Cancel</a>
-                                <a id="deleteButton" class="btn btn-warning no-new" onclick="RegisterApp.removeStudent()" title="Remove"
+                                <a name="deleteButton" class="btn btn-warning" onclick="RegisterApp.removeStudent()" title="Remove"
                                    data-toggle="popover" data-trigger="hover" data-content="You can remove only students who have no registrations for this event.">Remove</a>
                             </div>
-                            <div class="alert alert-danger" id="submitError">
-                                <strong>Server error! </strong><span id="serverError"></span>
+                            <div class="alert alert-danger" name="submitError">
+                                <strong>Server error! </strong><span></span>
                             </div>
                         </div>
                     </div>

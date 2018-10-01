@@ -27,7 +27,7 @@
                     </div>
                 </form>
                 <ul class="nav navbar-nav">
-                    <li class="@LinkClass("Index")">@Html.ActionLink("Events", "Index", "Chair")</li>
+                    <li class="@LinkClass("Index")">@Html.ActionLink("Events", "Index", "Teacher")</li>
 
                     @foreach (string page in new string[] { "Register", "Entries"})
                     {
@@ -38,7 +38,7 @@
                             }
                             else
                             {
-                                @:<a href="/Chair/@page">@page</a>
+                                @:<a href="/Teacher/@page">@page</a>
                             }
                         </li>
                     }

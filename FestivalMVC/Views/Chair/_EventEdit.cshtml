@@ -1,5 +1,5 @@
 ﻿ <!-- Edit Event modal -->
-<div class="modal fade" id="modalEventEdit" role="dialog">
+<div class="modal fade" id="eventModal" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="eventForm">
@@ -78,13 +78,13 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <a class="btn btn-default" onclick="EventEdit.updateEvent()">Save</a>
-                                <a class="btn btn-default" onclick="$('#modalEventEdit').modal('hide')" title="Close">Cancel</a>
-                                <a id="deleteButton" class="btn btn-warning" onclick="EventEdit.deleteEvent()" title="Delete"
+                                <a class="btn btn-default" onclick="$('#eventModal').modal('hide')" title="Close">Cancel</a>
+                                <a name="deleteButton" class="btn btn-warning" onclick="EventEdit.deleteEvent()" title="Delete"
                                    data-toggle="popover" data-trigger="hover" data-placement="left"
                                    data-content="You can delete only events that have no entries.">Delete</a>
                             </div>
                             <div class="alert alert-danger" name="submitError">
-                                <strong>Server error! </strong><span name="serverError"></span>
+                                <strong>Server error! </strong><span></span>
                             </div>
 
                         </div>

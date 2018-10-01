@@ -4,6 +4,10 @@ var FestivalLib = (function () {
 
     return {
 
+        parseObject: function (o) {
+            return JSON.parse(o, dateTimeReviver);
+        },
+
         parseResponse: function (response) {
             var message;
 
@@ -67,7 +71,7 @@ var FestivalLib = (function () {
         //pass a string like 'person' and the object with the data
         populateForm: function (formNamePart, o) {
             var name;
-            $('#' + formNamePart + 'Form .form-control, .form-check-input').each(function (i, control) {
+            $('#' + formNamePart + 'Form').find('.form-control, .form-check-input').each(function (i, control) {
                 name = control.name;
                 var isMulti = name.match(/[[\]]/);
                 if (isMulti)
@@ -87,16 +91,27 @@ var FestivalLib = (function () {
                 }
             });
         },
-        popupForm(formNamePart, o, canDelete) {
+        popupForm(formNamePart, o, canDelete, optionalFields) {
             FestivalLib.populateForm(formNamePart, o);
             $(formErrorDiv(formNamePart)).hide();
-            $('#submitError').hide();
+
+            $formElt(formNamePart, 'submitError').hide();
 
             if (canDelete)
-                $('#deleteButton').show();
+                $formElt(formNamePart, 'deleteButton').show();
             else
-                $('#deleteButton').hide();
+                $formElt(formNamePart, 'deleteButton').hide();
 
+            if (typeof optionalFields !== 'undefined') {
+                if (optionalFields) {
+                    $('#' + formNamePart + 'Form .optional-show').show();
+                    $('#' + formNamePart + 'Form .optional-hide').hide();
+                }
+                else {
+                    $('#' + formNamePart + 'Form .optional-show').hide();
+                    $('#' + formNamePart + 'Form .optional-hide').show();
+                }
+            }
             $('#' + formNamePart + 'Modal').modal();
         },
 
@@ -113,6 +128,26 @@ var FestivalLib = (function () {
             $(document).ajaxStop(function () {
                 document.body.style.cursor = 'default';
             });
+        },
+
+        postAjax: function (url, data, expectsHtml, successFn,failFn) {
+            if (failFn == null)
+                failFn = FestivalLib.onAjaxFailure;
+            if (typeof(data) === 'string' || data instanceof String)
+                data = FestivalLib.collectFormData(data, true);
+            else
+                data = FestivalLib.addAntiForgeryToken( data );
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: expectsHtml ? "html":"json",
+                success: successFn,
+                failure: failFn,
+                error: failFn
+            });
+
         },
 
         showInfoModal: function (heading, message) {
@@ -189,6 +224,10 @@ var FestivalLib = (function () {
             }
         }
         return value;
+    }
+
+    function $formElt(formNamePart,name) {
+        return $('#' + formNamePart + 'Form [name="' + name + '"]');
     }
 
     function formErrorDiv(formNamePart) {

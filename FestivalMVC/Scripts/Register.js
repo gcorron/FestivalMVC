@@ -24,7 +24,7 @@ var RegisterApp = (function () {
                     BirthDate: {
                         required: true,
                         beforeDate: {
-                            param: [Date.now()],
+                            param: [new Date(Date.now()).toISOString()],
                         }
 
                     },
@@ -34,29 +34,26 @@ var RegisterApp = (function () {
             if (!$('#studentForm').valid()) {
                 return;
             }
-
-            function updatePersonAjax() {
-                $.ajax({
-                    type: "POST",
-                    url: "UpdateStudent",
-                    data: FestivalLib.collectFormData('student'),
-                    dataType: "html",
-                    success: onUpdateStudentSuccess,
-                    failure: FestivalLib.onAjaxFailure,
-                    error: FestivalLib.onAjaxFailure
-                });
-            }
+            FestivalLib.postAjax('/Teacher/UpdateStudent', 'student', true, onUpdateStudentSuccess, onStudentFormFail);
         }
     };
 
     function onUpdateStudentSuccess(html) {
 
-        var removeId = $('#studentForm [name=Id]').val();
-        if (removeId != 0)
-            $('#students td').remove('name = [' + removeId + ']');
+        var removeId = $formElt('student', 'Id').val();
+        var $removeTr;
+
+        if (removeId !== 0) {
+            $removeTr = $('#students tr').find('name = [' + removeId + ']');
+            $removeTr.remove();
+        }
 
         var tr = $(html)[0];
         var student = FestivalLib.convertJqueryData(tr, 'student');
+        if (removeId !== 0) { //replace enrollment flag from previously
+            student.Enrolled = $removeTr.data('student').Enrolled;
+            $(tr).data('student', student);
+        }
 
         $('#students').append(tr);
 
@@ -65,8 +62,18 @@ var RegisterApp = (function () {
         $('#studentModal').modal('hide');
     }
 
+    function onStudentFormFail(response) {
+        FestivalLib.ajaxFormFailure('student',response);
+    }
+
+    function $formElt(eltName) {
+        return $('#personForm [name="' + eltName + '"]');
+    }
+
     function Student() {
         this.Id = 0;
+        this.Teacher = 0;
+        this.Instrument = '-';
         this.FirstName = null;
         this.LastName = null;
         this.BirthDate = null;

@@ -15,9 +15,6 @@ var PersonApp = (function () {
             $('#starsKey').attr('data-content', '<p>' + FestivalLib.spanIcon(personBusyIcon) + ' means the person has been assigned to an event or location.</p>' +
                 '<p>' + FestivalLib.spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>'
                 + (forTeacher ? '' : '<p> No star means the person has been designated not available to be assigned.</p>')).popover();
-            if (forTeacher) {
-                $formElt('Available').closest('div').hide().removeClass('no-new');
-            }
             controllerUrl = forTeacher ? '/Chair' : '/Admin';
         },
 
@@ -42,22 +39,8 @@ var PersonApp = (function () {
         },
 
         editPerson: function (person, canDelete) {
-            populatePersonForm(person);
-            $('#personForm .no-new').hide();
-            $formElt('submitError').hide();
-
-            if (person.Id !== 0) {
-                $('#personForm .no-new').show();
-            }
-
-            if (canDelete) {
-                $formElt('deleteButton').removeAttr('disabled');
-            }
-            else {
-                $formElt('deleteButton]').attr('disabled', 'disabled');
-            }
-
-            $("#modalEdit").modal();
+            $('#personForm').data('assignedToLocation', person.AssignedToLocation); //needed for the new table row partial view being created on the server
+            FestivalLib.popupForm('person', person, canDelete, person.Id === 0);
         },
 
         deletePerson: function () {
@@ -65,15 +48,7 @@ var PersonApp = (function () {
                 return;
             }
             if (confirm('Delete, are you sure?')) {
-                $.ajax({
-                    type: "POST",
-                    url: "Admin/DeletePerson",
-                    data: personFormData(),
-                    dataType: "json",
-                    success: onDeletePersonSuccess,
-                    failure: onUpdatePersonFailure,
-                    error: onUpdatePersonFailure
-                });
+                FestivalLib.postAjax(controllerUrl +'/DeletePerson', personFormData(), false, onDeletePersonSuccess, onUpdatePersonFailure);
             }
         },
 
@@ -86,33 +61,21 @@ var PersonApp = (function () {
             var instrument = $('#eventInstrument').val();
             if (instrument)
                 person.Instrument = instrument;
-            PersonApp.editPerson(person, 0);
+            PersonApp.editPerson(person, false);
         },
 
         updatePerson: function () {
             if (!$('#personForm').valid()) {
                 return;
             }
-            updatePersonAjax();
+            FestivalLib.postAjax(controllerUrl + '/UpdatePerson', personFormData(), true,onUpdatePersonSuccess, onUpdatePersonFailure);
         }
     };
-
-    function updatePersonAjax() {
-        $.ajax({
-            type: "POST",
-            url: controllerUrl + "/UpdatePerson",
-            data: personFormData(),
-            dataType: "html",
-            success: onUpdatePersonSuccess,
-            failure: onUpdatePersonFailure,
-            error: onUpdatePersonFailure
-        });
-    }
 
     function personFormData() {
         var person = FestivalLib.collectFormData('person', false);
         var assignedToLocation = $('#personForm').data('assignedToLocation') || 0;
-        return FestivalLib.addAntiForgeryToken({ person: person, assignedToLocation: assignedToLocation });
+        return { person: person, assignedToLocation: assignedToLocation };
     }
 
     function onUpdatePersonSuccess(html) {
@@ -124,29 +87,27 @@ var PersonApp = (function () {
         var person = installPersonRow(newRow);
 
         $('#persons').append(newRow);
-        sortPersonTable();
+        FestivalLib.sortTableForPerson('person');
         //now update the person's name in the location table, if assigned to one
         if (person.locationId) {
             var row = $('#locations tr[name="' + locationId + '"]')[0];
             row.children[1].innerText = person.FullName;
         }
-
-        $('#modalEdit').modal('hide');
+        $('#personModal').modal('hide');
     }
 
     function onDeletePersonSuccess() {
         var removePersonId = $formElt('Id').val();
         $(personRowSelector(removePersonId)).remove(); //remove previous row for person
-        $('#modalEdit').modal('hide');
+        $('#personModal').modal('hide');
     }
 
     function onUpdatePersonFailure(response) {
         FestivalLib.ajaxFormFailure('person', response);
     }
 
-
     function installPersonRow(v) {
-        o = FestivalLib.convertJqueryData(v, 'person');
+        var o = FestivalLib.convertJqueryData(v, 'person');
         $(v).find('a').
             popover({
                 title: 'Contact',
@@ -161,15 +122,9 @@ var PersonApp = (function () {
         return '#persons >tr[name="' + id + '"]';
     }
 
-    $formElt(eltName) {
+    function $formElt(eltName) {
         return $('#personForm [name="' + eltName + '"]');
     }
-
-    function populatePersonForm(person) {
-        FestivalLib.populateForm('person', person);
-        $('#personForm').data('assignedToLocation', person.AssignedToLocation); //needed for the new table row partial view being created on the server
-    }
-
 
     //constructor for new person
     function Person() {
@@ -181,7 +136,5 @@ var PersonApp = (function () {
         this.Available = true;
         this.Instrument = '-';
     }
-
-
 
 })();

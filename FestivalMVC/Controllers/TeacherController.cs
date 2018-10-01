@@ -16,37 +16,40 @@ namespace FestivalMVC.Controllers
         public ActionResult Index()
         {
             var eventsVM = new EventsViewModel(true);
-            if (eventsVM.EventCount==1)
+            if (Session["SelectedEvent"] is null && eventsVM.EventsOpenForRegistrationCount == 1)
             {
                 Session["SelectedEvent"] = (EventViewModel)eventsVM.Events.First();
                 return RedirectToAction("Register");
             }
-
-            return View();
+            return View(eventsVM);
         }
 
 
-        [ValidateAntiForgeryToken]
-        [HttpPost]
-        public ActionResult Index(int id)
+        public ActionResult Register(int? id)
         {
+            EventViewModel theEvent;
 
-            ViewBag.Title = "Events";
+            if (id is null)
+            {
+                theEvent = (EventViewModel)Session["SelectedEvent"];
+            }
+            else
+            {
+                var dataEvent = SQLData.SelectEvent((int)id, out string instrumentName);
+                theEvent = new EventViewModel(dataEvent, instrumentName, false);
+                Session["SelectedEvent"] = theEvent;
+            }
 
-            var dataEvent = SQLData.SelectEvent(id, out string instrumentName);
-
-            var theEvent = new EventViewModel(dataEvent, instrumentName,false);
-
-            Session["SelectedEvent"] = theEvent;
-
-            return RedirectToAction("TeacherEvent");
-        }
-
-        public ActionResult Register()
-        {
             ViewBag.Title = "Register";
-            var theEvent = (EventViewModel)Session["SelectedEvent"];
             var theUser = (LoginPerson)Session["TheUser"];
+
+            //verify that the teacher's location is the same as for the event
+            //so one teacher cannot use this link for another teachers event
+            if (theUser.ParentLocationId != theEvent.Event.Location)
+            {
+                throw new Exception("This event does not belong to your location.");
+            }
+
             return View(new TeacherRegisterViewModel(theEvent.Event.Id,theUser.Id));
         }
 
@@ -55,14 +58,22 @@ namespace FestivalMVC.Controllers
         public ActionResult UpdateStudent(Student student )
         {
             var theEvent = (EventViewModel)Session["SelectedEvent"];
+            if (!theEvent.ComputeIfOpen())
+                throw new Exception("Event is not open for registration.");
+
             var theUser = (LoginPerson)Session["TheUser"];
+            if (theUser.ParentLocationId != theEvent.Event.Location)
+            {
+                throw new Exception("This event does not belong to your location.");
+            }
+
+
             student.Teacher = theUser.Id;
             student.Instrument = theEvent.Event.Instrument;
             int id = SQLData.UpdateStudent(student);
             if (student.Id == 0)
                 student.Id = id;
-            return View("_Student", student);
-
+            return View("_Student", new StudentViewModel { Student = student, Enrolled = false });
         }
 
 

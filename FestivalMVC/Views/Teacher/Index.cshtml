@@ -15,7 +15,6 @@
     <div class="content well">
         <div class="row">
             <div class="col-sm-8">
-                <!-- script will reveal after load -->
                 <h3>
                     @if (Model.Events.Count() == 0)
                     {
@@ -23,27 +22,35 @@
                     }
                     else
                     {
-                        @:First, select an event.
+                        if (Model.EventsOpenForRegistrationCount > 0)
+                        {
+                            if (Session["SelectedEvent"] is null)
+                            {
+                                @:First, select an event.
+                                <br />
+                            }
+                        }
+                        else
+                        {
+                            @:No events are currently open for registration.
+                            <br />
+                        }
                     }
                 </h3>
-                <br />
+                
                 <div class="row">
                     <div class="col-sm-6">
                         @foreach (var ev in Model.Events)
                         {
-                        <h4><a data-event="@Json.Encode(ev)" onclick="EventsPage.selectEvent(this)">@ev.EventDescription</a>&nbsp;@ev.StatusDesc</h4>
+                            <h4>@Html.ActionLink($"{ev.EventDescription} {ev.StatusDesc}","Register",new { id = ev.Event.Id })</h4>
                         }
 
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="clear"></div>
+<div class="clear"></div>
 
-        @section Scripts
-{
-
-            @Scripts.Render("~/bundles/jqueryval")
-            @Scripts.Render("~/Scripts/EventsPage.js")
-        }

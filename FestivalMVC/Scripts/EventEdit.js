@@ -6,34 +6,20 @@ var EventEdit = (function () {
         //public functions
 
         init: function () {
-
-            $(document).ajaxStart(function () {
-                document.body.style.cursor = 'wait';
-            });
-
-            $(document).ajaxStop(function () {
-                document.body.style.cursor = 'default';
-            });
+            FestivalLib.initAjaxCursor();
         },
-
 
         editEvent: function (event) {
 
-            var $elt = $formElt('deleteButton');
+            var newEvent = false;
             if (event == null) {
-                $elt.hide();
                 event = new Event();
+                newEvent = true;
             }
             else {
-                $elt.show();
-                event = JSON.parse(event, dateTimeReviver);
+                event = FestivalLib.parseObject(event);
             }
-
-            FestivalLib.populateForm('event',event);
-            clearAlerts();
-
-
-            $("#modalEventEdit").modal();
+            FestivalLib.popupForm('event', event,newEvent);
         },
 
         deleteEvent: function () {
@@ -93,111 +79,29 @@ var EventEdit = (function () {
                 }
             });
             if (!$('#eventForm').valid()) {
-                showWarning('Please make corrections first.');
                 return;
             }
-            clearAlerts();
             ajaxUpdateEvent();
         }
     };
-
-    // UI
-
-    function showWarning(message) {
-        showAlert('.formWarning', message);
-    }
-
-    function showError(message) {
-        showAlert('.formError', message);
-    }
-
-    function showAlert(selector, message) {
-        clearAlerts();
-        $(selector + ' >span').text(message);
-        $(selector).show();
-    }
-
-    function clearAlerts() {
-        $('.no-new, .alert').hide();
-    }
-
-
-  
-    function showEditError(prompt, message) {
-        var $errdiv = $formElt('submitError');
-        $errdiv.find('span').text(message);
-        $errdiv.find('strong').text(prompt + '  ');
-        $errdiv.show();
-    }
-
-    //utility
 
     function $formElt(name) {
         return $('#eventForm [name="' + name + '"]');
     }
 
-    function dateTimeReviver(key, value) {
-        var a;
-        if (typeof value === 'string') {
-            a = /\/Date\((\d*)\)\//.exec(value);
-            if (a) {
-                return new Date(+a[1]);
-            }
-        }
-        return value;
-    }
-
-    //AJAX
-
     function onUpdateEventFailure(response) {
-        showEditError('Server Error', parseResponse(response));
+        FestivalLib.ajaxFormFailure('event', response);
     }
 
     function ajaxDeleteEvent() {
-        $.ajax({
-            type: "POST",
-            url: "/Chair/DeleteEvent",
-            data: FestivalLib.AddAntiForgeryToken({ id: $formElt('Id').val() }),
-            dataType: "json",
-            success: onAjaxUpdateEventSuccess,
-            failure: onUpdateEventFailure,
-            error: onUpdateEventFailure
-        });
+        FestivalLib.postAjax('/Chair/DeleteEvent', { id: $formElt('Id').val() }, false, onUpdateEventSuccess, onUpdateEventFailure);
     }
-
-    function ajaxUpdateEvent() {
-        $.ajax({
-            type: "POST",
-            url: "/Chair/UpdateEvent",
-            data: FestivalLib.collectFormData('event',true),
-            dataType: "json",
-            success: onAjaxUpdateEventSuccess,
-            failure: onUpdateEventFailure,
-            error: onUpdateEventFailure
-        });
-    }
-
-    function onAjaxUpdateEventSuccess(response) {
+    function onUpdateEventSuccess(response) {
         window.location = response.redirect;
     }
 
-    function parseResponse(response) {
-        var message;
-
-        if (response.responseJSON && response.responseJSON.Message)
-            return response.responseJSON.Message;
-
-        message = response.d || response.responseText;
-
-        if (message == null)
-            return 'No details available';
-
-        try {
-            return JSON.parse(message);
-        }
-        catch (e) {
-            return message;
-        }
+    function ajaxUpdateEvent() {
+        FestivalLib.postAjax('/Chair/UpdateEvent', 'event', false, onUpdateEventSuccess, onUpdateEventFailure);
     }
 
     function Event() {
@@ -210,8 +114,8 @@ var EventEdit = (function () {
         this.Status = "A";
         this.Venue = "";
         this.Notes = "";
+        this.ClassTypes = "";
     }
-
 
 })();
 

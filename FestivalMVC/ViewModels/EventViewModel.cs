@@ -19,6 +19,7 @@ namespace FestivalMVC.ViewModels
             Event = ev;
             InstrumentName = instrumentName;
             CanEdit = canEdit;
+
         }
 
         public Event Event { get; }
@@ -80,7 +81,7 @@ namespace FestivalMVC.ViewModels
             return ComputeIfOpen() ? "Open" : "Closed";
         }
 
-        private bool ComputeIfOpen()
+        public bool ComputeIfOpen()
         {
             return (CurrentTime.CompareTo(Event.OpenDate) > 0 && CurrentTime.CompareTo(Event.CloseDate) < 0);
         }
@@ -100,11 +101,7 @@ namespace FestivalMVC.ViewModels
                 }
                 else //Teacher
                 {
-                    if (CurrentTime.CompareTo(Event.OpenDate) < 0 || Event.Status == open)
-                        return "IR";
-                    if (CurrentTime.CompareTo(Event.CloseDate) < 0 || Event.Status == open)
-                        return "IRE";
-                    return "I";
+                    return ComputeIfOpen() ? "IRE" : "I";
                 }
 
             }
@@ -130,5 +127,60 @@ namespace FestivalMVC.ViewModels
         }
 
     }
+
+    public class EventsViewModel
+    {
+        private readonly IEnumerable<Event> _events;
+        private readonly IEnumerable<Instrum> _instruments;
+        private readonly Location _location;
+        private readonly bool _forTeacher;
+
+        public EventsViewModel(bool forTeacher)
+        {
+            var location = Admin.LocationIdSecured;
+            _forTeacher = forTeacher;
+
+            if (forTeacher)
+            {
+                SQLData.SelectEventsForTeacher(location, DateTime.Now, out _events, out _instruments, out _location);
+            }
+            else
+            {
+                SQLData.SelectEventsForDistrict(location, out _events, out _instruments, out _location);
+            }
+
+        }
+
+        public string InstrumentName(char id)
+        {
+            return (from p in _instruments
+                    where p.Id == id
+                    select p.Instrument).Single().ToString();
+        }
+
+        public IEnumerable<EventViewModel> Events
+        {
+            get
+            {
+                return from p in _events
+                       select new EventViewModel(p, InstrumentName(p.Instrument), !_forTeacher);
+            }
+        }
+
+        public int EventsOpenForRegistrationCount
+        {
+            get
+            {
+                return (from ev in Events
+                        where ev.ComputeIfOpen()
+                        select ev).Count();
+                       
+            }
+        }
+
+        public Location Location { get => _location; }
+
+    }
+
 
 }

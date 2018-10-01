@@ -156,6 +156,14 @@ namespace FestivalMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public ActionResult DeletePerson(Contact person)
+        {
+            SQLData.DeleteContact(person.Id);
+            return Json(0);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult UpdateJudge(Judge judge)
         {
             EventViewModel theEvent = (EventViewModel)Session["SelectedEvent"];

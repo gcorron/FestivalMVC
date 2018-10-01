@@ -7,11 +7,14 @@ var PreparePageApp = (function () {
         },
 
         editJudge: function (elt) {
-            var judge = $(elt).data('judge');
-            if (!judge) {
+
+            var judge;
+            if (elt)
+                judge = $(elt).data('judge');
+            else
                 judge = new Judge();
-            }
-            FestivalLib.popupForm('judge',judge);
+
+            FestivalLib.popupForm('judge',judge.Id !== 0);
         },
 
         deleteJudge: function () {
@@ -19,27 +22,11 @@ var PreparePageApp = (function () {
             if (!confirm('Delete ' + judge.Name + '?'))
                 return;
             judge.Id = -(judge.Id);
-            $.ajax({
-                type: "POST",
-                url: "UpdateJudge",
-                data: FestivalLib.addAntiForgeryToken(judge),
-                dataType: "html",
-                success: onUpdateJudgeSuccess,
-                failure: onUpdateJudgeFailure,
-                error: onUpdateJudgeFailure
-            });
+            FestivalLib.postAjax('UpdateJudge', judge, true, onUpdateJudgeSuccess, onUpdateJudgeFailure);
         },
 
         updateJudge: function () {
-            $.ajax({
-                type: "POST",
-                url: "UpdateJudge",
-                data: FestivalLib.collectFormData('judge', true),
-                dataType: "html",
-                success: onUpdateJudgeSuccess,
-                failure: onUpdateJudgeFailure,
-                error: onUpdateJudgeFailure
-            });
+            FestivalLib.postAjax('UpdateJudge', 'judge', true, onUpdateJudgeSuccess, onUpdateJudgeFailure);
         }
     };
 
@@ -47,16 +34,7 @@ var PreparePageApp = (function () {
 
         var id = person.Id;
         var participate = (currentAssignment == 0);
-
-        $.ajax({
-            type: "POST",
-            url: "UpdateTeacherEventAssignment",
-            data: FestivalLib.addAntiForgeryToken({ id, participate }),
-            dataType: "json",
-            success: onChangeParticipateSuccess,
-            failure: FestivalLib.onAjaxFailure,
-            error: FestivalLib.onAjaxFailure
-        });
+        FestivalLib.postAjax('UpdateTeacherEventAssignment', { id, participate }, false, onChangeParticipateSuccess, null);
     }
 
     function onChangeParticipateSuccess(o) {
