@@ -29,7 +29,7 @@
     <div class="col-sm-12">
         <div class="well well-sm">
             <a class="btn btn-sm btn-primary" onclick="RegisterApp.editStudent(null)">Add Student</a>
-            <table>
+            <table class="table table-bordered table-responsive table-striped">
                 <thead>
                     <tr>
                         <th>Student</th>
@@ -41,7 +41,37 @@
                     @{
                         foreach (var student in Model.AllStudents)
                         {
-                            Html.RenderPartial("_Student", student);
+                            <tr name="@student.StudentVM.Student.Id" data-student="@Json.Encode(student.StudentVM.Student)">
+                                @{Html.RenderPartial("_Student", student.StudentVM);
+                                }
+                                <td>
+                                    @{ if (student.GetEnroll('S', out var en))
+                                        {
+                                            @:Solo
+                                            if (en.LastClassAbbr.Length > 0)
+                                            {
+                                                @en.LastClassAbbr @en.LastAwardRating @en.ConsecutiveSuperior @en.AccumulatedPoints
+                                            }
+                                        }
+                                    }
+                                </td>
+                                <td>@en.ClassAbbr</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @{
+                                        if (student.GetEnroll('C', out var en2))
+                                        {
+                                            @:Concerto
+                                            if (en2.LastClassAbbr.Length > 0)
+                                            {
+                                                @en2.LastClassAbbr @en2.LastAwardRating @en2.ConsecutiveSuperior @en2.AccumulatedPoints
+                                            }
+                                        }
+                                    }
+                                    </td >
+                                    <td> @en2.ClassAbbr </td >
+                            </tr>
                         }
                     }
                 </tbody>

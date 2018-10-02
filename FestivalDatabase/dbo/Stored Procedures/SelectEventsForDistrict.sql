@@ -11,7 +11,7 @@ BEGIN
 set nocount off
 
 
-	select id, openDate, closeDate,eventDate,instrument,status,classTypes,
+	select id, location, openDate, closeDate,eventDate,instrument,status,classTypes,
 		venue,notes
 			from event
 	where location=@location and status<>'H' --history, previous years events

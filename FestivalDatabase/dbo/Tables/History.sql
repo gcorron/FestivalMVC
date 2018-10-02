@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[History] (
-    [Student]             INT          IDENTITY (1, 1) NOT NULL,
+    [Student]             INT          NOT NULL,
     [ClassType]           CHAR (1)     NOT NULL,
     [Event]               INT          NOT NULL,
     [ClassAbbr]           VARCHAR (10) NOT NULL,
@@ -9,6 +9,8 @@
     [AccumulatedPoints]   TINYINT      NOT NULL,
     CONSTRAINT [PK_History] PRIMARY KEY CLUSTERED ([Student] ASC, [ClassType] ASC)
 );
+
+
 
 
 

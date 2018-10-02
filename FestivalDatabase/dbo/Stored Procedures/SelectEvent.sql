@@ -7,7 +7,7 @@ CREATE PROCEDURE [dbo].[SelectEvent] @id int
 AS
 BEGIN
 
-	select id, openDate, closeDate,eventDate,instrument,status,classTypes,
+	select id, location,openDate, closeDate,eventDate,instrument,status,classTypes,
 		venue,notes
 			from event
 	where id=@id

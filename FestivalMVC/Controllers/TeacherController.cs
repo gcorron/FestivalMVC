@@ -73,7 +73,7 @@ namespace FestivalMVC.Controllers
             int id = SQLData.UpdateStudent(student);
             if (student.Id == 0)
                 student.Id = id;
-            return View("_Student", new StudentViewModel { Student = student, Enrolled = false });
+            return View("_Student", new StudentViewModel { Student = student });
         }
 
 
