@@ -1,6 +1,6 @@
 ﻿@model FestivalMVC.ViewModels.StudentViewModel
 
-    <td rowspan="2">
+    <td rowspan="2" data-student="@Json.Encode(Model.Student)">
         <a onclick="RegisterApp.editStudent($(this).closest('tr').data('student'))">@Model.FullName</a>
         <br />
         <span>@($"Age {Model.Age} Phone {Model.Student.Phone}")</span>

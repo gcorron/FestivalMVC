@@ -54,5 +54,12 @@ namespace FestivalMVC.ViewModels
             return enroll.ClassType == classType;
         }
 
+        public bool IsRegistered()
+        {
+            return (from en in Enrolls
+                    where en.ClassAbbr.Length > 0
+                    select en).Any();
+        }
+
     }
 }

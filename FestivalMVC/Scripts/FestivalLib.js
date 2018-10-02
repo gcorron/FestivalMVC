@@ -179,6 +179,12 @@ var FestivalLib = (function () {
         },
 
         sortTableForPerson(rowName) {
+            var rowInc = 1;
+            var isStudent = false;
+            if (rowName == 'student') {
+                rowInc = 2; //two rows per student
+                isStudent = true;
+            }
             var table, rows, switching, i, shouldSwitch;
             var personx, persony, compared;
             table = document.getElementById(rowName + 's');
@@ -186,10 +192,10 @@ var FestivalLib = (function () {
             while (switching) {
                 switching = false;
                 rows = table.rows;
-                for (i = 0; i < (rows.length - 1); i++) {
+                for (i = 0; i < (rows.length - 1); i+=rowInc) {
                     shouldSwitch = false;
-                    personx = $(rows[i]).data(rowName);
-                    persony = $(rows[i + 1]).data(rowName);
+                    personx = getRowData(i);
+                    persony = getRowData(i + rowInc);
                     compared = compare(personx.LastName, persony.LastName);
                     if (compared === 0)
                         compared = compare(personx.FirstName, persony.FirstName);
@@ -199,7 +205,9 @@ var FestivalLib = (function () {
                     }
                 }
                 if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    rows[i].parentNode.insertBefore(rows[i + rowInc], rows[i]);
+                    if (isStudent)
+                        rows[i+1].parentNode.insertBefore(rows[i + 1 + rowInc], rows[i+1]);
                     switching = true;
                 }
             }
@@ -211,6 +219,12 @@ var FestivalLib = (function () {
                 if (cx < cy)
                     return -1;
                 return 0;
+            }
+            function getRowData(rowNum) {
+                if (isStudent)
+                    return $(rows[rowNum]).find('td [rowspan]').data(rowName);
+                else
+                    return $(rows[i]).data(rowName);
             }
         }
     };
