@@ -2,17 +2,24 @@
 
 var RegisterApp = (function () {
     return {
-        editStudent: function (student) {
+        init: function () {
+            $('#students tr').find('[rowspan]:first-child').each(function (i,v) {
+                FestivalLib.convertJqueryData(v,'student');
+            });
+        },
+        editStudent: function (elt) {
             var canDelete;
-            if (student == null) {
+            var student;
+            if (elt == null) {
                 student = new Student();
                 canDelete = false;
             }
             else {
-                canDelete = student.Enrolled;
+                student = $(elt).data('student');
+                canDelete = student.CanDelete;
                 student = student.Student; //student data contained in ViewModel
             }
-            FestivalLib.popupForm('student', student ,canDelete);
+            FestivalLib.popupForm('student', student, canDelete);
         },
         updateStudent: function () {
             jQuery.validator.addMethod("beforeDate", function (value, element, params) {
@@ -40,22 +47,23 @@ var RegisterApp = (function () {
 
     function onUpdateStudentSuccess(html) {
 
+        var $elt;
+
         var removeId = $formElt('student', 'Id').val();
-        var $removeTr;
 
         if (removeId !== 0) {
-            $removeTr = $('#students tr').find('name = [' + removeId + ']');
-            $removeTr.remove();
-        }
+            $elt = $(html);
+            FestivalLib.convertJqueryData($elt[0], 'student');
 
-        var tr = $(html)[0];
-        var student = FestivalLib.convertJqueryData(tr, 'student');
-        if (removeId !== 0) { //replace enrollment flag from previously
-            student.Enrolled = $removeTr.data('student').Enrolled;
-            $(tr).data('student', student);
+            var $removetd = $('#students tr[name="' + removeId + '"]').find('td [rowspan]');
+            $removetd.replaceWith($elt);
         }
-
-        $('#students').append(tr);
+        else {
+            html = '<tr name="' + student.Id + '">' + html + '<td></td>'.repeat(4);
+            $elt = $(html);
+            FestivalLib.convertJqueryData($elt.find('[rowspan]:first-child'), 'student');
+            $('#students').append($elt);
+        }
 
         FestivalLib.sortTableForPerson('student');
 
@@ -63,7 +71,7 @@ var RegisterApp = (function () {
     }
 
     function onStudentFormFail(response) {
-        FestivalLib.ajaxFormFailure('student',response);
+        FestivalLib.ajaxFormFailure('student', response);
     }
 
     function $formElt(eltName) {
@@ -81,3 +89,7 @@ var RegisterApp = (function () {
     }
 
 })();
+
+$(document).ready(function () {
+    RegisterApp.init(true);
+});

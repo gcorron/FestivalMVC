@@ -25,13 +25,16 @@ namespace FestivalMVC.ViewModels
                           let ens = from e in enrolls
                                     where e.Student == p.Id
                                     select e
+                          let canDelete = (from e in ens
+                                           where e.Status != 'R'
+                                           select e).Any()
                           orderby p.LastName, p.FirstName
-                          select new FullStudentViewModel { StudentVM = new StudentViewModel { Student = p }, Enrolls = ens.ToArray() };
+                          select new FullStudentViewModel { StudentVM =
+                            new StudentViewModel { Student = p, CanDelete=canDelete }, Enrolls = ens.ToArray() };
         }
 
         public EventViewModel EventVM { get; }
         public IEnumerable<FullStudentViewModel> AllStudents { get; set; }
-
     }
 
     public struct StudentViewModel
@@ -39,6 +42,7 @@ namespace FestivalMVC.ViewModels
         public Student Student { get; set; }
         public string FullName { get => $"{Student.FirstName} {Student.LastName}"; }
         public string Age { get => (Math.Truncate(DateTime.Now.Subtract(Student.BirthDate).Days / 365.25d)).ToString(); }
+        public bool CanDelete { get; set; }
     }
 
     public struct FullStudentViewModel
@@ -53,13 +57,5 @@ namespace FestivalMVC.ViewModels
                     select en).SingleOrDefault<Enroll>();
             return enroll.ClassType == classType;
         }
-
-        public bool IsRegistered()
-        {
-            return (from en in Enrolls
-                    where en.ClassAbbr.Length > 0
-                    select en).Any();
-        }
-
     }
 }

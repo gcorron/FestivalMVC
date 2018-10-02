@@ -41,7 +41,7 @@
                     @{
                         foreach (var student in Model.AllStudents)
                         {
-                            <tr name="@student.StudentVM.Student.Id" data-registered="@student.IsRegistered()">
+                            <tr name="@student.StudentVM.Student.Id">
                                 @{Html.RenderPartial("_Student", student.StudentVM);
                                 }
                                 <td>
