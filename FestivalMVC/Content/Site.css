@@ -78,3 +78,7 @@ dl {
     margin-bottom: 2px; /* Reduced from whatever it currently is */
     margin-top: 2px; /* Reduced from whatever it currently is */
 }
+
+.table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td {
+    padding: 5px;
+}

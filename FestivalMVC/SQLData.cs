@@ -9,6 +9,13 @@ namespace FestivalMVC
 {
     public class SQLData
     {
+        public static void RemoveStudentFromTeacher(int id, int teacher)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("RemoveStudentFromTeacher", new { id, teacher }, commandType: CommandType.StoredProcedure);
+            }
+        }
 
         public static int UpdateStudent(Student student)
         {
@@ -18,8 +25,9 @@ namespace FestivalMVC
             }
         }
 
-        public static void SelectDataForTeacherEvent(int ev,int teacher, out IEnumerable<Student> students
-            , out IEnumerable<Enroll> enrolls, out Event eventModel, out string instrumentName)
+        public static void SelectDataForTeacherEvent(int ev, int teacher, out IEnumerable<Student> students
+            , out IEnumerable<Enroll> enrolls, out Event eventModel, out string instrumentName
+            , out IEnumerable<ClassAbbreviation> classAbbrs)
         {
             using (IDbConnection connection = GetDBConnection())
             {
@@ -29,6 +37,7 @@ namespace FestivalMVC
                     enrolls = multi.Read<Enroll>();
                     eventModel = multi.ReadSingle<Event>();
                     instrumentName = multi.ReadSingle<string>();
+                    classAbbrs = multi.Read<ClassAbbreviation>();
                 }
             }
         }
@@ -143,7 +152,6 @@ namespace FestivalMVC
                     locations = multi.Read<Location>();
                 }
             }
-
         }
 
         public static void SelectEventsForDistrict(int locationId, out IEnumerable<Event> events,
@@ -173,7 +181,6 @@ namespace FestivalMVC
                 }
             }
         }
-
 
         public static LoginPerson GetLoginPerson(string userName)
         {

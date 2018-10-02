@@ -31,7 +31,7 @@ namespace FestivalMVC.Controllers
 
             if (id is null)
             {
-                theEvent = (EventViewModel)Session["SelectedEvent"];
+                theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
             }
             else
             {
@@ -41,7 +41,7 @@ namespace FestivalMVC.Controllers
             }
 
             ViewBag.Title = "Register";
-            var theUser = (LoginPerson)Session["TheUser"];
+            var theUser = GetSessionItem<LoginPerson>("TheUser");
 
             //verify that the teacher's location is the same as for the event
             //so one teacher cannot use this link for another teachers event
@@ -55,13 +55,23 @@ namespace FestivalMVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
+        public ActionResult RemoveStudent(Student student)
+        {
+            var theUser = GetSessionItem<LoginPerson>("TheUser");
+            SQLData.RemoveStudentFromTeacher(student.Id,theUser.Id);
+            return Json(0);
+        }
+
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
         public ActionResult UpdateStudent(Student student )
         {
-            var theEvent = (EventViewModel)Session["SelectedEvent"];
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
             if (!theEvent.ComputeIfOpen())
                 throw new Exception("Event is not open for registration.");
 
-            var theUser = (LoginPerson)Session["TheUser"];
+            var theUser = GetSessionItem<LoginPerson>("TheUser");
             if (theUser.ParentLocationId != theEvent.Event.Location)
             {
                 throw new Exception("This event does not belong to your location.");
@@ -73,7 +83,7 @@ namespace FestivalMVC.Controllers
             int id = SQLData.UpdateStudent(student);
             if (student.Id == 0)
                 student.Id = id;
-            return View("_Student", new StudentViewModel { Student = student });
+            return PartialView("_Student", new StudentViewModel { Student = student });
         }
 
 
@@ -124,7 +134,18 @@ namespace FestivalMVC.Controllers
                 };
             }
         }
+        private T GetSessionItem<T>(string name) ///TODO implement in other controllers
+        {
+            try
+            {
+                return (T)Session[name];
+            }
+            catch (Exception)
+            {
 
+                throw new Exception("Session timed out. Please log in again to continue.");
+            }
+        }
 
     }
 }

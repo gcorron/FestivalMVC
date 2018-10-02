@@ -130,19 +130,19 @@ var FestivalLib = (function () {
             });
         },
 
-        postAjax: function (url, data, expectsHtml, successFn,failFn) {
+        postAjax: function (url, data, expectsHtml, successFn, failFn) {
             if (failFn == null)
                 failFn = FestivalLib.onAjaxFailure;
-            if (typeof(data) === 'string' || data instanceof String)
+            if (typeof (data) === 'string' || data instanceof String)
                 data = FestivalLib.collectFormData(data, true);
             else
-                data = FestivalLib.addAntiForgeryToken( data );
+                data = FestivalLib.addAntiForgeryToken(data);
 
             $.ajax({
                 type: "POST",
                 url: url,
                 data: data,
-                dataType: expectsHtml ? "html":"json",
+                dataType: expectsHtml ? "html" : "json",
                 success: successFn,
                 failure: failFn,
                 error: failFn
@@ -181,18 +181,20 @@ var FestivalLib = (function () {
         sortTableForPerson(rowName) {
             var rowInc = 1;
             var isStudent = false;
+            var table, rows, switching, i, shouldSwitch;
+            var personx, persony, compared;
+
             if (rowName == 'student') {
                 rowInc = 2; //two rows per student
                 isStudent = true;
             }
-            var table, rows, switching, i, shouldSwitch;
-            var personx, persony, compared;
+
             table = document.getElementById(rowName + 's');
             switching = true;
             while (switching) {
                 switching = false;
                 rows = table.rows;
-                for (i = 0; i < (rows.length - 1); i+=rowInc) {
+                for (i = 0; i < (rows.length - rowInc); i += rowInc) {
                     shouldSwitch = false;
                     personx = getRowData(i);
                     persony = getRowData(i + rowInc);
@@ -207,7 +209,7 @@ var FestivalLib = (function () {
                 if (shouldSwitch) {
                     rows[i].parentNode.insertBefore(rows[i + rowInc], rows[i]);
                     if (isStudent)
-                        rows[i+1].parentNode.insertBefore(rows[i + 1 + rowInc], rows[i+1]);
+                        rows[i + 1].parentNode.insertBefore(rows[i + 1 + rowInc], rows[i + 1]);
                     switching = true;
                 }
             }
@@ -221,10 +223,12 @@ var FestivalLib = (function () {
                 return 0;
             }
             function getRowData(rowNum) {
-                if (isStudent)
-                    return $(rows[rowNum]).find('td [rowspan]').data(rowName);
+                if (isStudent) {
+                    var temp = $(rows[rowNum]).find('td:first-child').data(rowName);
+                    return temp.Student;
+                }
                 else
-                    return $(rows[i]).data(rowName);
+                    return $(rows[rowNum]).data(rowName);
             }
         }
     };
@@ -240,7 +244,7 @@ var FestivalLib = (function () {
         return value;
     }
 
-    function $formElt(formNamePart,name) {
+    function $formElt(formNamePart, name) {
         return $('#' + formNamePart + 'Form [name="' + name + '"]');
     }
 

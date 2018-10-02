@@ -57,22 +57,22 @@ namespace FestivalMVC.ViewModels
                 string ret = "";
                 for (var i = 0; i < Event.ClassTypes.Length; i++)
                 {
-                    ret = ret + "," + eventTypeDesc(Event.ClassTypes[i]);
+                    ret = ret + "," + EventTypeDesc(Event.ClassTypes[i]);
                 }
                 if (ret.Length > 0)
                     ret = ret.Substring(1);
 
                 return ret;
+            }
+        }
 
-                string eventTypeDesc(char c)
-                {
-                    switch (c)
-                    {
-                        case 'C': return "Concerto";
-                        case 'S': return "Solo";
-                        default: return "???";
-                    }
-                }
+        public string EventTypeDesc(char c)
+        {
+            switch (c)
+            {
+                case 'C': return "Concerto";
+                case 'S': return "Solo";
+                default: return "???";
             }
         }
 

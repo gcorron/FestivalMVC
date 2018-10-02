@@ -30,4 +30,11 @@ namespace FestivalMVC.Models
         public int Event { get; set; }
         public string Name { get => _name; set => _name = value.Trim(); }
     }
+
+    public struct ClassAbbreviation
+    {
+        public char ClassType { get; set; }
+        public string ClassAbbr { get; set; }
+        public Int16 AuditionMinutes { get; set; }
+    }
 }

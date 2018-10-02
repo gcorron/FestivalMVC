@@ -9,6 +9,7 @@ namespace FestivalMVC.ViewModels
 {
     public class TeacherRegisterViewModel
     {
+        IEnumerable<ClassAbbreviation> _abbrs;
 
         //constructor
         public TeacherRegisterViewModel(int ev, int teacher)
@@ -17,7 +18,8 @@ namespace FestivalMVC.ViewModels
                 out IEnumerable<Student> students,
                 out IEnumerable<Enroll> enrolls,
                 out Event eventModel,
-                out string instrumentName);
+                out string instrumentName,
+                out _abbrs);
 
             EventVM = new EventViewModel(eventModel, instrumentName, false);
 
@@ -25,16 +27,27 @@ namespace FestivalMVC.ViewModels
                           let ens = from e in enrolls
                                     where e.Student == p.Id
                                     select e
-                          let canDelete = (from e in ens
-                                           where e.Status != 'R'
-                                           select e).Any()
+                          let canDelete = !(from e in ens
+                                            where "R-".IndexOf(e.Status) != 0 //must have already paid
+                                            select e).Any()
                           orderby p.LastName, p.FirstName
-                          select new FullStudentViewModel { StudentVM =
-                            new StudentViewModel { Student = p, CanDelete=canDelete }, Enrolls = ens.ToArray() };
+                          select new FullStudentViewModel
+                          {
+                              StudentVM =
+                            new StudentViewModel { Student = p, CanDelete = canDelete },
+                              Enrolls = ens.ToArray()
+                          };
+
         }
 
         public EventViewModel EventVM { get; }
         public IEnumerable<FullStudentViewModel> AllStudents { get; set; }
+        public IEnumerable<ClassAbbreviation> ClassAbbrsForClassType(char classType)
+        {
+            return from p in _abbrs
+                   where p.ClassType == classType
+                   select p;
+        }
     }
 
     public struct StudentViewModel
@@ -53,8 +66,8 @@ namespace FestivalMVC.ViewModels
         public bool GetEnroll(char classType, out Enroll enroll)
         {
             enroll = (from en in Enrolls
-                    where en.ClassType == classType
-                    select en).SingleOrDefault<Enroll>();
+                      where en.ClassType == classType
+                      select en).SingleOrDefault<Enroll>();
             return enroll.ClassType == classType;
         }
     }
