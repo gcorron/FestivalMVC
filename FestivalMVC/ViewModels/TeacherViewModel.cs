@@ -9,7 +9,7 @@ namespace FestivalMVC.ViewModels
 {
     public class TeacherRegisterViewModel
     {
-        IEnumerable<ClassAbbreviation> _abbrs;
+        readonly IEnumerable<ClassAbbreviation> _abbrs;
 
         //constructor
         public TeacherRegisterViewModel(int ev, int teacher)
@@ -34,7 +34,7 @@ namespace FestivalMVC.ViewModels
                           select new FullStudentViewModel
                           {
                               StudentVM =
-                            new StudentViewModel { Student = p, CanDelete = canDelete },
+                            new StudentViewModel { Student = p, CanDelete = canDelete, PossibleClassTypes = eventModel.ClassTypes },
                               Enrolls = ens.ToArray()
                           };
 
@@ -56,6 +56,7 @@ namespace FestivalMVC.ViewModels
         public string FullName { get => $"{Student.FirstName} {Student.LastName}"; }
         public string Age { get => (Math.Truncate(DateTime.Now.Subtract(Student.BirthDate).Days / 365.25d)).ToString(); }
         public bool CanDelete { get; set; }
+        public string PossibleClassTypes { get; set; }
     }
 
     public struct FullStudentViewModel
@@ -63,12 +64,39 @@ namespace FestivalMVC.ViewModels
         public StudentViewModel StudentVM { get; set; }
         public Enroll[] Enrolls { get; set; }
 
+        // returns true if valid enroll record in out variable
         public bool GetEnroll(char classType, out Enroll enroll)
         {
             enroll = (from en in Enrolls
                       where en.ClassType == classType
                       select en).SingleOrDefault<Enroll>();
-            return enroll.ClassType == classType;
+
+            return (enroll.ClassType == classType);
+        }
+
+        public Registered GetRegistered()
+        {
+            var registered = new Registered
+            {
+                Student = StudentVM.Student.Id,
+                ClassType = this.StudentVM.PossibleClassTypes[0]
+            };
+
+            if (GetEnroll(registered.ClassType, out var enroll))
+            {
+                registered.ClassAbbr = enroll.ClassAbbr;
+                registered.Status = enroll.Status;
+            }
+            if (this.StudentVM.PossibleClassTypes.Length > 1)
+            {
+                registered.ClassType2 = this.StudentVM.PossibleClassTypes[1];
+                if (GetEnroll(registered.ClassType2, out enroll))
+                {
+                    registered.ClassAbbr2 = enroll.ClassAbbr;
+                    registered.Status2 = enroll.Status;
+                }
+            }
+            return registered;
         }
     }
 }

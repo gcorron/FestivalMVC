@@ -62,6 +62,7 @@ var FestivalLib = (function () {
                     o[name] = $.trim(control.value);
                 }
             });
+
             if (addAntiForgery)
                 return FestivalLib.addAntiForgeryToken(o);
             else
@@ -76,31 +77,36 @@ var FestivalLib = (function () {
                 var isMulti = name.match(/[[\]]/);
                 if (isMulti)
                     name = name.replace(/[[\]]/g, "");
-                var val = o[name];
 
-                if (isMulti) {
-                    control.checked = val.indexOf(control.value) >= 0;
+                if (name in o) {
+
+                    var val = o[name];
+
+                    if (control.type === 'checkbox') {
+                        if (isMulti)
+                            control.checked = val.indexOf(control.value) >= 0;
+                        else
+                            control.checked = val;
+                    }
+                    else if (val && control.type === 'date')
+                        control.value = val.toISOString().split('T')[0];
+                    else {
+                        control.value = val;
+                    }
                 }
-                else if (control.type === 'checkbox') {
-                    control.checked = val;
-                }
-                else if (val && control.type === 'date')
-                    control.value = val.toISOString().split('T')[0];
-                else {
-                    control.value = val;
-                }
+
             });
         },
         popupForm(formNamePart, o, canDelete, optionalFields) {
             FestivalLib.populateForm(formNamePart, o);
             $(formErrorDiv(formNamePart)).hide();
 
-            $formElt(formNamePart, 'submitError').hide();
+            FestivalLib.$formElt(formNamePart, 'submitError').hide();
 
             if (canDelete)
-                $formElt(formNamePart, 'deleteButton').show();
+                FestivalLib.$formElt(formNamePart, 'deleteButton').show();
             else
-                $formElt(formNamePart, 'deleteButton').hide();
+                FestivalLib.$formElt(formNamePart, 'deleteButton').hide();
 
             if (typeof optionalFields !== 'undefined') {
                 if (optionalFields) {
@@ -184,12 +190,11 @@ var FestivalLib = (function () {
             var table, rows, switching, i, shouldSwitch;
             var personx, persony, compared;
 
-            if (rowName == 'student') {
-                rowInc = 2; //two rows per student
-                isStudent = true;
-            }
-
+            isStudent = (rowName = 'student');
             table = document.getElementById(rowName + 's');
+            if ($(table).find('tr [rowspan]').length > 0)
+                rowInc = 2;
+
             switching = true;
             while (switching) {
                 switching = false;
@@ -230,6 +235,14 @@ var FestivalLib = (function () {
                 else
                     return $(rows[rowNum]).data(rowName);
             }
+        },
+
+        $tableRow: function (tableName, id) {
+            return $('#' + tableName + ' tr[name="' + id + '"]');
+        },
+
+        $formElt: function (formNamePart, name) {
+            return $('#' + formNamePart + 'Form [name="' + name + '"]');
         }
     };
 
@@ -242,10 +255,6 @@ var FestivalLib = (function () {
             }
         }
         return value;
-    }
-
-    function $formElt(formNamePart, name) {
-        return $('#' + formNamePart + 'Form [name="' + name + '"]');
     }
 
     function formErrorDiv(formNamePart) {

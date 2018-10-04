@@ -8,13 +8,13 @@ BEGIN
 		where teacher=@teacher
 
 
-	select isnull(a.student,b.student) as Student, isnull(a.classtype,b.classtype) as ClassType, isnull(a.classabbr,'') as LastClassAbbr,
+	select isnull(a.student,b.student) as Student, isnull(a.classtype,b.classtype) as ClassType, a.classabbr as LastClassAbbr,
 		isnull(awardRating,0) as LastAwardRating,isnull(consecutivesuperior,0) as ConsecutiveSuperior,
-		 isnull(accumulatedpoints,0) as AccumulatedPoints, isnull(b.ClassAbbr,'') as ClassAbbr, isnull(b.Status,'-') as Status
+		 isnull(accumulatedpoints,0) as AccumulatedPoints, b.ClassAbbr as ClassAbbr, isnull(b.Status,'-') as Status
 	from history a full outer join entry b
 	on a.student=b.student and a.ClassType=b.ClassType
 	inner join student c on a.student=c.id or b.student=c.id
-	where c.teacher=@teacher
+	where c.teacher=@teacher and isnull(b.Event,@ev)=@ev
 
 	exec SelectEvent @ev
 

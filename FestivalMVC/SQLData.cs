@@ -4,11 +4,21 @@ using System.Configuration;
 using System.Data;
 using Dapper;
 using FestivalMVC.Models;
+using FestivalMVC.ViewModels;
 
 namespace FestivalMVC
 {
     public class SQLData
     {
+
+        public static Registered UpdateEntry(Registration entry)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.QuerySingle<Registered>("UpdateEntry", entry, commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public static void RemoveStudentFromTeacher(int id, int teacher)
         {
             using (IDbConnection connection = GetDBConnection())

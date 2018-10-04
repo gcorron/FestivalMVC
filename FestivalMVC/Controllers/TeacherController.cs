@@ -55,6 +55,20 @@ namespace FestivalMVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
+        public ActionResult UpdateEntry(Registration entry)
+        {
+            var theUser = GetSessionItem<LoginPerson>("TheUser");
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+
+            entry.Teacher = theUser.Id;
+            entry.Event = theEvent.Event.Id;
+            Registered result=SQLData.UpdateEntry(entry);
+            return Json(result);
+        }
+
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
         public ActionResult RemoveStudent(Student student)
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");

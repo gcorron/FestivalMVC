@@ -1,8 +1,8 @@
 ﻿@model FestivalMVC.ViewModels.StudentViewModel
 
-<td rowspan="2" data-student="@Json.Encode(Model)">
+<td rowspan="@Model.PossibleClassTypes.Length" data-student="@Json.Encode(Model)">
     <a onclick="RegisterApp.editStudent( $(this).closest('td').data('student') )">@Model.FullName</a>
-    <a class="btn btn-xs btn-default pull-right" onclick="RegisterApp.registerStudent( $(this).closest('td').data('student') )">Register</a>
+    <a class="btn btn-xs btn-default pull-right" onclick="RegisterApp.registerStudent( $(this).closest('tr').data('register') )">Register</a>
     <br />
-    <span>@($"Age {Model.Age} Phone {Model.Student.Phone}")</span>
+    <span>@($"Age {Model.Age} Ph: {Model.Student.Phone}")</span>
 </td>

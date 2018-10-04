@@ -1,0 +1,36 @@
+﻿@model FestivalMVC.Models.Enroll
+
+<td>
+    @if (!(Model.LastClassAbbr is null))
+    {
+        <abbr>@Model.LastClassAbbr</abbr> @Html.Raw(Stars(Model.LastAwardRating))
+        if (Model.ConsecutiveSuperior > 0)
+        {
+            <span class="badge">@Model.ConsecutiveSuperior</span>
+        }
+        <b class="small">@Model.AccumulatedPoints</b>
+    }
+</td>
+<td name="@Model.ClassType" class="text-center">@Html.Raw(RegisterStyle(Model.ClassAbbr, @Model.Status))</td>
+
+@using System.Text
+@{
+
+    string Stars(char rating)
+    {
+        int numStars = "FGES".IndexOf(rating);
+
+        var sb = new StringBuilder("", 200);
+        for (var j = 0; j <= numStars; j++)
+        {
+            sb.Append("<span class='glyphicon glyphicon-star'></span>");
+        }
+
+        return sb.ToString();
+    }
+    string RegisterStyle(string abbr, char status)
+    {
+        string style = status == '-' ? "default" : "warning";
+        return "<span class=\"label label-" + style + "\">" + (abbr ?? "") + "</span>";
+    }
+}
