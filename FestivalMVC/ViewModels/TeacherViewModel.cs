@@ -29,13 +29,16 @@ namespace FestivalMVC.ViewModels
                                     where e.Student == p.Id
                                     select e
                           let canDelete = !(from e in ens
-                                            where "R-".IndexOf(e.Status) != 0 //must have already paid
+                                            where "-".IndexOf(e.Status) < 0 //must have already paid
                                             select e).Any()
+                          let canRegister= (from e in ens
+                                             where "-".IndexOf(e.Status) == 0 
+                                             select e).Any()
                           orderby p.LastName, p.FirstName
                           select new FullStudentViewModel
                           {
                               StudentVM =
-                            new StudentViewModel { Student = p, CanDelete = canDelete, CanRegister = eventOpen, PossibleClassTypes = eventModel.ClassTypes },
+                            new StudentViewModel { Student = p, CanDelete = canDelete, CanRegister = eventOpen && canRegister, PossibleClassTypes = eventModel.ClassTypes },
                               Enrolls = ens.ToArray()
                           };
 
@@ -89,7 +92,9 @@ namespace FestivalMVC.ViewModels
             var registered = new Registered
             {
                 Student = StudentVM.Student.Id,
-                ClassType = this.StudentVM.PossibleClassTypes[0]
+                ClassType = this.StudentVM.PossibleClassTypes[0],
+                Status = '-',
+                Status2='-'
             };
 
             if (GetEnroll(registered.ClassType, out var enroll))

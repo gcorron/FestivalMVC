@@ -115,6 +115,7 @@
     <Build Include="dbo\Stored Procedures\TransferStudent.sql" />
     <Build Include="dbo\Stored Procedures\RemoveStudentFromTeacher.sql" />
     <Build Include="dbo\Views\EntryView.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateEntryPaid.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

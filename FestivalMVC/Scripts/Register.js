@@ -23,7 +23,13 @@ var RegisterApp = (function () {
             var $td = $tr.children('[rowspan]');
             var fullName=$td.data('student').FullName;
             newRegister.FullName = fullName;
+
+            FestivalLib.$formElt('register', 'ClassAbbr').attr('disabled', register.Status !== '-');
+            FestivalLib.$formElt('register', 'ClassAbbr2').attr('disabled', register.Status2 !== '-');
+
+
             FestivalLib.popupForm('register', newRegister, false);
+
         },
 
         editStudent: function (student) {
@@ -70,6 +76,9 @@ var RegisterApp = (function () {
             register.ClassType = $(elt).attr('data-classType');
             register.ClassAbbr = elt.value || '';
             FestivalLib.postAjax('/Teacher/UpdateEntry', register, false, onUpdateEntrySuccess, onEntryFormFail);
+        },
+        payRegistration: function () {
+            FestivalLib.postAjax('/Teacher/PayRegistration', { amountDue: 0.00 }, false, onPayRegistrationSuccess, FestivalLib.onAjaxFailure);
         }
     };
 
@@ -127,6 +136,24 @@ var RegisterApp = (function () {
         FestivalLib.ajaxFormFailure('register', response);
     }
 
+    function onPayRegistrationSuccess(payreg) {
+        if (payreg.Message === '?') {
+            if (confirm('Process payment of $' + payreg.AmountDue + ' for ' + payreg.Entries + ' entries?')) {
+
+
+                FestivalLib.postAjax('/Teacher/PayRegistration', { amountDue: payreg.AmountDue }, false, onPayRegistrationSuccess, FestivalLib.onAjaxFailure);
+            }
+        }
+        else {
+            $('#infoModal').on('click', '.btn, .close', function () {
+                 window.location.reload();
+            });
+
+            FestivalLib.showInfoModal('Payment Transaction', payreg.Message);
+            
+        }
+    }
+    
     function Student() {
         this.Id = 0;
         this.Teacher = 0;

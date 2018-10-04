@@ -28,8 +28,13 @@
 
     <div class="col-sm-6">
         <div class="well well-sm">
-            <a class="btn btn-sm btn-primary" onclick="RegisterApp.editStudent(null)">Add Student</a>
-            <a class="btn btn-sm btn-warning pull-right" onclick="RegisterApp.payRegistration()">Pay</a>
+
+            @{if (!closed)
+                {
+                    <a class="btn btn-sm btn-primary" onclick="RegisterApp.editStudent(null)">Add Student</a>
+                    <a class="btn btn-sm btn-warning pull-right" onclick="RegisterApp.payRegistration()">Pay</a>
+                }
+            }
 
             <table class="table table-bordered table-responsive table-striped table-condensed">
                 <thead>
@@ -54,7 +59,7 @@
                             {
                                 <tr>
                                     @{student.GetEnroll(classTypes[1], out enroll);
-                                      Html.RenderPartial("_Enroll", enroll);}
+                                        Html.RenderPartial("_Enroll", enroll);}
                                 </tr>
                             }
                         }
@@ -166,7 +171,23 @@
     </div>
 </form>
 
+<div class="modal fade" id="infoModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a small modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
 
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

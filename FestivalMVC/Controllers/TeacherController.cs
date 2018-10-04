@@ -16,14 +16,12 @@ namespace FestivalMVC.Controllers
         public ActionResult Index()
         {
             var eventsVM = new EventsViewModel(true);
-            if (Session["SelectedEvent"] is null && eventsVM.EventsOpenForRegistrationCount == 1)
+            if (Session["SelectedEvent"] is null && !( ( Session["SelectedEvent"]=eventsVM.GetOnlyEventOpen() ) is null ))
             {
-                Session["SelectedEvent"] = (EventViewModel)eventsVM.Events.First();
                 return RedirectToAction("Register");
             }
             return View(eventsVM);
         }
-
 
         public ActionResult Register(int? id)
         {
@@ -55,13 +53,26 @@ namespace FestivalMVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
+        public ActionResult PayRegistration(decimal amountDue)
+        {
+            var theUser = GetSessionItem<LoginPerson>("TheUser");
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            if (theEvent.ComputeIfOpen() == false)
+                throw new Exception("This event is closed - no payment allowed.");
+
+            var payreg = SQLData.UpdateEntryPaid(theEvent.Event.Id, theUser.Id, amountDue);
+            return Json(payreg);
+        }
+
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
         public ActionResult UpdateEntry(Registration entry)
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
             if (theEvent.ComputeIfOpen() == false)
                 throw new Exception("This event is closed - no changes to registrations allowed.");
-
 
             entry.Teacher = theUser.Id;
             entry.Event = theEvent.Event.Id;

@@ -49,4 +49,11 @@ namespace FestivalMVC.Models
         public char ClassType { get; set; }
         public string ClassAbbr { get; set; }
     }
+
+    public struct PayReg
+    {
+        public int Entries { get; set; }
+        public decimal AmountDue { get; set; }
+        public string Message { get; set; }
+    }
 }

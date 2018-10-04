@@ -11,6 +11,14 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static PayReg UpdateEntryPaid(int ev, int teacher, decimal totalAmt)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.QuerySingle<PayReg>("UpdateEntryPaid", new { ev, teacher, totalAmt}, commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public static Registration UpdateEntry(Registration entry)
         {
             using (IDbConnection connection = GetDBConnection())
