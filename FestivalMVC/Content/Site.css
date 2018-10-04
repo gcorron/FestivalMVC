@@ -80,5 +80,19 @@ dl {
 }
 
 .table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td {
-    padding: 5px;
+    padding: 3px;
+    height:25px;
 }
+
+.table-condensed span {
+    height:15px;
+    overflow:hidden;
+    margin:0px;
+}
+
+.label-fixed {
+    min-width: 50px;
+    display: inline-block;
+}
+
+

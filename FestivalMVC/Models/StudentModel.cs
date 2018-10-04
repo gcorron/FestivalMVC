@@ -48,7 +48,5 @@ namespace FestivalMVC.Models
         public int Student { get; set; }
         public char ClassType { get; set; }
         public string ClassAbbr { get; set; }
-        public char ClassType2 { get; set; }
-        public string ClassAbbr2 { get; set; }
     }
 }

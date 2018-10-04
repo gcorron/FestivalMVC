@@ -59,10 +59,13 @@ namespace FestivalMVC.Controllers
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            if (theEvent.ComputeIfOpen() == false)
+                throw new Exception("This event is closed - no changes to registrations allowed.");
+
 
             entry.Teacher = theUser.Id;
             entry.Event = theEvent.Event.Id;
-            Registered result=SQLData.UpdateEntry(entry);
+            Registration result=SQLData.UpdateEntry(entry);
             return Json(result);
         }
 

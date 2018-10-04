@@ -11,11 +11,11 @@ namespace FestivalMVC
     public class SQLData
     {
 
-        public static Registered UpdateEntry(Registration entry)
+        public static Registration UpdateEntry(Registration entry)
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                return connection.QuerySingle<Registered>("UpdateEntry", entry, commandType: CommandType.StoredProcedure);
+                return connection.QuerySingle<Registration>("UpdateEntry", entry, commandType: CommandType.StoredProcedure);
             }
         }
 

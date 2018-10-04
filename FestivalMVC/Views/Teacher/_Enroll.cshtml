@@ -3,15 +3,15 @@
 <td>
     @if (!(Model.LastClassAbbr is null))
     {
-        <abbr>@Model.LastClassAbbr</abbr> @Html.Raw(Stars(Model.LastAwardRating))
+        <b>@Model.LastClassAbbr</b> @Html.Raw(Stars(Model.LastAwardRating))
         if (Model.ConsecutiveSuperior > 0)
         {
-            <span class="badge">@Model.ConsecutiveSuperior</span>
+            @($" X {Model.ConsecutiveSuperior}")
         }
-        <b class="small">@Model.AccumulatedPoints</b>
+        <b class="small pull-right">@Model.AccumulatedPoints</b>
     }
 </td>
-<td name="@Model.ClassType" class="text-center">@Html.Raw(RegisterStyle(Model.ClassAbbr, @Model.Status))</td>
+<td name="@($"{Model.ClassType}{Model.Student}")" class="text-center">@Html.Raw(RegisterStyle(Model.ClassAbbr, @Model.Status))</td>
 
 @using System.Text
 @{
@@ -31,6 +31,6 @@
     string RegisterStyle(string abbr, char status)
     {
         string style = status == '-' ? "default" : "warning";
-        return "<span class=\"label label-" + style + "\">" + (abbr ?? "") + "</span>";
+        return "<span class=\"label label-fixed label-" + style + "\">" + (abbr ?? "") + "</span>";
     }
 }

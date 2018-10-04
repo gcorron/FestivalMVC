@@ -80,7 +80,7 @@ var FestivalLib = (function () {
 
                 if (name in o) {
 
-                    var val = o[name];
+                    var val = o[name] || '';
 
                     if (control.type === 'checkbox') {
                         if (isMulti)
@@ -99,7 +99,7 @@ var FestivalLib = (function () {
         },
         popupForm(formNamePart, o, canDelete, optionalFields) {
             FestivalLib.populateForm(formNamePart, o);
-            $(formErrorDiv(formNamePart)).hide();
+            $(FestivalLib.formErrorDiv(formNamePart)).hide();
 
             FestivalLib.$formElt(formNamePart, 'submitError').hide();
 
@@ -167,7 +167,7 @@ var FestivalLib = (function () {
         },
 
         ajaxFormFailure: function (formNamePart, response) {
-            var div = formErrorDiv(formNamePart);
+            var div = FestivalLib.formErrorDiv(formNamePart);
             var span = $(div).find('span');
             $(span).text(FestivalLib.parseResponse(response));
             $(div).show();
@@ -243,6 +243,9 @@ var FestivalLib = (function () {
 
         $formElt: function (formNamePart, name) {
             return $('#' + formNamePart + 'Form [name="' + name + '"]');
+        },
+        formErrorDiv: function (formNamePart) {
+            return $('#' + formNamePart + 'Form div[name=submitError]');
         }
     };
 
@@ -257,7 +260,4 @@ var FestivalLib = (function () {
         return value;
     }
 
-    function formErrorDiv(formNamePart) {
-        return $('#' + formNamePart + 'Form div[name=submitError]')[0];
-    }
 })();

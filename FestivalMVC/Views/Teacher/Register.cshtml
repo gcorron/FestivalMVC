@@ -17,9 +17,11 @@
         @{Html.RenderPartial("_Event", Model.EventVM);}
     </div>
 
-    @{ if (!Model.EventVM.ComputeIfOpen())
+    @{ bool closed = false;
+        if (!Model.EventVM.ComputeIfOpen())
         {
-            <h3>Registration is closed. No registratoins or changes will be accpeted.</h3>
+            closed = true;
+            <h3>Registration is closed. No registrations or changes will be accepted.</h3>
         }
 
     }
@@ -119,11 +121,11 @@
 
 <form id="registerForm">
     <div class="modal fade" id="registerModal" role="dialog">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="well">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-12">
                             <div class="form-group">
                                 <label class="control-label" for="FullName">Student Name:</label>
                                 <input name="FullName" class="form-control" readonly></input>
@@ -141,20 +143,17 @@
                                     <input name="@fieldTypeName" class="form-control" type="hidden" value="@classType" />
                                     <div class="form-group">
                                         <label class="control-label" for="@fieldAbbrName">@Model.EventVM.EventTypeDesc(classType)</label>
-                                        <select class="form-control" name="@fieldAbbrName" data-classType="@classType">
-                                            <option value="">Not Entering</option>
+                                        <select class="form-control" name="@fieldAbbrName" data-classType="@classType" onchange="RegisterApp.updateEntry(this)">
+                                            <option value="">( Not Entering )</option>
                                             @foreach (var theType in Model.ClassAbbrsForClassType(classType))
                                             {
-                                                <option value=@theType.ClassAbbr>@theType.ClassAbbr></option>
+                                                <option value=@theType.ClassAbbr>@theType.ClassAbbr</option>
                                             }
                                         </select>
                                     </div>
                                 }}
-                        </div>
-                        <div class="col-sm-4">
                             <div class="form-group">
-                                <a class="btn btn-default" onclick="RegisterApp.updateEntry()">Save</a>
-                                <a class="btn btn-default" onclick="$('#registerModal').modal('hide')" title="Close">Cancel</a>
+                                <a class="btn btn-default" onclick="$('#registerModal').modal('hide')" title="Close">Close</a>
                             </div>
                             <div class="alert alert-danger" name="submitError">
                                 <strong>Server error! </strong><span></span>

@@ -61,9 +61,14 @@ var RegisterApp = (function () {
             FestivalLib.postAjax('/Teacher/UpdateStudent', 'student', true, onUpdateStudentSuccess, onStudentFormFail);
         },
 
-        updateEntry: function () {
-            var register = FestivalLib.collectFormData('register',false);
-            delete register.FullName;
+        updateEntry: function (elt) {
+            FestivalLib.formErrorDiv('register').hide();
+            var register = {};
+            register.Event = 0; //server supplies these two
+            register.Teacher = 0;
+            register.Student = FestivalLib.$formElt('register', 'Student').val();
+            register.ClassType = $(elt).attr('data-classType');
+            register.ClassAbbr = elt.value || '';
             FestivalLib.postAjax('/Teacher/UpdateEntry', register, false, onUpdateEntrySuccess, onEntryFormFail);
         }
     };
@@ -108,19 +113,10 @@ var RegisterApp = (function () {
         $('#studentModal').modal('hide');
     }
 
-    function onUpdateEntrySuccess(registered) {
-        
-        FestivalLib.$tableRow('students', registered.Student).data('register',registered);
-
-        //render changes only if not paid (those don't change)
-        var $tr = FestivalLib.$tableRow('students', registered.Student);
-
-        if (registered.Status==='-') //not yet paid, could have been changed
-            $tr.find('td[name="' + registered.ClassType + '"]').find('span').text(registered.ClassAbbr);
-        if (registered.ClassType2 !== null && registered.Status2 === '-')
-            $tr.find('td[name="' + registered.ClassType2 + '"]').find('span').text(registered.ClassAbbr2);
-
-        $('#registerModal').modal('hide');
+    function onUpdateEntrySuccess(register) {
+        var name = register.ClassType + register.Student;
+        var $span = $('#students td[name="' + name + '"]').find('span');
+        $span.text(register.ClassAbbr);
     }
 
     function onStudentFormFail(response) {

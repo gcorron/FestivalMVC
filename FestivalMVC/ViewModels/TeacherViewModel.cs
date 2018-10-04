@@ -22,6 +22,7 @@ namespace FestivalMVC.ViewModels
                 out _abbrs);
 
             EventVM = new EventViewModel(eventModel, instrumentName, false);
+            var eventOpen = EventVM.ComputeIfOpen();
 
             AllStudents = from p in students
                           let ens = from e in enrolls
@@ -34,7 +35,7 @@ namespace FestivalMVC.ViewModels
                           select new FullStudentViewModel
                           {
                               StudentVM =
-                            new StudentViewModel { Student = p, CanDelete = canDelete, PossibleClassTypes = eventModel.ClassTypes },
+                            new StudentViewModel { Student = p, CanDelete = canDelete, CanRegister = eventOpen, PossibleClassTypes = eventModel.ClassTypes },
                               Enrolls = ens.ToArray()
                           };
 
@@ -56,6 +57,7 @@ namespace FestivalMVC.ViewModels
         public string FullName { get => $"{Student.FirstName} {Student.LastName}"; }
         public string Age { get => (Math.Truncate(DateTime.Now.Subtract(Student.BirthDate).Days / 365.25d)).ToString(); }
         public bool CanDelete { get; set; }
+        public bool CanRegister { get; set; }
         public string PossibleClassTypes { get; set; }
     }
 
@@ -70,8 +72,16 @@ namespace FestivalMVC.ViewModels
             enroll = (from en in Enrolls
                       where en.ClassType == classType
                       select en).SingleOrDefault<Enroll>();
+            bool found = (enroll.ClassType == classType);
 
-            return (enroll.ClassType == classType);
+            if (!found)
+            {
+                enroll.ClassType = classType; // in case default returned!
+                enroll.Student = StudentVM.Student.Id; // ditto
+                enroll.Status = '-';
+            }
+
+            return found;
         }
 
         public Registered GetRegistered()
