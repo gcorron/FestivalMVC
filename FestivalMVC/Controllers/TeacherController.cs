@@ -16,7 +16,7 @@ namespace FestivalMVC.Controllers
         public ActionResult Index()
         {
             var eventsVM = new EventsViewModel(true);
-            if (Session["SelectedEvent"] is null && !( ( Session["SelectedEvent"]=eventsVM.GetOnlyEventOpen() ) is null ))
+            if (Session["SelectedEvent"] is null && !((Session["SelectedEvent"] = eventsVM.GetOnlyEventOpen()) is null))
             {
                 return RedirectToAction("Register");
             }
@@ -48,7 +48,7 @@ namespace FestivalMVC.Controllers
                 throw new Exception("This event does not belong to your location.");
             }
 
-            return View(new TeacherRegisterViewModel(theEvent.Event.Id,theUser.Id));
+            return View(new TeacherRegisterViewModel(theEvent.Event.Id, theUser.Id));
         }
 
         [ValidateAntiForgeryToken]
@@ -76,7 +76,7 @@ namespace FestivalMVC.Controllers
 
             entry.Teacher = theUser.Id;
             entry.Event = theEvent.Event.Id;
-            Registration result=SQLData.UpdateEntry(entry);
+            Registration result = SQLData.UpdateEntry(entry);
             return Json(result);
         }
 
@@ -86,14 +86,14 @@ namespace FestivalMVC.Controllers
         public ActionResult RemoveStudent(Student student)
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");
-            SQLData.RemoveStudentFromTeacher(student.Id,theUser.Id);
+            SQLData.RemoveStudentFromTeacher(student.Id, theUser.Id);
             return Json(0);
         }
 
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult UpdateStudent(Student student )
+        public ActionResult UpdateStudent(Student student)
         {
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
             if (!theEvent.ComputeIfOpen())
@@ -111,7 +111,14 @@ namespace FestivalMVC.Controllers
             int id = SQLData.UpdateStudent(student);
             if (student.Id == 0)
                 student.Id = id;
-            return PartialView("_Student", new StudentViewModel { Student = student });
+            return PartialView("_Student", new StudentViewModel
+            {
+                Student = student,
+                PossibleClassTypes = theEvent.Event.ClassTypes,
+                CanDelete = true, //client script will change if necessary
+                CanRegister=true  // ditto
+            }
+            );
         }
 
 

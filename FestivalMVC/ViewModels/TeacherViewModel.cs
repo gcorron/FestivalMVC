@@ -23,17 +23,18 @@ namespace FestivalMVC.ViewModels
 
             EventVM = new EventViewModel(eventModel, instrumentName, false);
             var eventOpen = EventVM.ComputeIfOpen();
+            var possibleEnrolls = EventVM.Event.ClassTypes.Length;
 
             AllStudents = from p in students
                           let ens = from e in enrolls
                                     where e.Student == p.Id
                                     select e
                           let canDelete = !(from e in ens
-                                            where "-".IndexOf(e.Status) < 0 //must have already paid
+                                            where e.Status != '-' //must have already paid
                                             select e).Any()
-                          let canRegister= (from e in ens
-                                             where "-".IndexOf(e.Status) == 0 
-                                             select e).Any()
+                          let canRegister = (from e in ens
+                                              where e.Status != '-'
+                                              select e).Count() < possibleEnrolls
                           orderby p.LastName, p.FirstName
                           select new FullStudentViewModel
                           {

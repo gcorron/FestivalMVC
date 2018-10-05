@@ -33,14 +33,13 @@ var RegisterApp = (function () {
         },
 
         editStudent: function (student) {
-            var canDelete;
             if (student === null) {
                 student = new Student();
-                canDelete = false;
+                var canDelete = false;
             }
             else {
-                canDelete = student.CanDelete;
                 student = student.Student; //student data contained in ViewModel
+                canDelete = student.CanDelete;
             }
             FestivalLib.popupForm('student', student, canDelete);
         },
@@ -105,13 +104,17 @@ var RegisterApp = (function () {
         }
         else {
             var $removetd = $('#students tr[name="' + removeId + '"]').find('td[rowspan]');
-            //patch-in existing CanDelete property
+            //patch-in existing view model properties, remove register button if not allowed
+
 
             student = $removetd.data('student');
             var canDelete = student.CanDelete;
-
+            var canRegister = student.CanRegister;
             student = $elt.data('student');
             student.CanDelete = canDelete;
+            student.CanRegister = canRegister;
+            if (!canRegister)
+                $elt.find('a.btn').remove();
             $elt.data('student', student);
 
             $removetd.replaceWith($elt);
@@ -139,8 +142,6 @@ var RegisterApp = (function () {
     function onPayRegistrationSuccess(payreg) {
         if (payreg.Message === '?') {
             if (confirm('Process payment of $' + payreg.AmountDue + ' for ' + payreg.Entries + ' entries?')) {
-
-
                 FestivalLib.postAjax('/Teacher/PayRegistration', { amountDue: payreg.AmountDue }, false, onPayRegistrationSuccess, FestivalLib.onAjaxFailure);
             }
         }

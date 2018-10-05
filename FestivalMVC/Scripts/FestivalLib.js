@@ -190,7 +190,7 @@ var FestivalLib = (function () {
             var table, rows, switching, i, shouldSwitch;
             var personx, persony, compared;
 
-            isStudent = (rowName = 'student');
+            isStudent = (rowName === 'student');
             table = document.getElementById(rowName + 's');
             if ($(table).find('tr [rowspan]').length > 0)
                 rowInc = 2;

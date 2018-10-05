@@ -179,6 +179,16 @@ namespace FestivalMVC.ViewModels
 
         }
 
+        public int EventsOpenForRegistrationCount
+        {
+            get
+            {
+                return (from ev in Events
+                        where ev.ComputeIfOpen()
+                        select ev).Count();
+
+            }
+        }
 
         public Location Location { get => _location; }
 
