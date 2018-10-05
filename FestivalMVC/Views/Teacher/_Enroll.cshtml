@@ -1,17 +1,19 @@
-﻿@model FestivalMVC.Models.Enroll
+﻿@model FestivalMVC.ViewModels.EnrollVM
 
 <td>
-    @if (!(Model.LastClassAbbr is null))
+    @if (!(Model.History.ClassAbbr is null))
     {
-        <b>@Model.LastClassAbbr</b> @Html.Raw(Stars(Model.LastAwardRating))
-        if (Model.ConsecutiveSuperior > 0)
+        <b>@Model.History.ClassAbbr</b> @Html.Raw(Stars(Model.History.AwardRating))
+        if (Model.History.ConsecutiveSuperior > 0)
         {
-            @($" X {Model.ConsecutiveSuperior}")
+            @($" X {Model.History.ConsecutiveSuperior}")
         }
-        <b class="small pull-right">@Model.AccumulatedPoints</b>
+        <b class="small pull-right">@Model.History.AccumulatedPoints</b>
     }
 </td>
-<td name="@($"{Model.ClassType}{Model.Student}")" class="text-center">@Html.Raw(RegisterStyle(Model.ClassAbbr, @Model.Status))</td>
+<td name="@($"{Model.Registered.ClassType}{Model.Registered.Student}")" class="text-center">
+    @Html.Raw(RegisterStyle(Model.Registered.ClassAbbr, @Model.Registered.Status))
+</td>
 
 @using System.Text
 @{

@@ -7,16 +7,20 @@ using FestivalMVC.ViewModels;
 
 namespace FestivalMVC.ViewModels
 {
+
     public class TeacherRegisterViewModel
     {
-        readonly IEnumerable<ClassAbbreviation> _abbrs;
+        private readonly Dictionary<int, History[]> _history;
+        private readonly Dictionary<int, Registered[]> _registered;
+        private readonly IEnumerable<ClassAbbreviation> _abbrs;
 
         //constructor
         public TeacherRegisterViewModel(int ev, int teacher)
         {
             SQLData.SelectDataForTeacherEvent(ev, teacher,
                 out IEnumerable<Student> students,
-                out IEnumerable<Enroll> enrolls,
+                out IEnumerable<History> history,
+                out IEnumerable<Registered> registered,
                 out Event eventModel,
                 out string instrumentName,
                 out _abbrs);
@@ -25,25 +29,36 @@ namespace FestivalMVC.ViewModels
             var eventOpen = EventVM.ComputeIfOpen();
             var possibleEnrolls = EventVM.Event.ClassTypes.Length;
 
+            _history = (from h in history
+                        group h by h.Student into g
+                        select new
+                        {
+                            student = g.Key,
+                            historyArray = g.Select(i => i) as History[]
+                        }
+                        ).ToDictionary(d => d.student, d => d.historyArray);
+
+
+            _registered = (from r in registered
+                           group r by r.Student into g
+                           select new
+                           {
+                               student = g.Key,
+                               registeredArray = g.Select(i => i) as Registered[]
+                           }
+                           ).ToDictionary(d => d.student, d => d.registeredArray);
+
             AllStudents = from p in students
-                          let ens = from e in enrolls
-                                    where e.Student == p.Id
-                                    select e
-                          let canDelete = !(from e in ens
-                                            where e.Status != '-' //must have already paid
-                                            select e).Any()
-                          let canRegister = (from e in ens
-                                              where e.Status != '-'
-                                              select e).Count() < possibleEnrolls
                           orderby p.LastName, p.FirstName
                           select new FullStudentViewModel
                           {
-                              StudentVM =
-                            new StudentViewModel { Student = p, CanDelete = canDelete, CanRegister = eventOpen && canRegister, PossibleClassTypes = eventModel.ClassTypes },
-                              Enrolls = ens.ToArray()
+                              StudentVM = new StudentViewModel { Student = p },
+                              History = _history[p.Id],
+                              Registered = _registered[p.Id]
                           };
 
         }
+
 
         public EventViewModel EventVM { get; }
         public IEnumerable<FullStudentViewModel> AllStudents { get; set; }
@@ -60,59 +75,52 @@ namespace FestivalMVC.ViewModels
         public Student Student { get; set; }
         public string FullName { get => $"{Student.FirstName} {Student.LastName}"; }
         public string Age { get => (Math.Truncate(DateTime.Now.Subtract(Student.BirthDate).Days / 365.25d)).ToString(); }
-        public bool CanDelete { get; set; }
-        public bool CanRegister { get; set; }
-        public string PossibleClassTypes { get; set; }
+    }
+
+    public struct EnrollVM
+    {
+        public History History { get; set; }
+        public Registered Registered { get; set; }
     }
 
     public struct FullStudentViewModel
     {
         public StudentViewModel StudentVM { get; set; }
-        public Enroll[] Enrolls { get; set; }
+        public History[] History { get; set; }
+        public Registered[] Registered { get; set; }
 
-        // returns true if valid enroll record in out variable
-        public bool GetEnroll(char classType, out Enroll enroll)
+        public EnrollVM GetEnroll(char classType)
         {
-            enroll = (from en in Enrolls
-                      where en.ClassType == classType
-                      select en).SingleOrDefault<Enroll>();
-            bool found = (enroll.ClassType == classType);
+            var history = (from h in History
+                           where h.ClassType == classType
+                           select h).SingleOrDefault<History>();
 
-            if (!found)
+            var registered = (from r in Registered
+                          where r.ClassType == classType
+                          select r).SingleOrDefault<Registered>();
+            
+            if (registered.Student==0) //view uses empty registration
             {
-                enroll.ClassType = classType; // in case default returned!
-                enroll.Student = StudentVM.Student.Id; // ditto
-                enroll.Status = '-';
+                registered.Student = StudentVM.Student.Id;
+                registered.ClassType = classType;
+                registered.Status = '-';
             }
 
-            return found;
-        }
-
-        public Registered GetRegistered()
-        {
-            var registered = new Registered
+            return new EnrollVM
             {
-                Student = StudentVM.Student.Id,
-                ClassType = this.StudentVM.PossibleClassTypes[0],
-                Status = '-',
-                Status2='-'
+                History = history,
+                Registered = registered
             };
 
-            if (GetEnroll(registered.ClassType, out var enroll))
+        }
+
+        public Registered[] AllRegistered
+        {
+            get
             {
-                registered.ClassAbbr = enroll.ClassAbbr;
-                registered.Status = enroll.Status;
+                return (from r in Registered
+                        select r).ToArray();
             }
-            if (this.StudentVM.PossibleClassTypes.Length > 1)
-            {
-                registered.ClassType2 = this.StudentVM.PossibleClassTypes[1];
-                if (GetEnroll(registered.ClassType2, out enroll))
-                {
-                    registered.ClassAbbr2 = enroll.ClassAbbr;
-                    registered.Status2 = enroll.Status;
-                }
-            }
-            return registered;
         }
     }
 }

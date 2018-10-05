@@ -45,22 +45,25 @@
                     </tr>
                 </thead>
                 <tbody id="students">
+
                     @{
+                        var classTypes = Model.EventVM.Event.ClassTypes;
                         foreach (var student in Model.AllStudents)
                         {
-                            var classTypes = student.StudentVM.PossibleClassTypes;
-                            var registered = student.GetRegistered();
-                            <tr name="@student.StudentVM.Student.Id" data-register="@Json.Encode(registered)">
-                                @{Html.RenderPartial("_Student", student.StudentVM);
-                                    student.GetEnroll(classTypes[0], out var enroll);
-                                    Html.RenderPartial("_Enroll", enroll);}
+                            <tr name="@student.StudentVM.Student.Id"
+                                data-student="@Json.Encode(student.StudentVM.Student)"
+                                data-register="@Json.Encode(student.AllRegistered)">
+                                <td rowspan="@classTypes.Length">
+                                    @{Html.RenderPartial("_Student", student.StudentVM);}
+                                </td>
+                                @{Html.RenderPartial("_Enroll", student.GetEnroll(classTypes[0]));}
                             </tr>
-                            if (classTypes.Length > 1)
-                            {
-                                <tr>
-                                    @{student.GetEnroll(classTypes[1], out enroll);
-                                        Html.RenderPartial("_Enroll", enroll);}
-                                </tr>
+                            @{ if (classTypes.Length > 1)
+                                {
+                                    <tr>
+                                        @{Html.RenderPartial("_Enroll", student.GetEnroll(classTypes[1]))};
+                                    </tr>
+                                                                                            }
                             }
                         }
                     }

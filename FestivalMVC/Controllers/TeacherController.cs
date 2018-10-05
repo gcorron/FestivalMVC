@@ -67,7 +67,7 @@ namespace FestivalMVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult UpdateEntry(Registration entry)
+        public ActionResult UpdateEntry(RegisteredDB entry)
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
@@ -76,7 +76,7 @@ namespace FestivalMVC.Controllers
 
             entry.Teacher = theUser.Id;
             entry.Event = theEvent.Event.Id;
-            Registration result = SQLData.UpdateEntry(entry);
+            RegisteredDB result = SQLData.UpdateEntry(entry);
             return Json(result);
         }
 
@@ -105,24 +105,12 @@ namespace FestivalMVC.Controllers
                 throw new Exception("This event does not belong to your location.");
             }
 
-
-            student.Teacher = theUser.Id;
-            student.Instrument = theEvent.Event.Instrument;
-            int id = SQLData.UpdateStudent(student);
+            var studentDb = new StudentDB(student, theEvent.Event.Instrument, theUser.Id);
+            int id = SQLData.UpdateStudent(studentDb);
             if (student.Id == 0)
                 student.Id = id;
-            return PartialView("_Student", new StudentViewModel
-            {
-                Student = student,
-                PossibleClassTypes = theEvent.Event.ClassTypes,
-                CanDelete = true, //client script will change if necessary
-                CanRegister=true  // ditto
-            }
-            );
+            return PartialView("_Student", new StudentViewModel {Student = student} );
         }
-
-
-
 
         //catch all unhandled exceptions that are thrown within scope of this controller
         protected override void OnException(ExceptionContext filterContext)

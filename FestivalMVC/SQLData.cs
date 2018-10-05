@@ -19,11 +19,11 @@ namespace FestivalMVC
             }
         }
 
-        public static Registration UpdateEntry(Registration entry)
+        public static RegisteredDB UpdateEntry(RegisteredDB entry)
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                return connection.QuerySingle<Registration>("UpdateEntry", entry, commandType: CommandType.StoredProcedure);
+                return connection.QuerySingle<RegisteredDB>("UpdateEntry", entry, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -35,7 +35,7 @@ namespace FestivalMVC
             }
         }
 
-        public static int UpdateStudent(Student student)
+        public static int UpdateStudent(StudentDB student)
         {
             using (IDbConnection connection = GetDBConnection())
             {
@@ -44,7 +44,7 @@ namespace FestivalMVC
         }
 
         public static void SelectDataForTeacherEvent(int ev, int teacher, out IEnumerable<Student> students
-            , out IEnumerable<Enroll> enrolls, out Event eventModel, out string instrumentName
+            , out IEnumerable<History> history, out IEnumerable<Registered> registered, out Event eventModel, out string instrumentName
             , out IEnumerable<ClassAbbreviation> classAbbrs)
         {
             using (IDbConnection connection = GetDBConnection())
@@ -52,7 +52,8 @@ namespace FestivalMVC
                 using (var multi = connection.QueryMultiple("SelectDataForTeacherEvent", new { ev, teacher }, commandType: CommandType.StoredProcedure))
                 {
                     students = multi.Read<Student>();
-                    enrolls = multi.Read<Enroll>();
+                    history = multi.Read<History>();
+                    registered = multi.Read<Registered>();
                     eventModel = multi.ReadSingle<Event>();
                     instrumentName = multi.ReadSingle<string>();
                     classAbbrs = multi.Read<ClassAbbreviation>();
