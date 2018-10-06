@@ -11,11 +11,39 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        #region TeacherEntry
+        
+        public static void SelectEntryDetails(int ev, int teacher,
+            out IEnumerable<StudentName> studentNames,
+            out IEnumerable<ClassTypeData> classTypes,
+            out IEnumerable<EntryBase> entries,
+            out IEnumerable<EntryDetails> entryDetails,
+            out IEnumerable<Piece> pieces,
+            out IEnumerable<ComposerName> composers)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                using (var multi = connection.QueryMultiple("SelectEntryDetails", new { ev, teacher }, commandType: CommandType.StoredProcedure))
+                {
+                    studentNames = multi.Read<StudentName>();
+                    classTypes = multi.Read<ClassTypeData>();
+                    entries = multi.Read<EntryBase>();
+                    entryDetails = multi.Read<EntryDetails>();
+                    pieces = multi.Read<Piece>();
+                    composers = multi.Read<ComposerName>();
+                }
+            }
+
+        }
+        #endregion
+
+
+        #region TeacherRegister
         public static PayReg UpdateEntryPaid(int ev, int teacher, decimal totalAmt)
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                return connection.QuerySingle<PayReg>("UpdateEntryPaid", new { ev, teacher, totalAmt}, commandType: CommandType.StoredProcedure);
+                return connection.QuerySingle<PayReg>("UpdateEntryPaid", new { ev, teacher, totalAmt }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -57,6 +85,37 @@ namespace FestivalMVC
                     eventModel = multi.ReadSingle<Event>();
                     instrumentName = multi.ReadSingle<string>();
                     classAbbrs = multi.Read<ClassAbbreviation>();
+                }
+            }
+        }
+
+        public static void SelectEventsForTeacher(int parentLocation, DateTime currentTime, out IEnumerable<Event> events,
+out IEnumerable<Instrum> instruments, out Location location)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                using (var multi = connection.QueryMultiple("SelectEventsForTeacher", new { parentLocation, currentTime }, commandType: CommandType.StoredProcedure))
+                {
+                    events = multi.Read<Event>();
+                    instruments = multi.Read<Instrum>();
+                    location = multi.ReadSingle<Location>();
+                }
+            }
+        }
+
+        #endregion
+
+        #region ChairEvent
+        public static void SelectEventsForDistrict(int locationId, out IEnumerable<Event> events,
+            out IEnumerable<Instrum> instruments, out Location location)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                using (var multi = connection.QueryMultiple("SelectEventsForDistrict", new { location = locationId }, commandType: CommandType.StoredProcedure))
+                {
+                    events = multi.Read<Event>();
+                    instruments = multi.Read<Instrum>();
+                    location = multi.ReadSingle<Location>();
                 }
             }
         }
@@ -111,6 +170,19 @@ namespace FestivalMVC
             }
         }
 
+        public static int UpdateEvent(Event ev)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.QuerySingle<int>("UpdateEvent", ev, commandType: CommandType.StoredProcedure);
+            }
+
+        }
+
+        #endregion
+
+        #region ContactOrLocation
+
         public static void UpdateContactForAccount(ContactForSelf model)
         {
             using (IDbConnection connection = GetDBConnection())
@@ -152,15 +224,6 @@ namespace FestivalMVC
 
         }
 
-        public static int UpdateEvent(Event ev)
-        {
-            using (IDbConnection connection = GetDBConnection())
-            {
-                return connection.QuerySingle<int>("UpdateEvent", ev, commandType: CommandType.StoredProcedure);
-            }
-
-        }
-
         public static void SelectDataForLocation(int location, out IEnumerable<ContactForView> contacts, out IEnumerable<Location> locations)
         {
             using (IDbConnection connection = GetDBConnection())
@@ -173,33 +236,6 @@ namespace FestivalMVC
             }
         }
 
-        public static void SelectEventsForDistrict(int locationId, out IEnumerable<Event> events,
-            out IEnumerable<Instrum> instruments, out Location location)
-        {
-            using (IDbConnection connection = GetDBConnection())
-            {
-                using (var multi = connection.QueryMultiple("SelectEventsForDistrict", new { location = locationId }, commandType: CommandType.StoredProcedure))
-                {
-                    events = multi.Read<Event>();
-                    instruments = multi.Read<Instrum>();
-                    location = multi.ReadSingle<Location>();
-                }
-            }
-        }
-
-        public static void SelectEventsForTeacher(int parentLocation, DateTime currentTime, out IEnumerable<Event> events,
-            out IEnumerable<Instrum> instruments, out Location location)
-        {
-            using (IDbConnection connection = GetDBConnection())
-            {
-                using (var multi = connection.QueryMultiple("SelectEventsForTeacher", new { parentLocation, currentTime }, commandType: CommandType.StoredProcedure))
-                {
-                    events = multi.Read<Event>();
-                    instruments = multi.Read<Instrum>();
-                    location = multi.ReadSingle<Location>();
-                }
-            }
-        }
 
         public static LoginPerson GetLoginPerson(string userName)
         {
@@ -217,6 +253,7 @@ namespace FestivalMVC
             }
 
         }
+        #endregion
 
         public static IDbConnection GetDBConnection()
         {

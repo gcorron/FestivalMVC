@@ -51,6 +51,16 @@ namespace FestivalMVC.Controllers
             return View(new TeacherRegisterViewModel(theEvent.Event.Id, theUser.Id));
         }
 
+        public ActionResult Entries()
+        {
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theUser = GetSessionItem<LoginPerson>("TheUser");
+
+            var EntryViewModel = new EntryViewModel(theEvent.Event.Id, theUser.Id);
+
+            return View(EntryViewModel);
+        }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult PayRegistration(decimal amountDue)

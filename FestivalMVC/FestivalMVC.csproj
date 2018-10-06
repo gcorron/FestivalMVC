@@ -224,6 +224,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\EntryModels.cs" />
     <Compile Include="Models\EventModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Instrument.cs" />
@@ -235,6 +236,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AdminViewModel.cs" />
     <Compile Include="ViewModels\ChairViewModel.cs" />
+    <Compile Include="ViewModels\EntryViewModel.cs" />
     <Compile Include="ViewModels\EventViewModel.cs" />
     <Compile Include="ViewModels\TeacherViewModel.cs" />
   </ItemGroup>
@@ -323,6 +325,7 @@
     <Content Include="Views\Teacher\_Student.cshtml" />
     <Content Include="Views\Teacher\_Enroll.cshtml" />
     <Content Include="Views\Teacher\_FullStudent.cshtml" />
+    <Content Include="Views\Teacher\Entries.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
