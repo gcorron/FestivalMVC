@@ -10,8 +10,6 @@ namespace FestivalMVC.ViewModels
 
     public class TeacherRegisterViewModel
     {
-        private readonly Dictionary<int, History[]> _history;
-        private readonly Dictionary<int, Registered[]> _registered;
         private readonly IEnumerable<ClassAbbreviation> _abbrs;
 
         //constructor
@@ -29,32 +27,18 @@ namespace FestivalMVC.ViewModels
             var eventOpen = EventVM.ComputeIfOpen();
             var possibleEnrolls = EventVM.Event.ClassTypes.Length;
 
-            _history = (from h in history
-                        group h by h.Student into g
-                        select new
-                        {
-                            student = g.Key,
-                            historyArray = g.Select(i => i) as History[]
-                        }
-                        ).ToDictionary(d => d.student, d => d.historyArray);
-
-
-            _registered = (from r in registered
-                           group r by r.Student into g
-                           select new
-                           {
-                               student = g.Key,
-                               registeredArray = g.Select(i => i) as Registered[]
-                           }
-                           ).ToDictionary(d => d.student, d => d.registeredArray);
-
             AllStudents = from p in students
                           orderby p.LastName, p.FirstName
                           select new FullStudentViewModel
                           {
                               StudentVM = new StudentViewModel { Student = p },
-                              History = _history[p.Id],
-                              Registered = _registered[p.Id]
+                              History = from h in history
+                                        where h.Student==p.Id
+                                        select h,
+                              Registered = from r in registered
+                                           where r.Student==p.Id
+                                           select r,
+                              ClassTypes = EventVM.Event.ClassTypes
                           };
 
         }
@@ -83,23 +67,27 @@ namespace FestivalMVC.ViewModels
         public Registered Registered { get; set; }
     }
 
-    public struct FullStudentViewModel
+    public class FullStudentViewModel
     {
         public StudentViewModel StudentVM { get; set; }
-        public History[] History { get; set; }
-        public Registered[] Registered { get; set; }
+        public string ClassTypes { get; set; }
+
+        public IEnumerable<History> History { get; set; }
+        public IEnumerable<Registered> Registered { get; set; }
+
 
         public EnrollVM GetEnroll(char classType)
         {
-            var history = (from h in History
-                           where h.ClassType == classType
-                           select h).SingleOrDefault<History>();
 
-            var registered = (from r in Registered
-                          where r.ClassType == classType
-                          select r).SingleOrDefault<Registered>();
-            
-            if (registered.Student==0) //view uses empty registration
+            History history = (from h in History
+                   where h.ClassType == classType
+                   select h).SingleOrDefault<History>();
+
+            Registered registered = (from r in Registered
+                   where r.ClassType == classType
+                   select r).SingleOrDefault<Registered>();
+
+            if (registered.Student == 0) //view uses empty registration
             {
                 registered.Student = StudentVM.Student.Id;
                 registered.ClassType = classType;

@@ -36,7 +36,7 @@
                 }
             }
 
-            <table class="table table-bordered table-responsive table-striped table-condensed">
+            <table class="table table-bordered table-responsive table-striped table-condensed" data-classTypes="@Json.Encode(Model.EventVM.Event.ClassTypes)">
                 <thead>
                     <tr>
                         <th>Student</th>
@@ -47,24 +47,9 @@
                 <tbody id="students">
 
                     @{
-                        var classTypes = Model.EventVM.Event.ClassTypes;
                         foreach (var student in Model.AllStudents)
                         {
-                            <tr name="@student.StudentVM.Student.Id"
-                                data-student="@Json.Encode(student.StudentVM.Student)"
-                                data-register="@Json.Encode(student.AllRegistered)">
-                                <td rowspan="@classTypes.Length">
-                                    @{Html.RenderPartial("_Student", student.StudentVM);}
-                                </td>
-                                @{Html.RenderPartial("_Enroll", student.GetEnroll(classTypes[0]));}
-                            </tr>
-                            @{ if (classTypes.Length > 1)
-                                {
-                                    <tr>
-                                        @{Html.RenderPartial("_Enroll", student.GetEnroll(classTypes[1]))};
-                                    </tr>
-                                                                                            }
-                            }
+                            Html.RenderPartial("_FullStudent", student);
                         }
                     }
                 </tbody>
@@ -72,7 +57,6 @@
         </div>
     </div>
 </div>
-
 
 <form id="studentForm">
     <div class="modal fade" id="studentModal" role="dialog">
@@ -127,53 +111,51 @@
     </div>
 </form>
 
-<form id="registerForm">
-    <div class="modal fade" id="registerModal" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="well">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label" for="FullName">Student Name:</label>
-                                <input name="FullName" class="form-control" readonly></input>
-                            </div>
-                            <input name="Student" class="form-control" type="hidden" />
-                            <input name="Teacher" class="form-control" type="hidden" value="0" />
-                            <input name="Event" class="form-control" type="hidden" value="0" />
-
-
-                            @{ for (var i = 0; i < Model.EventVM.Event.ClassTypes.Length; i++)
-                                {
-                                    char classType = Model.EventVM.Event.ClassTypes[i];
-                                    string fieldAbbrName = "ClassAbbr" + (i == 0 ? "" : "2");
-                                    string fieldTypeName = "ClassType" + (i == 0 ? "" : "2");
-                                    <input name="@fieldTypeName" class="form-control" type="hidden" value="@classType" />
+@{if (!closed)
+    {
+        <form id="registerForm">
+            <div class="modal fade" id="registerModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="well">
+                            <div class="row">
+                                <div class="col-sm-12">
                                     <div class="form-group">
-                                        <label class="control-label" for="@fieldAbbrName">@Model.EventVM.EventTypeDesc(classType)</label>
-                                        <select class="form-control" name="@fieldAbbrName" data-classType="@classType" onchange="RegisterApp.updateEntry(this)">
-                                            <option value="">( Not Entering )</option>
-                                            @foreach (var theType in Model.ClassAbbrsForClassType(classType))
-                                            {
-                                                <option value=@theType.ClassAbbr>@theType.ClassAbbr</option>
-                                            }
-                                        </select>
+                                        <label class="control-label" for="FullName">Student Name:</label>
+                                        <input name="FullName" class="form-control" readonly></input>
                                     </div>
-                                }}
-                            <div class="form-group">
-                                <a class="btn btn-default" onclick="$('#registerModal').modal('hide')" title="Close">Close</a>
-                            </div>
-                            <div class="alert alert-danger" name="submitError">
-                                <strong>Server error! </strong><span></span>
+                                    <input name="Student" class="form-control" type="hidden" />
+
+                                    @{ for (var i = 0; i < Model.EventVM.Event.ClassTypes.Length; i++)
+                                        {
+                                            char classType = Model.EventVM.Event.ClassTypes[i];
+                                            <div class="form-group">
+                                                <label class="control-label" for="@($"ClassAbbr{classType}")">@Model.EventVM.EventTypeDesc(classType)</label>
+                                                <select class="form-control" name="@($"ClassAbbr{classType}")" data-classType="@classType"
+                                                        onchange="RegisterApp.updateEntry(this)">
+                                                    <option value="">( Not Entering )</option>
+                                                    @foreach (var theType in Model.ClassAbbrsForClassType(classType))
+                                                    {
+                                                        <option value=@theType.ClassAbbr>@theType.ClassAbbr</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        }}
+                                    <div class="form-group">
+                                        <a class="btn btn-default" onclick="$('#registerModal').modal('hide')" title="Close">Close</a>
+                                    </div>
+                                    <div class="alert alert-danger" name="submitError">
+                                        <strong>Server error! </strong><span></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</form>
-
+        </form>
+    }
+}
 <div class="modal fade" id="infoModal" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">

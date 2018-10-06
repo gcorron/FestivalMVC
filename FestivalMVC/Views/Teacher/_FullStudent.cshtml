@@ -1,0 +1,17 @@
+﻿@model FestivalMVC.ViewModels.FullStudentViewModel
+
+<tr name="@Model.StudentVM.Student.Id"
+    data-register="@Json.Encode(Model.AllRegistered)">
+    <td rowspan="@Model.ClassTypes.Length">
+        @{Html.RenderPartial("_Student", Model.StudentVM);}
+    </td>
+    @{Html.RenderPartial("_Enroll", Model.GetEnroll(Model.ClassTypes[0]));}
+</tr>
+@{ if (Model.ClassTypes.Length > 1)
+    {
+        <tr>
+            @{Html.RenderPartial("_Enroll", Model.GetEnroll(Model.ClassTypes[1]));}
+        </tr>
+                                                                                    }
+}
+

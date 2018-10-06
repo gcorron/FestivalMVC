@@ -1,14 +1,30 @@
 ﻿"use strict";
 
 var RegisterApp = (function () {
+    var _classTypes;
     return {
         init: function () {
-            $('#students tr[data-register]').each(function (i, v) {
+            $('#students tr[name]').each(function (i, v) {
                 FestivalLib.convertJqueryData(v, 'register');
-                FestivalLib.convertJqueryData($(v).find('[data-student]'), 'student');
+                FestivalLib.convertJqueryData($(v).find('div[data-student]')[0], 'student');
             });
-
+            _classTypes = FestivalLib.convertJqueryData('table[data-classTypes]', 'classTypes');
             $('[data-toggle="popover"]').popover();
+
+            //remove any register buttons where they can't register
+            if ($('#registerForm').length === 0)
+                $('#students a.btn').remove();
+            else {
+                var register;
+                $('#students tr[name]').each(function (i, v) {
+                    register = $(v).data('register');
+                    if (register.length === _classTypes.length && register.every(function (r) {
+                        return r.Status !== '-';
+                    })) {
+                        $(v).find('a.btn').remove();
+                    }
+                });
+            }
 
         },
         removeStudent: function () {
@@ -17,19 +33,28 @@ var RegisterApp = (function () {
             FestivalLib.postAjax('/Teacher/RemoveStudent', 'student', true, onRemoveStudentSuccess, onStudentFormFail);
         },
 
-        registerStudent: function (register) {
-            var newRegister = $({}).extend(register);
-            var $tr = FestivalLib.$tableRow('students', register.Student);
-            var $td = $tr.children('[rowspan]');
-            var fullName=$td.data('student').FullName;
-            newRegister.FullName = fullName;
+        registerStudent: function (elt) {
+            var newRegister = $({});
+            var register = $(elt).closest('tr').data('register');
+            var student = $(elt).closest('div').data('student');
+            newRegister.FullName = student.FullName;
+            newRegister.Student = student.Student.Id;
 
-            FestivalLib.$formElt('register', 'ClassAbbr').attr('disabled', register.Status !== '-');
-            FestivalLib.$formElt('register', 'ClassAbbr2').attr('disabled', register.Status2 !== '-');
+            var fieldName;
 
-
+            //default settings for select controls
+            for (var i = 0; i < _classTypes.length; i++) {
+                fieldName = 'ClassAbbr' + _classTypes.charAt(i);
+                newRegister[fieldName] = '';
+            }
+            $('#register select').attr('disabled', false);
+            //set fields to any previous registrations
+            for (i = 0; i < register.length; i++) {
+                fieldName = 'ClassAbbr' + register[i].ClassType;
+                newRegister[fieldName] = register[i].ClassAbbr;
+                FestivalLib.$formElt('register', fieldName).attr('disabled', register[i].Status !== '-');
+            }
             FestivalLib.popupForm('register', newRegister, false);
-
         },
 
         editStudent: function (student) {
@@ -39,7 +64,9 @@ var RegisterApp = (function () {
             }
             else {
                 student = student.Student; //student data contained in ViewModel
-                canDelete = student.CanDelete;
+                var register = FestivalLib.$tableRow('students', student.Id).data('register');
+                if (register.length === 0)
+                    canDelete = true;
             }
             FestivalLib.popupForm('student', student, canDelete);
         },
@@ -69,13 +96,12 @@ var RegisterApp = (function () {
         updateEntry: function (elt) {
             FestivalLib.formErrorDiv('register').hide();
             var register = {};
-            register.Event = 0; //server supplies these two
-            register.Teacher = 0;
             register.Student = FestivalLib.$formElt('register', 'Student').val();
-            register.ClassType = $(elt).attr('data-classType');
+            register.ClassType = elt.name.slice(-1);
             register.ClassAbbr = elt.value || '';
             FestivalLib.postAjax('/Teacher/UpdateEntry', register, false, onUpdateEntrySuccess, onEntryFormFail);
         },
+
         payRegistration: function () {
             FestivalLib.postAjax('/Teacher/PayRegistration', { amountDue: 0.00 }, false, onPayRegistrationSuccess, FestivalLib.onAjaxFailure);
         }
@@ -96,28 +122,22 @@ var RegisterApp = (function () {
         $elt = $(html);
         var student = FestivalLib.convertJqueryData($elt[0], 'student');
 
-        if (removeId === "0") {
-            $elt2 = $('<tr name="' + student.Id + '">' + '<td rowspan="2"></td>' + '<td></td>'.repeat(2) + '<tr></tr>' + '<td></td>'.repeat(2));
-            $removetd = $elt2.find('td[rowspan]');
-            $removetd.replaceWith($elt);
-            $elt2.appendTo('#students');
+        if (removeId === "0") { //server returns the whole row for new student
+            $elt.appendTo('#students');
         }
         else {
-            var $removetd = $('#students tr[name="' + removeId + '"]').find('td[rowspan]');
-            //patch-in existing view model properties, remove register button if not allowed
+            var $tr = $('#students tr[name="' + removeId + '"]');
+            var $removediv = $tr.find('div[name="student"]');
+            var canRegister = true;
+            var register = $tr.data('register');
+            if (register.length === _classTypes.length)
+                canRegister = $tr.data('register').some(function (reg) {
+                    return reg.Status === '-';
+                });
 
-
-            student = $removetd.data('student');
-            var canDelete = student.CanDelete;
-            var canRegister = student.CanRegister;
-            student = $elt.data('student');
-            student.CanDelete = canDelete;
-            student.CanRegister = canRegister;
             if (!canRegister)
                 $elt.find('a.btn').remove();
-            $elt.data('student', student);
-
-            $removetd.replaceWith($elt);
+            $removediv.replaceWith($elt);
         }
 
         FestivalLib.sortTableForPerson('student');
@@ -147,14 +167,14 @@ var RegisterApp = (function () {
         }
         else {
             $('#infoModal').on('click', '.btn, .close', function () {
-                 window.location.reload();
+                window.location.reload();
             });
 
             FestivalLib.showInfoModal('Payment Transaction', payreg.Message);
-            
+
         }
     }
-    
+
     function Student() {
         this.Id = 0;
         this.Teacher = 0;
@@ -168,5 +188,5 @@ var RegisterApp = (function () {
 })();
 
 $(document).ready(function () {
-    RegisterApp.init(true);
+    RegisterApp.init();
 });

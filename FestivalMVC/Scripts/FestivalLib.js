@@ -88,8 +88,9 @@ var FestivalLib = (function () {
                         else
                             control.checked = val;
                     }
-                    else if (val && control.type === 'date')
+                    else if (val && control.type === 'date') {
                         control.value = val.toISOString().split('T')[0];
+                    }
                     else {
                         control.value = val;
                     }
@@ -185,15 +186,13 @@ var FestivalLib = (function () {
         },
 
         sortTableForPerson(rowName) {
-            var rowInc = 1;
             var isStudent = false;
             var table, rows, switching, i, shouldSwitch;
             var personx, persony, compared;
 
             isStudent = (rowName === 'student');
             table = document.getElementById(rowName + 's');
-            if ($(table).find('tr [rowspan]').length > 0)
-                rowInc = 2;
+            var rowInc = Number($(table).find('tr [rowspan]').attr('rowspan') || 1);
 
             switching = true;
             while (switching) {
@@ -229,7 +228,7 @@ var FestivalLib = (function () {
             }
             function getRowData(rowNum) {
                 if (isStudent) {
-                    var temp = $(rows[rowNum]).find('td:first-child').data(rowName);
+                    var temp = $(rows[rowNum]).find('div[name="student"]').data(rowName);
                     return temp.Student;
                 }
                 else
@@ -252,7 +251,7 @@ var FestivalLib = (function () {
     function dateTimeReviver(key, value) {
         var a;
         if (typeof value === 'string') {
-            a = /\/Date\((\d*)\)\//.exec(value);
+            a = /\/Date\(([-]?\d*)\)\//.exec(value);
             if (a) {
                 return new Date(+a[1]);
             }

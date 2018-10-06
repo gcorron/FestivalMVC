@@ -322,6 +322,7 @@
     <Content Include="Views\Teacher\Register.cshtml" />
     <Content Include="Views\Teacher\_Student.cshtml" />
     <Content Include="Views\Teacher\_Enroll.cshtml" />
+    <Content Include="Views\Teacher\_FullStudent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

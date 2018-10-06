@@ -108,8 +108,17 @@ namespace FestivalMVC.Controllers
             var studentDb = new StudentDB(student, theEvent.Event.Instrument, theUser.Id);
             int id = SQLData.UpdateStudent(studentDb);
             if (student.Id == 0)
+            {
                 student.Id = id;
-            return PartialView("_Student", new StudentViewModel {Student = student} );
+                return PartialView("_FullStudent", new FullStudentViewModel
+                {
+                    StudentVM = new StudentViewModel { Student = student },
+                    History = new History[0],
+                    Registered = new Registered[0],
+                    ClassTypes = theEvent.Event.ClassTypes
+                });
+            }
+            return PartialView("_Student", new StudentViewModel { Student = student });
         }
 
         //catch all unhandled exceptions that are thrown within scope of this controller
