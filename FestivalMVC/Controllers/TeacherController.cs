@@ -56,7 +56,7 @@ namespace FestivalMVC.Controllers
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
             var theUser = GetSessionItem<LoginPerson>("TheUser");
 
-            var EntryViewModel = new EntryViewModel(theEvent.Event.Id, theUser.Id);
+            var EntryViewModel = new EntryViewModel(theEvent, theUser.Id);
 
             return View(EntryViewModel);
         }

@@ -12,14 +12,21 @@ namespace FestivalMVC
     {
 
         #region TeacherEntry
-        
+
+        public IEnumerable<ComposerName> SelectComposers()
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.Query<ComposerName>("SelectComposers", commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public static void SelectEntryDetails(int ev, int teacher,
-            out IEnumerable<StudentName> studentNames,
-            out IEnumerable<ClassTypeData> classTypes,
-            out IEnumerable<EntryBase> entries,
-            out IEnumerable<EntryDetails> entryDetails,
-            out IEnumerable<Piece> pieces,
-            out IEnumerable<ComposerName> composers)
+        out IEnumerable<StudentName> studentNames,
+        out IEnumerable<ClassTypeData> classTypes,
+        out IEnumerable<EntryBase> entries,
+        out IEnumerable<EntryDetails> entryDetails,
+        out IEnumerable<EntryDetailsRequired> entryDetailsRequired)
         {
             using (IDbConnection connection = GetDBConnection())
             {
@@ -29,8 +36,7 @@ namespace FestivalMVC
                     classTypes = multi.Read<ClassTypeData>();
                     entries = multi.Read<EntryBase>();
                     entryDetails = multi.Read<EntryDetails>();
-                    pieces = multi.Read<Piece>();
-                    composers = multi.Read<ComposerName>();
+                    entryDetailsRequired = multi.Read<EntryDetailsRequired>();
                 }
             }
 

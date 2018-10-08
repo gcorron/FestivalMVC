@@ -137,6 +137,19 @@ var FestivalLib = (function () {
             });
         },
 
+        getAjax: function (url, successFn, failFn) {
+            if (failFn == null)
+                failFn = FestivalLib.onAjaxFailure;
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                success: successFn,
+                failure: failFn,
+                error: failfn
+            });
+        },
+
         postAjax: function (url, data, expectsHtml, successFn, failFn) {
             if (failFn == null)
                 failFn = FestivalLib.onAjaxFailure;

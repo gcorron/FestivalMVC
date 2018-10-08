@@ -9,22 +9,22 @@
     @Html.AntiForgeryToken()
 </form>
 
-<div class="row">
-    <div class="col-sm-4">
-        @{Html.RenderPartial("_Event", Model.EventVM);}
-    </div>
+<div class="well">
+    <div class="row">
+        <div class="col-sm-4">
+            @{Html.RenderPartial("_Event", Model.EventVM);}
+        </div>
 
-    @{ bool closed = false;
-        if (!Model.EventVM.ComputeIfOpen())
-        {
-            closed = true;
-            <h3>Registration is closed. No registrations or changes will be accepted.</h3>
+        @{ bool closed = false;
+            if (!Model.EventVM.ComputeIfOpen())
+            {
+                closed = true;
+                <h3>Registration is closed. No registrations or changes will be accepted.</h3>
+            }
+
         }
 
-    }
-
-    <div class="col-sm-6">
-        <div class="well well-sm">
+        <div class="col-sm-6">
 
             @{if (!closed)
                 {

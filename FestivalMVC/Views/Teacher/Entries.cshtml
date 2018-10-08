@@ -1,17 +1,148 @@
-﻿@{
+﻿@model FestivalMVC.ViewModels.EntryViewModel
+@{
     Layout = "~/Views/Teacher/_TeacherLayout.cshtml";
 }
 
-<!DOCTYPE html>
+<form id="__AjaxAntiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title></title>
-</head>
-<body>
-    <div>
-        Entries
+<div class="well">
+    <div class="row">
+
+        <div class="col-sm-4">
+            @{Html.RenderPartial("_Event", Model.EventVM);}
+        </div>
+
+        @{ bool closed = false;
+            if (!Model.EventVM.ComputeIfOpen())
+            {
+                closed = true;
+                <h3>Registration is closed. No registrations or changes will be accepted.</h3>
+            }
+
+        }
+        <div class="col-sm-8">
+
+            <ul class="nav nav-tabs">
+                @{ string first = "active";
+                    foreach (var classtype in Model.ClassTypes)
+                    {
+                        <li class="@first"><a data-toggle="tab" href="@($"#tab{classtype.ClassType}")">@classtype.TypeName</a></li>
+                        first = "";
+                    }
+                }
+            </ul>
+            <div class="tab-content">
+                @{ first = "in active";
+                    foreach (var classtype in Model.ClassTypes)
+                    {
+                        <div id="@($"tab{classtype.ClassType}")" class="tab-pane fade @first">
+                            <table id="@($"table{classtype.ClassType}")" class="table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Class</th>
+                                        <th>Required Piece</th>
+                                        @if (classtype.RequiresChoicePiece)
+                                        {
+                                            <th>Choice Piece</th>
+                                        }
+                                        @if (classtype.RequiresAccomp)
+                                        {
+                                            <th>Accompanist</th>
+                                        }
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var entry in Model.EntriesByClassType(classtype.ClassType))
+                                    {
+                                        <tr name="@entry.EntryBase.Id" data-entry="@entry">
+                                            <td>@entry.StudentName</td>
+                                            <td class="text-center"><span class="label label-fixed label-warning"> @entry.EntryBase.ClassAbbr</span></td>
+                                            <td>@entry.RequiredPieceDesc</td>
+                                            @if (classtype.RequiresChoicePiece)
+                                            {
+                                                <td>@entry.ChoicePieceDesc</td>
+                                            }
+                                            @if (classtype.RequiresAccomp)
+                                            {
+                                                <td>@entry.EntryDetails.Accompanist</td>
+                                            }
+                                            <td>@entry.EntryDetails.Notes</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        first = "";
+                    }
+
+                }
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
+
+
+@{if (!closed)
+    {
+        <form id="entryForm">
+            <div class="modal fade" id="entryModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="well">
+                            <div class="row">
+                                <div class="col-sm-12">
+
+                                    public int Id { get; set; }
+                                    public int RequiredPiece { get; set; }
+                                    public byte RequiredExtension { get; set; }
+                                    public string ChoicePiece { get =>_choicePiece; set => _choicePiece=value.Trim(); }
+                                    public string ChoiceComposer { get => _choiceComposer; set => _choiceComposer = value.Trim(); }
+                                    public string Publisher { get => _publisher; set => _publisher = value.Trim(); }
+                                    public string Accompanist { get => _accompanist; set => _accompanist = value.Trim(); }
+                                    public string Notes { get => _notes; set => _notes = value.Trim(); }
+                                    
+                                    <input name="Id" type="hidden" class="form-control" />
+                                    
+
+
+                                    <div class="form-group">
+                                        <label class="control-label" for="FullName">Student Name:</label>
+                                        <input name="FullName" class="form-control" readonly></input>
+                                    </div>
+                                    <input name="Student" class="form-control" type="hidden" />
+                                    <div class="form-group">
+                                        <a class="btn btn-default" onclick="$('#registerModal').modal('hide')" title="Close">Close</a>
+                                    </div>
+                                    <div class="alert alert-danger" name="submitError">
+                                        <strong>Server error! </strong><span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+}
+<div class="modal fade" id="infoModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a small modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
