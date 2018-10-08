@@ -116,6 +116,10 @@
     <Build Include="dbo\Stored Procedures\RemoveStudentFromTeacher.sql" />
     <Build Include="dbo\Views\EntryView.sql" />
     <Build Include="dbo\Stored Procedures\UpdateEntryPaid.sql" />
+    <Build Include="dbo\Tables\EventClassType.sql" />
+    <Build Include="dbo\Stored Procedures\SelectPiecesForClassAbbr.sql" />
+    <Build Include="dbo\Stored Procedures\SelectEntryDetails.sql" />
+    <Build Include="dbo\Stored Procedures\SelectComposers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

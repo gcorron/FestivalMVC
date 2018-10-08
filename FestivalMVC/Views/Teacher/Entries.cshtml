@@ -9,7 +9,6 @@
 
 <div class="well">
     <div class="row">
-
         <div class="col-sm-4">
             @{Html.RenderPartial("_Event", Model.EventVM);}
         </div>
@@ -58,7 +57,7 @@
                                 <tbody>
                                     @foreach (var entry in Model.EntriesByClassType(classtype.ClassType))
                                     {
-                                        <tr name="@entry.EntryBase.Id" data-entry="@entry">
+                                        <tr name="@entry.EntryBase.Id" data-entry="@Json.Encode(entry)" onclick="EntriesApp.editEntry($(this).data('entry'))">
                                             <td>@entry.StudentName</td>
                                             <td class="text-center"><span class="label label-fixed label-warning"> @entry.EntryBase.ClassAbbr</span></td>
                                             <td>@entry.RequiredPieceDesc</td>
@@ -90,32 +89,61 @@
     {
         <form id="entryForm">
             <div class="modal fade" id="entryModal" role="dialog">
-                <div class="modal-dialog modal-sm">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <div class="well">
+                        <div class="well-sm">
                             <div class="row">
-                                <div class="col-sm-12">
-
-                                    public int Id { get; set; }
-                                    public int RequiredPiece { get; set; }
-                                    public byte RequiredExtension { get; set; }
-                                    public string ChoicePiece { get =>_choicePiece; set => _choicePiece=value.Trim(); }
-                                    public string ChoiceComposer { get => _choiceComposer; set => _choiceComposer = value.Trim(); }
-                                    public string Publisher { get => _publisher; set => _publisher = value.Trim(); }
-                                    public string Accompanist { get => _accompanist; set => _accompanist = value.Trim(); }
-                                    public string Notes { get => _notes; set => _notes = value.Trim(); }
-                                    
+                                <div class="col-sm-4">
                                     <input name="Id" type="hidden" class="form-control" />
-                                    
-
-
                                     <div class="form-group">
-                                        <label class="control-label" for="FullName">Student Name:</label>
-                                        <input name="FullName" class="form-control" readonly></input>
+                                        <label class="control-label" for="StudentName">Student Name:</label>
+                                        <input name="StudentName" class="form-control" readonly />
                                     </div>
-                                    <input name="Student" class="form-control" type="hidden" />
                                     <div class="form-group">
-                                        <a class="btn btn-default" onclick="$('#registerModal').modal('hide')" title="Close">Close</a>
+                                        <label class="control-label" for="Status">Status:</label>
+                                        <select name="Status" class="form-control">
+                                            <option value="P">Entering</option>
+                                            <option value="W">Withdraw</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label" for="RequiredPiece">Required Piece:</label>
+                                        <select name="RequiredPiece" class="form-control" onchange="EntriesApp.onRequiredChange()"></select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label" for="RequiredExtension">Movement:</label>
+                                        <select name="RequiredExtension" class="form-control"></select>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="ChoicePiece">Choice Piece:</label>
+                                        <input name="ChoicePiece" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="ChoiceComposer">Choice Composer:</label>
+                                        <input name="ChoiceComposer" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="Publisher">Publisher:</label>
+                                        <input name="Publisher" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="Accompanist">Accompanist:</label>
+                                        <input name="Accompanist" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="Notes">Notes:</label>
+                                        <input name="Notes" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <a class="btn btn-default" onclick="$('#entryModal').modal('hide')" title="Close">Close</a>
+                                        <a class="btn btn-default" onclick="EntriesApp.updateEntry()" title="Save">Save</a>
                                     </div>
                                     <div class="alert alert-danger" name="submitError">
                                         <strong>Server error! </strong><span></span>
@@ -146,3 +174,13 @@
         </div>
     </div>
 </div>
+<script>
+
+
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/Entries.js")
+}

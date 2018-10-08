@@ -58,7 +58,6 @@ namespace FestivalMVC.Models
     public struct Piece
     {
         public int Id { get; set; }
-        public string ClassAbbr { get; set; }
         public string Composition { get; set; }
         public int Composer { get; set; }
         public byte Extension { get; set; }

@@ -13,7 +13,15 @@ namespace FestivalMVC
 
         #region TeacherEntry
 
-        public IEnumerable<ComposerName> SelectComposers()
+        public static IEnumerable<Piece> SelectPiecesForClassAbbr(string classAbbr)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.Query<Piece>("SelectPiecesForClassAbbr",new {classAbbr }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public static IEnumerable<ComposerName> SelectComposers()
         {
             using (IDbConnection connection = GetDBConnection())
             {

@@ -146,7 +146,7 @@ var FestivalLib = (function () {
                 dataType: "json",
                 success: successFn,
                 failure: failFn,
-                error: failfn
+                error: failFn
             });
         },
 

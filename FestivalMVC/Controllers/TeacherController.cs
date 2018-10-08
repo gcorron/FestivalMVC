@@ -61,6 +61,17 @@ namespace FestivalMVC.Controllers
             return View(EntryViewModel);
         }
 
+        public ActionResult Composers()
+        {
+            return Json(SQLData.SelectComposers(),JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Pieces(string classAbbr)
+        {
+            var pieces = SQLData.SelectPiecesForClassAbbr(classAbbr);
+            return Json(new {classAbbr, pieces}, JsonRequestBehavior.AllowGet);
+        }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult PayRegistration(decimal amountDue)

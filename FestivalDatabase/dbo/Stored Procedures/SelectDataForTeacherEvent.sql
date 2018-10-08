@@ -2,25 +2,23 @@
 as
 BEGIN
 
-	
+
 	select id,birthdate,phone,lastname,FirstName
 	from student
 		where teacher=@teacher
 
+	select student, classtype, classabbr, awardrating, consecutivesuperior, accumulatedpoints
+	from history a inner join student b on a.student=b.id
+	where teacher=@teacher
 
-	select isnull(a.student,b.student) as Student, isnull(a.classtype,b.classtype) as ClassType, a.classabbr as LastClassAbbr,
-		isnull(awardRating,0) as LastAwardRating,isnull(consecutivesuperior,0) as ConsecutiveSuperior,
-		 isnull(accumulatedpoints,0) as AccumulatedPoints, b.ClassAbbr as ClassAbbr, isnull(b.Status,'-') as Status
-	from history a full outer join entry b
-	on a.student=b.student and a.ClassType=b.ClassType
-	inner join student c on a.student=c.id or b.student=c.id
-	where c.teacher=@teacher and isnull(b.Event,@ev)=@ev
+	select student,classtype, classabbr,status
+	from entry
+	where teacher=@teacher and event=@ev
 
 	exec SelectEvent @ev
 
-	
-declare @classtypes varchar(10)
-select @classtypes=classtypes from event where id=@ev
+	declare @classtypes varchar(10)
+	select @classtypes=classtypes from event where id=@ev
 
 	select classtype, classabbr, auditionMinutes
 	from eventclass
