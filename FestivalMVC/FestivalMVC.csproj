@@ -256,6 +256,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\ChairEntries.js" />
     <Content Include="Scripts\Entries.js" />
     <Content Include="Scripts\EventsPage.js" />
     <Content Include="Scripts\EventEdit.js" />
@@ -327,6 +328,7 @@
     <Content Include="Views\Teacher\_Enroll.cshtml" />
     <Content Include="Views\Teacher\_FullStudent.cshtml" />
     <Content Include="Views\Teacher\Entries.cshtml" />
+    <Content Include="Views\Shared\_Entries.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

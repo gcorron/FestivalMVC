@@ -14,87 +14,46 @@
             if (!Model.EventVM.ComputeIfOpen())
             {
                 closed = true;
-                <h3>Registration is closed. No more entries or changes will be accepted.</h3>
+                <h3>Registration is closed. No more submissions will be accepted.</h3>
+            }
+            else if (Model.EntriesAllApproved())
+            {
+                <h3>All entries have been accepted.</h3>
             }
             else
             {
-                int daysLeft = (int)Math.Truncate((Model.EventVM.Event.CloseDate - DateTime.Today).TotalDays);
-                if (daysLeft == 1)
+                var needCorrecting = Model.EntriesNeedCorrection();
+                if (needCorrecting > 0)
                 {
-                    int hoursLeft = (int)Math.Truncate((Model.EventVM.Event.CloseDate - DateTime.Today).TotalHours);
-                    <h2>@($"There are less than {hoursLeft} hours remaining to complete your entries!")</h2>
+                    <h3>You have @needCorrecting entries which require correcting!</h3>
                 }
-                <h3>@($"There are less than {daysLeft} days remaining to complete your entries.")</h3>
+                else if (!Model.EntriesAllSubmitted())
+                {
+                    int daysLeft = (int)Math.Truncate((Model.EventVM.Event.CloseDate - DateTime.Today).TotalDays);
+                    if (daysLeft == 1)
+                    {
+                        int hoursLeft = (int)Math.Truncate((Model.EventVM.Event.CloseDate - DateTime.Today).TotalHours);
+                        <h2>@($"There are less than {hoursLeft} hours remaining to submit your entries!")</h2>
+                    }
+                    <h3>@($"There are less than {daysLeft} days remaining to submit your entries.")</h3>
+                }
+                else
+                {
+                    <h3>All entries have been submitted, awaiting approval.</h3>
+                }
             }
-
         }
     </div>
-    <div class="row">
-        <div class="col-sm-12">
+    @{if (!closed && !Model.EntriesAllSubmitted())
+        {
+            <a class="btn btn-sm btn-primary pull-right" onclick="EntriesApp.submitEntries()">Submit</a>
+        }
+    }
 
-            <ul class="nav nav-tabs">
-                @{ string first = "active";
-                    foreach (var classtype in Model.ClassTypes)
-                    {
-                        <li class="@first"><a data-toggle="tab" href="@($"#tab{classtype.ClassType}")">@classtype.TypeName</a></li>
-                        first = "";
-                    }
-                }
-            </ul>
-            <div class="tab-content">
-                @{ first = "in active";
-                    foreach (var classtype in Model.ClassTypes)
-                    {
-                        <div id="@($"tab{classtype.ClassType}")" class="tab-pane fade @first" data-classType="@Json.Encode(classtype)">
-                            <table id="@($"table{classtype.ClassType}")" class="table-condensed">
-                                <thead>
-                                    <tr>
-                                        <th>Student</th>
-                                        <th>Class</th>
-                                        <th>Required Piece</th>
-                                        @if (classtype.RequiresChoicePiece)
-                                        {
-                                            <th>Choice Piece</th>
-                                        }
-                                        @if (classtype.RequiresAccomp)
-                                        {
-                                            <th>Accompanist</th>
-                                        }
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var entry in Model.EntriesByClassType(classtype.ClassType))
-                                    {
-                                        <tr name="@entry.EntryBase.Id" data-entry="@Json.Encode(entry)"
-                                            onclick="EntriesApp.editEntry($(this).data('entry'),$(this).closest('div.tab-pane').data('classType'))">
-                                            <td>@entry.StudentName</td>
 
-                                            <td class="text-center"><span class="label label-fixed label-warning"> @entry.EntryBase.ClassAbbr</span></td>
-                                            <td name="req">@entry.RequiredPieceDesc</td>
-                                            @if (classtype.RequiresChoicePiece)
-                                            {
-                                                <td name="choice">@entry.ChoicePieceDesc</td>
-                                            }
-                                            @if (classtype.RequiresAccomp)
-                                            {
-                                                <td name="acc">@entry.EntryDetails.Accompanist</td>
-                                            }
-                                            <td name="notes">@entry.EntryDetails.Notes</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                        first = "";
-                    }
 
-                }
-            </div>
-        </div>
-    </div>
+    @{Html.RenderPartial("_Entries", Model); }
 </div>
-
 
 @{if (!closed)
     {
@@ -125,23 +84,23 @@
                                 <div class="col-sm-4">
                                     <div class="form-group optional-hide">
                                         <label class="control-label" for="ChoicePiece">Choice Piece:</label>
-                                        <input name="ChoicePiece" class="form-control" required maxlength="50"/>
+                                        <input name="ChoicePiece" class="form-control" required maxlength="50" />
                                     </div>
                                     <div class="form-group optional-hide">
                                         <label class="control-label" for="ChoiceComposer">Choice Composer:</label>
-                                        <input name="ChoiceComposer" class="form-control" required maxlength="50"/>
+                                        <input name="ChoiceComposer" class="form-control" required maxlength="50" />
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="Publisher">Publisher:</label>
-                                        <input name="Publisher" class="form-control" required maxlength="20"/>
+                                        <input name="Publisher" class="form-control" required maxlength="20" />
                                     </div>
                                     <div class="form-group optional-show">
                                         <label class="control-label" for="Accompanist">Accompanist:</label>
-                                        <input name="Accompanist" class="form-control" required maxlength="50"/>
+                                        <input name="Accompanist" class="form-control" required maxlength="50" />
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="Notes">Notes:</label>
-                                        <input name="Notes" class="form-control" maxlength="50"/>
+                                        <input name="Notes" class="form-control" maxlength="50" />
                                     </div>
                                 </div>
                                 <div class="col-sm-4">

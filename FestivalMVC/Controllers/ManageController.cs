@@ -54,7 +54,7 @@ namespace FestivalMVC.Controllers
         // POST: /Manage/Index
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UpdateContactInfo(ContactForSelf model)
+        public ActionResult UpdateContactInfo(ContactShort model)
         {
             ManageController.ManageMessageId message= ManageMessageId.UpdateContactSuccess;
             try
@@ -85,7 +85,7 @@ namespace FestivalMVC.Controllers
             try
             {
                 var userName = User.Identity.GetUserName();
-                ContactForSelf model = SQLData.SelectContactForAccount(userName);
+                ContactShort model = SQLData.SelectContactForAccount(userName);
                 return View(model);
             } 
             catch (Exception e)

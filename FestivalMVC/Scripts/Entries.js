@@ -67,8 +67,51 @@ var EntriesApp = (function () {
 
             $('#entryForm  .form-control').find(':not(:visible)').val("");
             FestivalLib.postAjax('/Teacher/UpdateEntryDetails', 'entry', false, onUpdateEntrySuccess, onUpdateEntryFail);
+        },
+        submitEntries: function () {
+            if (allComplete()===false) {
+                FestivalLib.showInfoModal('Attention','All fields are not complete for all entries!');
+                return;
+            }
+            if (confirm('Once you submit these entries, you cannot go back and make changes. Are you sure?')) {
+                FestivalLib.postAjax('/Teacher/SubmitEntries', {}, false, onSubmitSuccess, FestivalLib.onAjaxFailure);
+            }
         }
     };
+
+    function onSubmitSuccess() {
+        document.location.reload();
+    }
+
+    function allComplete() {
+        var entry;
+        var $tr = $('tr[name]');
+        var ret = true;
+        $tr.each(function (i, elt) {
+            entry = $(elt).data('entry');
+            if (!entry.EntryDetails.RequiredPiece) {
+                ret = false;
+                return false;
+            }
+
+            switch (entry.EntryBase.ClassType) {
+                case 'C': //TODO: don't rely on constant, this is tricky
+                    if (!entry.EntryDetails.Accompanist) {
+                        ret = false;
+                        return false;
+                    }
+                    break;
+                case 'S':
+                    if (!(entry.EntryDetails.ChoiceComposer && entry.EntryDetails.ChoicePiece)) {
+                        ret = false;
+                        return false;
+                    }
+                    break;
+                default: //should never happen
+            }
+        });
+        return ret;
+    }
 
     function onUpdateEntrySuccess(entry) {
         var $tr = FestivalLib.$tableRow('*',entry.Id);

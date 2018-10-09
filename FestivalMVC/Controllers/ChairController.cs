@@ -35,15 +35,38 @@ namespace FestivalMVC.Controllers
         public ActionResult Prepare()
         {
             ViewBag.Title = "Prepare";
-            var theEvent = (EventViewModel)Session["SelectedEvent"];
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
             return View(new PreparePageViewModel(theEvent.Event.Id));
         }
 
         public ActionResult Entries()
         {
             ViewBag.Title = "Entries";
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
 
-            return View();
+            return View(new EntryViewModel(theEvent,0));
+        }
+
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Entries(int SelectedTeacher)
+        {
+            ViewBag.Title = "Entries";
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+
+            return View(new EntryViewModel(theEvent, SelectedTeacher));
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult ApproveEntries(int teacher)
+        {
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+
+            SQLData.UpdateAllEntryStatus(theEvent.Event.Id, teacher, StatusTypes.Approved);
+            return Json(0);
+
         }
 
         public ActionResult Schedule()
@@ -216,6 +239,19 @@ namespace FestivalMVC.Controllers
                 };
             }
         }
+        private T GetSessionItem<T>(string name) ///TODO implement in other controllers
+        {
+            try
+            {
+                return (T)Session[name];
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Session timed out. Please log in again to continue.");
+            }
+        }
+
 
 
     }

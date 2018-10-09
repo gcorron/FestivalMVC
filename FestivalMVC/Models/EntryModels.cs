@@ -5,6 +5,16 @@ using System.Web;
 
 namespace FestivalMVC.Models
 {
+    public static class StatusTypes
+    {
+        public const char None = '-';
+        public const char Paid = 'P';
+        public const char Submitted = 'S';
+        public const char Approved = 'A';
+        public const char Rejected = '?';
+        public const char Resubmitted = 'R';
+    }
+
     public struct ClassTypeData
     {
         public char ClassType { get; set; }

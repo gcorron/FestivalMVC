@@ -41,7 +41,12 @@ from EntryDetails a inner join @entries b on a.id=b.id
  left outer join Composer d
  on c.Composer=d.Id
 
-exec SelectEvent @ev
+	select id, lastName,firstName, email, phone
+		from Contact a inner join teacherevent b
+		on a.id=b.teacher
+		where b.event=@ev
+	order by lastName,FirstName
+
 
 
 

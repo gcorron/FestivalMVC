@@ -1,13 +1,53 @@
-﻿<!DOCTYPE html>
+﻿@model FestivalMVC.ViewModels.EntryViewModel
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title></title>
-</head>
-<body>
+@{
+    var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
+    var theUser = (FestivalMVC.Models.LoginPerson)Session["TheUser"];
+    var dataEvent = theEvent.Event;
+}
+@*
+    Entries Page For Chair
+*@
+
+<form id="__AjaxAntiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
+<div class="well">
     <div>
-    <h1>Entries</h1>
+        <form id="selectForm" action="/Chair/Entries" method="post" id="teachers" class="form-inline">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label class="control-label" for="SelectedTeacher">Teacher:&nbsp;</label>
+                <select class="form-control" name="SelectedTeacher" onchange="this.form.submit()">
+                    <option value="0" disabled default @(Model.SelectedTeacher == 0 ? "selected" : "")>Select ...</option>
+                    @{ foreach (var teacher in Model.Teachers)
+                        {
+                            <option value="@teacher.Id" @(Model.SelectedTeacher == teacher.Id ? "selected" : "")>@Model.GetFullName(teacher)</option>
+                        }
+
+                    }
+                </select>
+            </div>
+        </form>
     </div>
-</body>
-</html>
+    @{if (Model.SelectedTeacher != 0)
+        {
+            <hr />
+
+            if (Model.EntriesAllSubmitted() && !Model.EntriesAllApproved())
+            {
+                <a class="btn btn-sm btn-success pull-right" onclick="ChairEntriesApp.approveEntries()">Approve</a>
+            }
+            Html.RenderPartial("_Entries", Model);
+        }
+    }
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/ChairEntries.js")
+}
+
+

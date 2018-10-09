@@ -121,6 +121,7 @@
     <Build Include="dbo\Stored Procedures\SelectEntryDetails.sql" />
     <Build Include="dbo\Stored Procedures\SelectComposers.sql" />
     <Build Include="dbo\Stored Procedures\UpdateEntryDetails.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateAllEntryStatus.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

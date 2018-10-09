@@ -72,6 +72,19 @@ namespace FestivalMVC.Controllers
             return Json(new {classAbbr, pieces}, JsonRequestBehavior.AllowGet);
         }
 
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult SubmitEntries()
+        {
+            var theUser = GetSessionItem<LoginPerson>("TheUser");
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            if (theEvent.ComputeIfOpen() == false)
+                throw new Exception("This event is closed - no changes to registrations allowed.");
+
+            SQLData.UpdateAllEntryStatus(theEvent.Event.Id,theUser.Id,StatusTypes.Submitted);
+            return Json(0);
+
+        }
 
         [ValidateAntiForgeryToken]
         [HttpPost]

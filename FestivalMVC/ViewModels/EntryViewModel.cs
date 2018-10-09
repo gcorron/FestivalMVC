@@ -13,15 +13,18 @@ namespace FestivalMVC.ViewModels
         private IDictionary<int, string> _entryDetailsRequired;
         private IEnumerable<StudentName> _studentNames;
         private IEnumerable<ClassTypeData> _classTypes;
+        private IEnumerable<ContactShort> _teachers;
         private EventViewModel _eventVM;
 
         public EntryViewModel(EventViewModel eventVM, int teacher)
         {
             SQLData.SelectEntryDetails(eventVM.Event.Id, teacher,
-                out _studentNames, out _classTypes, out _entries, out _entryDetails, out var entryDetailsRequired);
+                out _studentNames, out _classTypes, out _entries, out _entryDetails, out var entryDetailsRequired, 
+                out _teachers);
 
             _entryDetailsRequired = entryDetailsRequired.ToDictionary(p => p.Id, p => p.RequiredDescription);
             _eventVM = eventVM;
+            SelectedTeacher = teacher;
         }
 
         public ClassTypeData GetClassTypeData(char classType)
@@ -60,6 +63,34 @@ namespace FestivalMVC.ViewModels
             else
                 return $" Mvt. {ext}";
         }
+
+        public IEnumerable<ContactShort> Teachers { get => _teachers; }
+        public string GetFullName(ContactShort teacher)
+        {
+            return $"{teacher.FirstName} {teacher.LastName}";
+        }
+
+        public int SelectedTeacher { get; set; }
+
+        public bool EntriesAllSubmitted()
+        {
+            return (from e in _entries
+                    select e).All(e => e.Status != StatusTypes.Paid && e.Status != StatusTypes.None);
+        }
+
+        public int EntriesNeedCorrection()
+        {
+            return (from e in _entries
+                    where e.Status == StatusTypes.Rejected
+                    select e).Count();
+        }
+        public bool EntriesAllApproved()
+        {
+            return (from e in _entries
+                    select e).All(e => e.Status == StatusTypes.Approved);
+
+        }
+
     }
 
     public class EntryVM
@@ -79,5 +110,4 @@ namespace FestivalMVC.ViewModels
         public EntryBase EntryBase { get; set; }
         public EntryDetails EntryDetails { get; set; }
     }
-
 }

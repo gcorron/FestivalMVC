@@ -14,7 +14,7 @@ var PreparePageApp = (function () {
             else
                 judge = new Judge();
 
-            FestivalLib.popupForm('judge',judge.Id !== 0);
+            FestivalLib.popupForm('judge',judge,judge.Id !== 0);
         },
 
         deleteJudge: function () {

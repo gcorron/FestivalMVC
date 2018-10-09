@@ -13,6 +13,15 @@ namespace FestivalMVC
 
         #region TeacherEntry
 
+        public static void UpdateAllEntryStatus(int ev, int teacher, char status)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("UpdateAllEntryStatus", new {ev,teacher,status }, commandType: CommandType.StoredProcedure);
+            }
+
+        }
+
         public static void UpdateEntryDetails(EntryDetails details)
         {
             using (IDbConnection connection = GetDBConnection())
@@ -27,7 +36,7 @@ namespace FestivalMVC
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                return connection.Query<Piece>("SelectPiecesForClassAbbr",new {classAbbr }, commandType: CommandType.StoredProcedure);
+                return connection.Query<Piece>("SelectPiecesForClassAbbr", new { classAbbr }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -44,7 +53,8 @@ namespace FestivalMVC
         out IEnumerable<ClassTypeData> classTypes,
         out IEnumerable<EntryBase> entries,
         out IEnumerable<EntryDetails> entryDetails,
-        out IEnumerable<EntryDetailsRequired> entryDetailsRequired)
+        out IEnumerable<EntryDetailsRequired> entryDetailsRequired,
+        out IEnumerable<ContactShort> teachers)
         {
             using (IDbConnection connection = GetDBConnection())
             {
@@ -55,6 +65,7 @@ namespace FestivalMVC
                     entries = multi.Read<EntryBase>();
                     entryDetails = multi.Read<EntryDetails>();
                     entryDetailsRequired = multi.Read<EntryDetailsRequired>();
+                    teachers = multi.Read<ContactShort>();
                 }
             }
 
@@ -130,6 +141,15 @@ out IEnumerable<Instrum> instruments, out Location location)
         #endregion
 
         #region ChairEvent
+
+        public static IEnumerable<ContactShort> SelectTeachersForEventEntries(int ev)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.Query<ContactShort>("SelectTeachersForEventEntries", new { ev }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public static void SelectEventsForDistrict(int locationId, out IEnumerable<Event> events,
             out IEnumerable<Instrum> instruments, out Location location)
         {
@@ -207,7 +227,7 @@ out IEnumerable<Instrum> instruments, out Location location)
 
         #region ContactOrLocation
 
-        public static void UpdateContactForAccount(ContactForSelf model)
+        public static void UpdateContactForAccount(ContactShort model)
         {
             using (IDbConnection connection = GetDBConnection())
             {
@@ -215,11 +235,11 @@ out IEnumerable<Instrum> instruments, out Location location)
             }
         }
 
-        public static ContactForSelf SelectContactForAccount(string userName)
+        public static ContactShort SelectContactForAccount(string userName)
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                return connection.QuerySingle<ContactForSelf>("SelectContactForAccount", new { userName }, commandType: CommandType.StoredProcedure);
+                return connection.QuerySingle<ContactShort>("SelectContactForAccount", new { userName }, commandType: CommandType.StoredProcedure);
             }
 
         }

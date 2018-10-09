@@ -1,0 +1,84 @@
+﻿@using FestivalMVC.Models;
+@using FestivalMVC.ViewModels
+@model EntryViewModel
+<div class="row">
+    <div class="col-sm-12">
+
+        <ul class="nav nav-tabs">
+            @{ string first = "active";
+                foreach (var classtype in Model.ClassTypes)
+                {
+                    <li class="@first"><a data-toggle="tab" href="@($"#tab{classtype.ClassType}")">@classtype.TypeName</a></li>
+                    first = "";
+                }
+            }
+        </ul>
+        <div class="tab-content">
+            @{ first = "in active";
+                foreach (var classtype in Model.ClassTypes)
+                {
+                    <div id="@($"tab{classtype.ClassType}")" class="tab-pane fade @first" data-classType="@Json.Encode(classtype)">
+                        <table id="@($"table{classtype.ClassType}")" class="table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Class</th>
+                                    <th>Required Piece</th>
+                                    @if (classtype.RequiresChoicePiece)
+                                    {
+                                        <th>Choice Piece</th>
+                                    }
+                                    @if (classtype.RequiresAccomp)
+                                    {
+                                        <th>Accompanist</th>
+                                    }
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model.EntriesByClassType(classtype.ClassType))
+                                {
+                                    <tr name="@entry.EntryBase.Id" data-entry="@Json.Encode(entry)"
+                                        onclick="EntriesApp.editEntry($(this).data('entry'),$(this).closest('div.tab-pane').data('classType'))">
+                                        <td>@entry.StudentName</td>
+
+                                        <td class="text-center">
+                                            <span class="label label-fixed @LabelForStatus(entry.EntryBase.Status)">
+                                            @entry.EntryBase.ClassAbbr</span>
+                                        </td>
+                                        <td name="req">@entry.RequiredPieceDesc</td>
+                                        @if (classtype.RequiresChoicePiece)
+                                        {
+                                            <td name="choice">@entry.ChoicePieceDesc</td>
+                                        }
+                                        @if (classtype.RequiresAccomp)
+                                        {
+                                            <td name="acc">@entry.EntryDetails.Accompanist</td>
+                                        }
+                                        <td name="notes">@entry.EntryDetails.Notes</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    first = "";
+                }
+                string LabelForStatus(char status)
+                {
+                    switch (status)
+                    {
+                        case StatusTypes.Paid:return "label-warning";
+                        case StatusTypes.None: return "label-default";
+                        case StatusTypes.Submitted: return "label-primary";
+                        case StatusTypes.Approved: return "label-success";
+                        case StatusTypes.Rejected: return "label-danger";
+                        case StatusTypes.Resubmitted: return "label-info";
+                        default: return "";
+                    }
+                }
+
+            }
+        </div>
+    </div>
+</div>
+

@@ -17,7 +17,7 @@ set nocount on
 		from event
 	where id=@id
 	
-	select id, userName, lastName,firstName, email, phone  -- since we know all of them are available, re-use that field to indicate whether they are in the event
+	select id, userName, lastName,firstName, email, phone
 			,available,instrument,case when b.teacher is NULL then  0 else b.event end as AssignedToLocation 
 		from Contact a left outer join teacherevent b
 		on a.id=b.teacher and @id=b.event

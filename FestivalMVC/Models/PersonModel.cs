@@ -54,7 +54,7 @@ namespace FestivalMVC.Models
         }
     }
 
-    public struct ContactForSelf
+    public struct ContactShort
     {
         private string firstName, lastName, email, phone;
 
