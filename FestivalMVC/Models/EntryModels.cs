@@ -40,13 +40,12 @@ namespace FestivalMVC.Models
 
         public int Id { get; set; }
         public int RequiredPiece { get; set; }
-        public byte RequiredExtension { get; set; }
-        public string ChoicePiece { get =>_choicePiece; set => _choicePiece=value.Trim(); }
-        public string ChoiceComposer { get => _choiceComposer; set => _choiceComposer = value.Trim(); }
-        public string Publisher
-        { get => _publisher; set => _publisher = value.Trim(); }
-        public string Accompanist { get => _accompanist; set => _accompanist = value.Trim(); }
-        public string Notes { get => _notes; set => _notes = value.Trim(); }
+        public char RequiredExtension { get; set; }
+        public string ChoicePiece { get =>_choicePiece; set => _choicePiece= (value ?? "").Trim(); }
+        public string ChoiceComposer { get => _choiceComposer; set => _choiceComposer =(value ?? "").Trim(); }
+        public string Publisher { get => _publisher; set => _publisher = (value ?? "").Trim(); }
+        public string Accompanist { get => _accompanist; set => _accompanist = (value ?? "").Trim(); }
+        public string Notes { get => _notes; set => _notes = (value ?? "").Trim(); }
     }
 
     public struct EntryDetailsRequired

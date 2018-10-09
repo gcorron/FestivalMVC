@@ -13,6 +13,16 @@ namespace FestivalMVC
 
         #region TeacherEntry
 
+        public static void UpdateEntryDetails(EntryDetails details)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("UpdateEntryDetails", details, commandType: CommandType.StoredProcedure);
+            }
+
+        }
+
+
         public static IEnumerable<Piece> SelectPiecesForClassAbbr(string classAbbr)
         {
             using (IDbConnection connection = GetDBConnection())

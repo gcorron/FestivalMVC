@@ -98,6 +98,7 @@ var FestivalLib = (function () {
 
             });
         },
+
         popupForm(formNamePart, o, canDelete, optionalFields) {
             FestivalLib.populateForm(formNamePart, o);
             $(FestivalLib.formErrorDiv(formNamePart)).hide();
@@ -250,7 +251,7 @@ var FestivalLib = (function () {
         },
 
         $tableRow: function (tableName, id) {
-            return $('#' + tableName + ' tr[name="' + id + '"]');
+            return $((tableName === '*' ? '':'#' + tableName + ' ') + 'tr[name="' + id + '"]');
         },
 
         $formElt: function (formNamePart, name) {

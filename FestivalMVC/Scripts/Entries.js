@@ -12,6 +12,10 @@ var EntriesApp = (function () {
                 FestivalLib.convertJqueryData(v, 'entry');
             });
 
+            $('div.tab-pane').each(function (i, v) {
+                FestivalLib.convertJqueryData(v, 'classType');
+            });
+
             //we need the required composers in local storage if not there already
             _requiredVersion = requiredVersion;
             _composers = getFromStorage('Composers');
@@ -20,10 +24,11 @@ var EntriesApp = (function () {
             }
         },
 
-        editEntry: function (entryVM) {
+        editEntry: function (entryVM,classType) {
             var entry = entryVM.EntryDetails;
             entry.StudentName = entryVM.StudentName;
             editEntryContinue.entry = entry;
+            editEntryContinue.optionalFields = !classType.RequiresChoicePiece;
             requiredPieces(entryVM.EntryBase.ClassAbbr, editEntryContinue);
         },
 
@@ -40,13 +45,72 @@ var EntriesApp = (function () {
                     if (ext & 1)
                         $sel.append(new Option('Mvt. ' + i, i));
                 }
-                $sel.cloest('div').show();
+                $sel.closest('div').show();
             }
             else {
                 $sel.closest('div').hide();
             }
+        },
+
+        updateEntry: function () {
+
+            $('#entryForm').validate({
+                ignore: ":not(:visible)"
+            });
+
+            if (!$('#entryForm').valid()) {
+                return;
+            }
+
+            $('#entryForm  .form-control').find(':not(:visible)').val("");
+            FestivalLib.postAjax('/Teacher/UpdateEntryDetails', 'entry', false, onUpdateEntrySuccess, onUpdateEntryFail);
         }
     };
+
+    function onUpdateEntrySuccess(entry) {
+        var $tr = FestivalLib.$tableRow('*',entry.Id);
+
+        var entryVM = $tr.data('entry');
+        entryVM.EntryDetails = entry;
+        $tr.data('entry', entryVM);
+
+        //reconstruct required piece desc
+        var pieces = getFromStorage('Pieces.' + entryVM.EntryBase.ClassAbbr);
+        var piece = findPiece(entry.RequiredPiece);
+        var pieceName = _composers[piece.Composer] + ': ' + piece.Composition;
+        findTd('req').text(pieceName);
+
+        //if choice piece, display that
+        var $td = findTd('choice');
+        if ($td.length > 0)
+            $td.text(entry.ChoiceComposer + ': ' + entry.ChoicePiece);
+
+        //if accomp, display that
+        $td = findTd('acc');
+        if ($td.length > 0)
+            $td.text(entry.Accompanist);
+
+        $td = findTd('notes');
+        $td.text(entry.Notes);
+        
+        $('#entryModal').modal('hide');
+
+        function findTd(name) {
+            return $tr.find('td[name="' + name + '"]');
+        }
+
+        function findPiece(id) {
+            for (var i = 0; i < pieces.length; i++) {
+                if (pieces[i].Id === id)
+                    return pieces[i];
+            }
+        }
+
+    }
+
+    function onUpdateEntryFail(response) {
+        FestivalLib.ajaxFormFailure('entry',response);
+    }
 
     function requiredPieces(classAbbr, callbackFn) {
         _callbackFn = callbackFn;
@@ -58,6 +122,7 @@ var EntriesApp = (function () {
     }
 
     function editEntryContinue(pieces) {
+        //populate the options for the required piece and extensions for each
         var $sel = FestivalLib.$formElt('entry', 'RequiredPiece');
         $sel.find('option').remove();
         $sel.append('<option value="" disabled selected hidden>Select ...</option>');
@@ -77,7 +142,8 @@ var EntriesApp = (function () {
             $sel.append(op);
         }
 
-        FestivalLib.popupForm('entry', editEntryContinue.entry, false);
+        FestivalLib.$formElt('entry', 'RequiredExtension').closest('div').hide();
+        FestivalLib.popupForm('entry', editEntryContinue.entry, false, editEntryContinue.optionalFields);
     }
 
     function onGetComposers(arr) {
