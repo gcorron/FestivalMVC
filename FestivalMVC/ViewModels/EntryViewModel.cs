@@ -46,26 +46,35 @@ namespace FestivalMVC.ViewModels
                        StudentName = s.FullName,
                        EntryBase = e,
                        EntryDetails = f.Id == 0 ? new EntryDetails { Id = e.Id } : f,
-                       RequiredPieceDesc = f.Id == 0 ? "" : _entryDetailsRequired[f.RequiredPiece] + TranslatePieceExtension(f.RequiredExtension) 
+                       RequiredPieceDesc = f.Id == 0 ? "" : _entryDetailsRequired[f.RequiredPiece] + TranslatePieceExtension(f.RequiredExtension)
                    };
         }
 
         public IEnumerable<ClassTypeData> ClassTypes { get => _classTypes; }
         public EventViewModel EventVM { get => _eventVM; }
 
-        private string TranslatePieceExtension(byte ext)
+        private string TranslatePieceExtension(char ext)
         {
-            if (ext == 0)
+            if (ext == '\0')
                 return "";
             else
-                return $" Mvt. {ext}"; 
+                return $" Mvt. {ext}";
         }
     }
 
     public class EntryVM
     {
         public string StudentName { get; set; }
-        public String ChoicePieceDesc { get;}
+        public String ChoicePieceDesc
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(EntryDetails.ChoiceComposer))
+                    return EntryDetails.ChoicePiece;
+                else
+                    return $"{EntryDetails.ChoiceComposer}: {EntryDetails.ChoicePiece}";
+            }
+        }
         public String RequiredPieceDesc { get; set; }
         public EntryBase EntryBase { get; set; }
         public EntryDetails EntryDetails { get; set; }

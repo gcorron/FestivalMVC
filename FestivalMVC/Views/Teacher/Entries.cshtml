@@ -1,5 +1,6 @@
 ﻿@model FestivalMVC.ViewModels.EntryViewModel
 @{
+    ViewBag.Title = "Entries";
     Layout = "~/Views/Teacher/_TeacherLayout.cshtml";
 }
 
@@ -8,20 +9,28 @@
 </form>
 
 <div class="well">
-    <div class="row">
-        <div class="col-sm-4">
-            @{Html.RenderPartial("_Event", Model.EventVM);}
-        </div>
-
+    <div class="text-center">
         @{ bool closed = false;
             if (!Model.EventVM.ComputeIfOpen())
             {
                 closed = true;
-                <h3>Registration is closed. No registrations or changes will be accepted.</h3>
+                <h3>Registration is closed. No more entries or changes will be accepted.</h3>
+            }
+            else
+            {
+                int daysLeft = (int)Math.Truncate((Model.EventVM.Event.CloseDate - DateTime.Today).TotalDays);
+                if (daysLeft == 1)
+                {
+                    int hoursLeft = (int)Math.Truncate((Model.EventVM.Event.CloseDate - DateTime.Today).TotalHours);
+                    <h2>@($"There are less than {hoursLeft} hours remaining to complete your entries!")</h2>
+                }
+                <h3>@($"There are less than {daysLeft} days remaining to complete your entries.")</h3>
             }
 
         }
-        <div class="col-sm-8">
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
 
             <ul class="nav nav-tabs">
                 @{ string first = "active";
@@ -36,7 +45,7 @@
                 @{ first = "in active";
                     foreach (var classtype in Model.ClassTypes)
                     {
-                        <div id="@($"tab{classtype.ClassType}")" class="tab-pane fade @first">
+                        <div id="@($"tab{classtype.ClassType}")" class="tab-pane fade @first" data-classType="@Json.Encode(classtype)">
                             <table id="@($"table{classtype.ClassType}")" class="table-condensed">
                                 <thead>
                                     <tr>
@@ -57,19 +66,21 @@
                                 <tbody>
                                     @foreach (var entry in Model.EntriesByClassType(classtype.ClassType))
                                     {
-                                        <tr name="@entry.EntryBase.Id" data-entry="@Json.Encode(entry)" onclick="EntriesApp.editEntry($(this).data('entry'))">
+                                        <tr name="@entry.EntryBase.Id" data-entry="@Json.Encode(entry)"
+                                            onclick="EntriesApp.editEntry($(this).data('entry'),$(this).closest('div.tab-pane').data('classType'))">
                                             <td>@entry.StudentName</td>
+
                                             <td class="text-center"><span class="label label-fixed label-warning"> @entry.EntryBase.ClassAbbr</span></td>
-                                            <td>@entry.RequiredPieceDesc</td>
+                                            <td name="req">@entry.RequiredPieceDesc</td>
                                             @if (classtype.RequiresChoicePiece)
                                             {
-                                                <td>@entry.ChoicePieceDesc</td>
+                                                <td name="choice">@entry.ChoicePieceDesc</td>
                                             }
                                             @if (classtype.RequiresAccomp)
                                             {
-                                                <td>@entry.EntryDetails.Accompanist</td>
+                                                <td name="acc">@entry.EntryDetails.Accompanist</td>
                                             }
-                                            <td>@entry.EntryDetails.Notes</td>
+                                            <td name="notes">@entry.EntryDetails.Notes</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -99,45 +110,38 @@
                                         <label class="control-label" for="StudentName">Student Name:</label>
                                         <input name="StudentName" class="form-control" readonly />
                                     </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="Status">Status:</label>
-                                        <select name="Status" class="form-control">
-                                            <option value="P">Entering</option>
-                                            <option value="W">Withdraw</option>
-                                        </select>
-                                    </div>
 
                                     <div class="form-group">
                                         <label class="control-label" for="RequiredPiece">Required Piece:</label>
-                                        <select name="RequiredPiece" class="form-control" onchange="EntriesApp.onRequiredChange()"></select>
+                                        <select name="RequiredPiece" class="form-control" onchange="EntriesApp.onRequiredChange()" required></select>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="control-label" for="RequiredExtension">Movement:</label>
-                                        <select name="RequiredExtension" class="form-control"></select>
+                                        <select name="RequiredExtension" class="form-control" required></select>
                                     </div>
 
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-group">
+                                    <div class="form-group optional-hide">
                                         <label class="control-label" for="ChoicePiece">Choice Piece:</label>
-                                        <input name="ChoicePiece" class="form-control" />
+                                        <input name="ChoicePiece" class="form-control" required maxlength="50"/>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group optional-hide">
                                         <label class="control-label" for="ChoiceComposer">Choice Composer:</label>
-                                        <input name="ChoiceComposer" class="form-control" />
+                                        <input name="ChoiceComposer" class="form-control" required maxlength="50"/>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="Publisher">Publisher:</label>
-                                        <input name="Publisher" class="form-control" />
+                                        <input name="Publisher" class="form-control" required maxlength="20"/>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group optional-show">
                                         <label class="control-label" for="Accompanist">Accompanist:</label>
-                                        <input name="Accompanist" class="form-control" />
+                                        <input name="Accompanist" class="form-control" required maxlength="50"/>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="Notes">Notes:</label>
-                                        <input name="Notes" class="form-control" />
+                                        <input name="Notes" class="form-control" maxlength="50"/>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">

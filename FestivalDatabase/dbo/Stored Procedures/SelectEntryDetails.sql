@@ -34,7 +34,7 @@ select * from @entries
 select a.id, requiredPiece,RequiredExtension, ChoicePiece,ChoiceComposer,Publisher,Accompanist, Notes
 from EntryDetails a inner join @entries b on a.id=b.id
 
-select a.id, d.Composer + ' :' + c.Composition as RequiredDescription
+select c.id, d.Composer + ' :' + c.Composition as RequiredDescription
 from EntryDetails a inner join @entries b on a.id=b.id
  left outer join Piece c
  on a.RequiredPiece=c.Id
