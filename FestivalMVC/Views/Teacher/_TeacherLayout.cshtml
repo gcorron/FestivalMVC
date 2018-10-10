@@ -77,15 +77,7 @@
         }
         else
         {
-            if (Session["SelectedEvent"] is null)
-            {
-                return true;
-            }
-            else
-            {
-                var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
-                return (theEvent.MenuKey.IndexOf(key) < 0);
-            }
+            return (Session["SelectedEvent"] is null);
         }
 
     }

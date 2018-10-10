@@ -26,9 +26,8 @@ namespace FestivalMVC.Controllers
 
             ViewBag.Title = "Events";
 
-            string nextPage = RefreshSelectedEventSessionData(id);
-
-            return Json(new { redirect = "/Chair/" + nextPage });
+            RefreshSelectedEventSessionData(id);
+            return Json(new { redirect = "/Chair/Prepare" });
 
         }
 
@@ -119,7 +118,7 @@ namespace FestivalMVC.Controllers
         }
 
 
-        private string RefreshSelectedEventSessionData(int id)
+        private void RefreshSelectedEventSessionData(int id)
         {
             var dataEvent = SQLData.SelectEvent(id, out string instrumentName);
 
@@ -127,7 +126,6 @@ namespace FestivalMVC.Controllers
 
             Session["SelectedEvent"] = theEvent;
 
-            return theEvent.NextPage;
         }
 
         [HttpPost]

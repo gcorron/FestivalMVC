@@ -22,6 +22,18 @@
                                 <input type="date" class="form-control" name="EventDate" required>
                             </div>
                         </div>
+
+                        <div name="statusGroup" class="form-group">
+                            <label class="control-label" for="Status">Event Status:</label>
+                            <select class="form-control" name="Status" required>
+                                <option value="" disabled selected hidden>Select ...</option>
+                                <option value="A">Automatic (by dates)</option>
+                                <option value="B">Open (override dates)</option>
+                                <option value="C">Closed (override dates)</option>
+                                <option value="D">Completed</option>
+                            </select>
+                        </div>
+
                         <div class="col-sm-4">
                             <div id="instrumentGroup" class="form-group">
                                 <label class="control-label" for="Instrument">Instrument Category:</label>
@@ -49,17 +61,6 @@
                                         <label class="form-check-label">Concerto</label>
                                     </span>
                                 </div>
-                            </div>
-
-                            <div name="statusGroup" class="form-group">
-                                <label class="control-label" for="Status">Event Status:</label>
-                                <select class="form-control" name="Status" required>
-                                    <option value="" disabled selected hidden>Select ...</option>
-                                    <option value="A">Automatic (by dates)</option>
-                                    <option value="B">Open (override dates)</option>
-                                    <option value="C">Closed (override dates)</option>
-                                    <option value="D">Completed</option>
-                                </select>
                             </div>
 
                             <div class="form-group">

@@ -83,48 +83,12 @@ namespace FestivalMVC.ViewModels
 
         public bool ComputeIfOpen()
         {
-            return (CurrentTime.CompareTo(Event.OpenDate) > 0 && CurrentTime.CompareTo(Event.CloseDate) < 0);
+            if (Event.Status == EventStatusTypes.Auto)
+                return (CurrentTime.CompareTo(Event.OpenDate) > 0 && CurrentTime.CompareTo(Event.CloseDate) < 0);
+            else
+                return (Event.Status == EventStatusTypes.Open);
         }
 
-        public string MenuKey
-        {
-            get
-            {
-                if (CanEdit) //Chair
-                {
-                    if (CurrentTime.CompareTo(Event.CloseDate) > 0 || Event.Status == closed)
-                        return "IPESR";
-                    else if (CurrentTime.CompareTo(Event.OpenDate) > 0 || Event.Status == open)
-                        return "IPE";
-                    else
-                        return "IP";
-                }
-                else //Teacher
-                {
-                    return ComputeIfOpen() ? "IRE" : "I";
-                }
-
-            }
-        }
-
-        public string NextPage
-        {
-            get
-            {
-                var menuKey = MenuKey;
-                if (CurrentTime.CompareTo(Event.EventDate) > 0)
-                    return "Ratings";
-
-                if (CurrentTime.CompareTo(Event.CloseDate) > 0)
-                    return "Schedule";
-
-                if (CurrentTime.CompareTo(Event.OpenDate) > 0)
-                    return "Entries";
-
-                return "Prepare";
-
-            }
-        }
 
     }
 

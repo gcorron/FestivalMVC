@@ -11,9 +11,11 @@ var RegisterApp = (function () {
             _classTypes = FestivalLib.convertJqueryData('table[data-classTypes]', 'classTypes');
             $('[data-toggle="popover"]').popover();
 
-            //remove any register buttons where they can't register
-            if ($('#registerForm').length === 0)
+            //remove any register buttons and student links where they can't register
+            if ($('#registerForm').length === 0) {
                 $('#students a.btn').remove();
+                $('#students a[name="studentName"]').contents().unwrap();
+            }
             else {
                 var register;
                 $('#students tr[name]').each(function (i, v) {

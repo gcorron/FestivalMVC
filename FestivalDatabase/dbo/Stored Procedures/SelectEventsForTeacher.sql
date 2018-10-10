@@ -5,10 +5,6 @@ BEGIN
 		venue,notes
 			from event
 	where location=@parentLocation
-		and (
-		(status='A' and closeDate>@currentTime)
-		 or status='B')
-
 
 	select id, instrument from instrument
 
