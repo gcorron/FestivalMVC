@@ -5,6 +5,14 @@ using System.Web;
 
 namespace FestivalMVC.Models
 {
+    public static class EventStatusTypes
+    {
+        public const char Auto = 'A';
+        public const char Open = 'B';
+        public const char Closed = 'C';
+        public const char Completed = 'D';
+    }
+
     public struct Event
     {
         private string _venue;

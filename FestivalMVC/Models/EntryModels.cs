@@ -5,7 +5,7 @@ using System.Web;
 
 namespace FestivalMVC.Models
 {
-    public static class StatusTypes
+    public static class EntryStatusTypes
     {
         public const char None = '-';
         public const char Paid = 'P';
@@ -76,6 +76,13 @@ namespace FestivalMVC.Models
     {
         public int Id { get; set; }
         public string Composer { get; set; }
+    }
+
+    public struct Approve
+    {
+        public int Id { get; set; }
+        public char Status { get; set; }
+        public string Notes { get; set; }
     }
 
 }

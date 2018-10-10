@@ -12,3 +12,6 @@ begin
 	insert entrydetails (id, requiredpiece,requiredextension, choicepiece,choicecomposer,publisher,accompanist, notes)
 	values (@id, @requiredpiece, @requiredextension,@choicepiece, @choicecomposer,@publisher, @accompanist, @notes)
 end
+update entry
+set status='R'
+where id=@id and status in ('A','?')

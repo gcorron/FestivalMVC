@@ -1,4 +1,5 @@
-﻿@model FestivalMVC.ViewModels.EntryViewModel
+﻿@using FestivalMVC.Models;
+@model FestivalMVC.ViewModels.EntryViewModel
 @{
     ViewBag.Title = "Entries";
     Layout = "~/Views/Teacher/_TeacherLayout.cshtml";
@@ -11,21 +12,32 @@
 <div class="well">
     <div class="text-center">
         @{ bool closed = false;
-            if (!Model.EventVM.ComputeIfOpen())
+            switch (Model.EventVM.Event.Status)
             {
-                closed = true;
+                case EventStatusTypes.Auto:
+                    closed = !Model.EventVM.ComputeIfOpen();
+                    break;
+                case EventStatusTypes.Open:
+                    break;
+                default:
+                    closed = true;
+                    break;
+            }
+
+            if (closed)
+            {
                 <h3>Registration is closed. No more submissions will be accepted.</h3>
             }
             else if (Model.EntriesAllApproved())
             {
-                <h3>All entries have been accepted.</h3>
+                <h3> All entries have been accepted.</h3>
             }
             else
             {
                 var needCorrecting = Model.EntriesNeedCorrection();
                 if (needCorrecting > 0)
                 {
-                    <h3>You have @needCorrecting entries which require correcting!</h3>
+                    <h3> You have @needCorrecting entries which require correcting!</h3>
                 }
                 else if (!Model.EntriesAllSubmitted())
                 {
@@ -33,13 +45,13 @@
                     if (daysLeft == 1)
                     {
                         int hoursLeft = (int)Math.Truncate((Model.EventVM.Event.CloseDate - DateTime.Today).TotalHours);
-                        <h2>@($"There are less than {hoursLeft} hours remaining to submit your entries!")</h2>
+                        <h2>@($"There are less than {hoursLeft} hours remaining to submit your entries!") </h2>
                     }
-                    <h3>@($"There are less than {daysLeft} days remaining to submit your entries.")</h3>
+                    <h3>@($"There are less than {daysLeft} days remaining to submit your entries.") </h3>
                 }
                 else
                 {
-                    <h3>All entries have been submitted, awaiting approval.</h3>
+                    <h3> All entries have been submitted, awaiting approval.</h3>
                 }
             }
         }

@@ -91,7 +91,7 @@ namespace FestivalMVC.ViewModels
             {
                 registered.Student = StudentVM.Student.Id;
                 registered.ClassType = classType;
-                registered.Status = StatusTypes.None;
+                registered.Status = EntryStatusTypes.None;
             }
 
             return new EnrollVM

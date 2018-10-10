@@ -67,12 +67,12 @@
                 {
                     switch (status)
                     {
-                        case StatusTypes.Paid:return "label-warning";
-                        case StatusTypes.None: return "label-default";
-                        case StatusTypes.Submitted: return "label-primary";
-                        case StatusTypes.Approved: return "label-success";
-                        case StatusTypes.Rejected: return "label-danger";
-                        case StatusTypes.Resubmitted: return "label-info";
+                        case EntryStatusTypes.Paid:return "label-warning";
+                        case EntryStatusTypes.None: return "label-default";
+                        case EntryStatusTypes.Submitted: return "label-primary";
+                        case EntryStatusTypes.Approved: return "label-success";
+                        case EntryStatusTypes.Rejected: return "label-danger";
+                        case EntryStatusTypes.Resubmitted: return "label-info";
                         default: return "";
                     }
                 }

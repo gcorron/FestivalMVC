@@ -64,7 +64,7 @@ namespace FestivalMVC.Controllers
         {
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
 
-            SQLData.UpdateAllEntryStatus(theEvent.Event.Id, teacher, StatusTypes.Approved);
+            SQLData.UpdateAllEntryStatus(theEvent.Event.Id, teacher, EntryStatusTypes.Approved);
             return Json(0);
 
         }
@@ -192,6 +192,14 @@ namespace FestivalMVC.Controllers
             EventViewModel theEvent = (EventViewModel)Session["SelectedEvent"];
             judge.Event = theEvent.Event.Id;
             return PartialView("_Judges", SQLData.UpdateJudge(judge));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateEntryStatus(Approve approve)
+        {
+            SQLData.UpdateEntryStatus(approve.Id, approve.Status, approve.Notes);
+            return Json(approve);
         }
 
         //catch all unhandled exceptions that are thrown within scope of this controller

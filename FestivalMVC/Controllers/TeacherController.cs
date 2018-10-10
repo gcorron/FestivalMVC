@@ -95,22 +95,9 @@ namespace FestivalMVC.Controllers
             if (theEvent.ComputeIfOpen() == false)
                 throw new Exception("This event is closed - no changes to registrations allowed.");
 
-            SQLData.UpdateAllEntryStatus(theEvent.Event.Id,theUser.Id,StatusTypes.Submitted);
+            SQLData.UpdateAllEntryStatus(theEvent.Event.Id,theUser.Id,EntryStatusTypes.Submitted);
             return Json(0);
 
-        }
-
-        [ValidateAntiForgeryToken]
-        [HttpPost]
-        public ActionResult UpdateEntryDetails(EntryDetails details)
-        {
-            var theUser = GetSessionItem<LoginPerson>("TheUser");
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-            if (theEvent.ComputeIfOpen() == false)
-                throw new Exception("This event is closed - no changes to registrations allowed.");
-
-            SQLData.UpdateEntryDetails(details);
-            return Json(details);
         }
 
         [ValidateAntiForgeryToken]

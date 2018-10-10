@@ -24,12 +24,12 @@ var EntriesApp = (function () {
             }
         },
 
-        editEntry: function (entryVM,classType) {
-            var entry = entryVM.EntryDetails;
-            entry.StudentName = entryVM.StudentName;
-            editEntryContinue.entry = entry;
-            editEntryContinue.optionalFields = !classType.RequiresChoicePiece;
-            requiredPieces(entryVM.EntryBase.ClassAbbr, editEntryContinue);
+        editEntry: function (entryVM, classType) {
+                var entry = entryVM.EntryDetails;
+                entry.StudentName = entryVM.StudentName;
+                editEntryContinue.entry = entry;
+                editEntryContinue.optionalFields = !classType.RequiresChoicePiece;
+                requiredPieces(entryVM.EntryBase.ClassAbbr, editEntryContinue);
         },
 
         onRequiredChange: function (extValue) {
@@ -68,6 +68,7 @@ var EntriesApp = (function () {
             $('#entryForm  .form-control').find(':not(:visible)').val("");
             FestivalLib.postAjax('/Teacher/UpdateEntryDetails', 'entry', false, onUpdateEntrySuccess, onUpdateEntryFail);
         },
+
         submitEntries: function () {
             if (allComplete()===false) {
                 FestivalLib.showInfoModal('Attention','All fields are not complete for all entries!');
@@ -76,8 +77,41 @@ var EntriesApp = (function () {
             if (confirm('Once you submit these entries, you cannot go back and make changes. Are you sure?')) {
                 FestivalLib.postAjax('/Teacher/SubmitEntries', {}, false, onSubmitSuccess, FestivalLib.onAjaxFailure);
             }
+        },
+
+        approveEntry: function (status) {
+            var approve = {};
+            approve.Id = FestivalLib.$formElt('entry','Id').val();
+            approve.Status = status;
+            approve.Notes = FestivalLib.$formElt('entry','Notes').val();
+            FestivalLib.postAjax('/Chair/UpdateEntryStatus', approve, false, onApproveSuccess, onUpdateEntryFail);
+        },
+
+        approveEntries: function () {
+            if (confirm('Approve all entries for this teacher. Are you sure?')) {
+                var $sel = FestivalLib.$formElt('select', 'SelectedTeacher');
+                var teacher = $sel.find('option:selected').val();
+                FestivalLib.postAjax('/Chair/ApproveEntries', { teacher }, false, onSubmitSuccess, FestivalLib.onAjaxFailure);
+            }
         }
     };
+
+    function onApproveSuccess(approve) {
+
+        var $tr = FestivalLib.$tableRow('*', approve.Id);
+        var entryVM = $tr.data('entry');
+        entryVM.EntryDetails.Notes = approve.Notes;
+        entryVM.EntryBase.Status = approve.Status;
+        $tr.data('entry', entryVM);
+
+        updateLabelColor($tr, approve.Status);
+
+        //update the notes in table
+        $tr.find('td[name="notes"]').text(approve.Notes);
+
+
+        $('#entryModal').modal('hide');
+    }
 
     function onSubmitSuccess() {
         document.location.reload();
@@ -118,6 +152,12 @@ var EntriesApp = (function () {
 
         var entryVM = $tr.data('entry');
         entryVM.EntryDetails = entry;
+        var status = entryVM.EntryBase.Status;
+        if (status === '?' || status === 'A') {
+            status = 'R';
+            entryVM.EntryBase.Status = status;
+            updateLabelColor($tr, status);
+        }
         $tr.data('entry', entryVM);
 
         //reconstruct required piece desc
@@ -219,6 +259,19 @@ var EntriesApp = (function () {
         return JSON.parse(str);
     }
 
+    function updateLabelColor($tr,status) {
+        //update the color of the label
+        var labelType;
+        switch (status) {
+            case 'A': labelType = 'success'; break;
+            case '?': labelType = 'danger'; break;
+            case 'R': labelType = 'info';break
+            default: labelType = 'default';
+        }
+        var elt = $tr.find('span.label')[0];
+        elt.className = 'label label-fixed label-' + labelType;
+
+    }
 
 })();
 

@@ -11,6 +11,15 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static void UpdateEntryStatus(int id, char status, string notes)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("UpdateEntryStatus", new { id, status,notes }, commandType: CommandType.StoredProcedure);
+            }
+
+        }
+
         #region TeacherEntry
 
         public static void UpdateAllEntryStatus(int ev, int teacher, char status)

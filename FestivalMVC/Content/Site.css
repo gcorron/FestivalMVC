@@ -95,4 +95,8 @@ dl {
     display: inline-block;
 }
 
+.label-info {
+    background-color: burlywood;
+}
+
 

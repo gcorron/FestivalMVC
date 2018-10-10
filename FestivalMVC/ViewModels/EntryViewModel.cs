@@ -75,19 +75,19 @@ namespace FestivalMVC.ViewModels
         public bool EntriesAllSubmitted()
         {
             return (from e in _entries
-                    select e).All(e => e.Status != StatusTypes.Paid && e.Status != StatusTypes.None);
+                    select e).All(e => e.Status != EntryStatusTypes.Paid && e.Status != EntryStatusTypes.None);
         }
 
         public int EntriesNeedCorrection()
         {
             return (from e in _entries
-                    where e.Status == StatusTypes.Rejected
+                    where e.Status == EntryStatusTypes.Rejected
                     select e).Count();
         }
         public bool EntriesAllApproved()
         {
             return (from e in _entries
-                    select e).All(e => e.Status == StatusTypes.Approved);
+                    select e).All(e => e.Status == EntryStatusTypes.Approved);
 
         }
 

@@ -256,7 +256,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="Scripts\ChairEntries.js" />
     <Content Include="Scripts\Entries.js" />
     <Content Include="Scripts\EventsPage.js" />
     <Content Include="Scripts\EventEdit.js" />

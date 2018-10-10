@@ -1,10 +1,11 @@
-﻿@model FestivalMVC.ViewModels.EntryViewModel
+﻿@using FestivalMVC.Models
+@model FestivalMVC.ViewModels.EntryViewModel
 
 @{
-    var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
-    var theUser = (FestivalMVC.Models.LoginPerson)Session["TheUser"];
-    var dataEvent = theEvent.Event;
+    ViewBag.Title = "Entries";
+    Layout = "~/Views/Chair/_ChairLayout.cshtml";
 }
+
 @*
     Entries Page For Chair
 *@
@@ -15,7 +16,7 @@
 
 <div class="well">
     <div>
-        <form id="selectForm" action="/Chair/Entries" method="post" id="teachers" class="form-inline">
+        <form id="selectForm" action="/Chair/Entries" method="post" class="form-inline">
             @Html.AntiForgeryToken()
             <div class="form-group">
                 <label class="control-label" for="SelectedTeacher">Teacher:&nbsp;</label>
@@ -37,17 +38,82 @@
 
             if (Model.EntriesAllSubmitted() && !Model.EntriesAllApproved())
             {
-                <a class="btn btn-sm btn-success pull-right" onclick="ChairEntriesApp.approveEntries()">Approve</a>
+                <a class="btn btn-sm btn-success pull-right" onclick="EntriesApp.approveEntries()">Approve</a>
             }
             Html.RenderPartial("_Entries", Model);
         }
     }
 </div>
+<form id="entryForm">
+    <div class="modal fade" id="entryModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="well-sm">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <input name="Id" type="hidden" class="form-control" />
+                            <div class="form-group">
+                                <label class="control-label" for="StudentName">Student Name:</label>
+                                <input name="StudentName" class="form-control" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" for="RequiredPiece">Required Piece:</label>
+                                <select name="RequiredPiece" class="form-control" onchange="EntriesApp.onRequiredChange()" readonly></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" for="RequiredExtension">Movement:</label>
+                                <select name="RequiredExtension" class="form-control" readonly></select>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group optional-hide">
+                                <label class="control-label" for="ChoicePiece">Choice Piece:</label>
+                                <input name="ChoicePiece" class="form-control" readonly />
+                            </div>
+                            <div class="form-group optional-hide">
+                                <label class="control-label" for="ChoiceComposer">Choice Composer:</label>
+                                <input name="ChoiceComposer" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="Publisher">Publisher:</label>
+                                <input name="Publisher" class="form-control" readonly/>
+                            </div>
+                            <div class="form-group optional-show">
+                                <label class="control-label" for="Accompanist">Accompanist:</label>
+                                <input name="Accompanist" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="Notes">Notes:</label>
+                                <input name="Notes" class="form-control" maxlength="50" />
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <a class="btn btn-default" onclick="$('#entryModal').modal('hide')" title="Close">Close</a>
+                                <a class="btn btn-default" onclick="EntriesApp.approveEntry('A')" title="Approve">Approve</a>
+                                <a class="btn btn-default" onclick="EntriesApp.approveEntry('?')" title="Reject">Reject</a>
+
+                            </div>
+                            <div class="alert alert-danger" name="submitError">
+                                <strong>Server error! </strong><span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
 
 
 @section Scripts {
     @Scripts.Render("~/Scripts/FestivalLib.js")
-    @Scripts.Render("~/Scripts/ChairEntries.js")
+    @Scripts.Render("~/Scripts/Entries.js")
 }
 
 
