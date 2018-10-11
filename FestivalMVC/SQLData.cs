@@ -11,11 +11,21 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static void SelectScheduleSetupData(int ev, out IEnumerable<UnscheduledSummaryModel> summary, out IEnumerable<ScheduleModel> schedule)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                var multi=connection.QueryMultiple("SelectScheduleSetupData", new { ev }, commandType: CommandType.StoredProcedure);
+                summary = multi.Read<UnscheduledSummaryModel>();
+                schedule = multi.Read<ScheduleModel>();
+            }
+        }
+
         public static void UpdateEntryStatus(int id, char status, string notes)
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                connection.Execute("UpdateEntryStatus", new { id, status,notes }, commandType: CommandType.StoredProcedure);
+                connection.Execute("UpdateEntryStatus", new { id, status, notes }, commandType: CommandType.StoredProcedure);
             }
 
         }
@@ -26,7 +36,7 @@ namespace FestivalMVC
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                connection.Execute("UpdateAllEntryStatus", new {ev,teacher,status }, commandType: CommandType.StoredProcedure);
+                connection.Execute("UpdateAllEntryStatus", new { ev, teacher, status }, commandType: CommandType.StoredProcedure);
             }
 
         }

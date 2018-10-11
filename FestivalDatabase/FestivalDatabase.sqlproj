@@ -123,6 +123,8 @@
     <Build Include="dbo\Stored Procedures\UpdateEntryDetails.sql" />
     <Build Include="dbo\Stored Procedures\UpdateAllEntryStatus.sql" />
     <Build Include="dbo\Stored Procedures\UpdateEntryStatus.sql" />
+    <Build Include="dbo\Tables\Schedule.sql" />
+    <Build Include="dbo\Stored Procedures\SelectScheduleSetupData.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />
