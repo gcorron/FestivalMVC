@@ -29,6 +29,7 @@ namespace FestivalMVC.ViewModels
     {
         private IEnumerable<ScheduleModel> _schedule;
         private IEnumerable<UnscheduledSummaryModel> _summary;
+        private IEnumerable<ScheduledSummaryModel> _entrySchedule;
         private IEnumerable<Judge> _judges;
 
         private Event _event;
@@ -37,7 +38,7 @@ namespace FestivalMVC.ViewModels
 #region constructors
         public SchedulePageViewModel(Event ev)
         {
-            SQLData.SelectScheduleSetupData(ev.Id, out _summary, out _schedule, out _judges);
+            SQLData.SelectScheduleSetupData(ev.Id, out _summary, out _entrySchedule, out _schedule, out _judges);
             _event = ev;
         }
 
@@ -57,6 +58,7 @@ namespace FestivalMVC.ViewModels
         public IEnumerable<ScheduleModel> Schedule { get => _schedule; }
         public IEnumerable<UnscheduledSummaryModel> Summary { get => _summary; }
         public IEnumerable<Judge> Judges { get => _judges; }
+        public IEnumerable<ScheduledSummaryModel> EntrySchedule { get => _entrySchedule; }
         public DateTime EventDate { get => _event.EventDate;}
         public string ClassTypes { get => _event.ClassTypes; }
 

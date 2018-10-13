@@ -11,57 +11,92 @@
 </form>
 
 <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-6">
         <div class="well well-sm">
-            <h4>Unscheduled Entry Summary</h4>
-            <table class="table table-bordered table-condensed">
-                <thead>
-                    <tr>
-                        <th>Class</th>
-                        <th class="text-right">Minutes</th>
-                        <th class="text-right">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{ bool lastTotal = false;
-                        foreach (var summaryLine in Model.Summary)
-                        {
+            @{ if (Model.Summary.Count() > 0)
+                {
+                    <h4>Unscheduled Entry Summary</h4>
+                    <table class="table table-bordered table-condensed">
+                        <thead>
                             <tr>
-                                <td>@TotalBold(summaryLine.ClassTypeDesc)</td>
-                                <td class="text-right">@TotalBold(summaryLine.AuditionMinutes)</td>
-                                <td class="text-right">@summaryLine.TotalMinutes</td>
+                                <th>Class</th>
+                                <th class="text-right">Minutes</th>
+                                <th class="text-right">Total</th>
                             </tr>
-
-                            if (summaryLine.AuditionMinutes == "Total")
-                            {
-                                if (!lastTotal)
+                        </thead>
+                        <tbody>
+                            @{ bool lastTotal = false;
+                                foreach (var summaryLine in Model.Summary)
                                 {
-                                    <tr><td></td><td></td><td></td></tr>
-                                }
-                                lastTotal = true;
-                            }
-                            else
-                            {
-                                lastTotal = false;
-                            }
+                                    <tr>
+                                        <td>@TotalBold(summaryLine.ClassTypeDesc)</td>
+                                        <td class="text-right">@TotalBold(summaryLine.AuditionMinutes)</td>
+                                        <td class="text-right">@summaryLine.TotalMinutes</td>
+                                    </tr>
 
-                        }
-                        IHtmlString TotalBold(string desc)
-                        {
-                            if (desc == "Total")
-                            {
-                                return Html.Raw(lastTotal ? "" : "<b>Total</b>");
+                                    if (summaryLine.AuditionMinutes == "Total")
+                                    {
+                                        if (!lastTotal)
+                                        {
+                                            <tr><td></td><td></td><td></td></tr>
+                                        }
+                                        lastTotal = true;
+                                    }
+                                    else
+                                    {
+                                        lastTotal = false;
+                                    }
+
+                                }
+                                IHtmlString TotalBold(string desc)
+                                {
+                                    if (desc == "Total")
+                                    {
+                                        return Html.Raw(lastTotal ? "" : "<b>Total</b>");
+                                    }
+                                    else
+                                    {
+                                        return Html.Raw(desc);
+                                    }
+                                }
                             }
-                            else
-                            {
-                                return Html.Raw(desc);
+                        </tbody>
+                    </table>
+                                }
+                                else //all scheduled, show the entry schedule
+                                {
+                    <h4>Scheduled Entry Summary</h4>
+                    <table class="table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Class Type</th>
+                                <th>Class</th>
+                                <th>Judge</th>
+                                <th>Audition Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ foreach (var schedule in Model.EntrySchedule)
+                                {
+                            <tr>
+                                <td>@schedule.StudentName</td>
+                                <td>@schedule.ClassType</td>
+                                <td>@schedule.ClassAbbr</td>
+                                <td>@schedule.JudgeName</td>
+                                <th>@schedule.AuditionTimeString</th>
+                            </tr>
+                                }
                             }
-                        }
-                    }
-                </tbody>
-            </table>
-            <a class="pull-right btn btn-sm btn-warning" onclick="scheduleApp.generateSchedule">Generate Student Schedule</a>
+                        </tbody>
+                    </table>
+
+                }
+            }
+
+            <a class="pull-right btn btn-sm btn-warning" onclick="ScheduleApp.generateNewSchedule()">Generate Student Schedule</a>
             <div class="clear"></div>
+
         </div>
     </div>
     <div class="col-sm-6">

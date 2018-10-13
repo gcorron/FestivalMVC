@@ -10,6 +10,24 @@ namespace FestivalMVC
 {
     public class SQLData
     {
+        public static void InsertAudition(ProcessAuditionModel audition)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("InsertAudition", new { audition.Id, audition.Schedule,audition.AuditionTime }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public static void SelectDataForGeneratingSchedule(int ev, out List<ProcessScheduleModel> schedules,
+            out List<ProcessAuditionModel> auditions)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                var multi = connection.QueryMultiple("SelectDataForGeneratingSchedule", new { ev }, commandType: CommandType.StoredProcedure);
+                schedules = multi.Read<ProcessScheduleModel>().AsList();
+                auditions = multi.Read<ProcessAuditionModel>().AsList();
+            }
+        }
 
         public static void UpdateSchedule(ScheduleModel schedule, out IEnumerable<ScheduleModel> schedules, out IEnumerable<Judge> judges)
         {
@@ -32,12 +50,13 @@ namespace FestivalMVC
         }
 
         public static void SelectScheduleSetupData(int ev, out IEnumerable<UnscheduledSummaryModel> summary,
-            out IEnumerable<ScheduleModel> schedules, out IEnumerable<Judge> judges)
+            out IEnumerable <ScheduledSummaryModel> summary2, out IEnumerable<ScheduleModel> schedules, out IEnumerable<Judge> judges)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 var multi=connection.QueryMultiple("SelectScheduleSetupData", new { ev }, commandType: CommandType.StoredProcedure);
                 summary = multi.Read<UnscheduledSummaryModel>();
+                summary2 = multi.Read<ScheduledSummaryModel>();
                 schedules = multi.Read<ScheduleModel>();
                 judges = multi.Read<Judge>();
             }

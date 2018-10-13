@@ -39,6 +39,12 @@ var ScheduleApp = (function () {
             delete schedule.StartHour;
             delete schedule.StartMinute;
             FestivalLib.postAjax('/Chair/UpdateSchedule', schedule, true, onUpdateScheduleSuccess, onUpdateScheduleFail);
+        },
+
+        generateNewSchedule: function () {
+            if (confirm('This will erase any existing audition times for entries and create new times. Are you sure?')) {
+                FestivalLib.postAjax('/Chair/GenerateNewSchedule', {}, false, onGenerateSuccess, FestivalLib.onAjaxFailure);
+            }
         }
     };
 
@@ -54,6 +60,10 @@ var ScheduleApp = (function () {
             schedule.Judge = $($ops[1]).val();
         FestivalLib.popupForm('schedule', schedule, schedule.Id !== 0);
 
+    }
+
+    function onGenerateSuccess() {
+        location.reload();
     }
 
     function onUpdateScheduleSuccess(html) {

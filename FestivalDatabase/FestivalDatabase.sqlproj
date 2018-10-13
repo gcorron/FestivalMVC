@@ -128,6 +128,8 @@
     <Build Include="dbo\Stored Procedures\UpdateSchedule.sql" />
     <Build Include="dbo\Stored Procedures\SelectJudgeScheduleForEvent.sql" />
     <Build Include="dbo\Stored Procedures\DeleteSchedule.sql" />
+    <Build Include="dbo\Stored Procedures\SelectDataForGeneratingSchedule.sql" />
+    <Build Include="dbo\Stored Procedures\InsertAudition.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

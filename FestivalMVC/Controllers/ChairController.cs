@@ -56,6 +56,17 @@ namespace FestivalMVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
+        public ActionResult GenerateNewSchedule()
+        {
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var generator = new AuditionGenerator();
+            bool result=generator.BeginProcess(theEvent.Event.Id);
+            return Json(result);
+            
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
         public ActionResult UpdateSchedule(ScheduleModel schedule)
         {
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
