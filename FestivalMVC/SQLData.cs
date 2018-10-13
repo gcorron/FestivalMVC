@@ -11,13 +11,35 @@ namespace FestivalMVC
     public class SQLData
     {
 
-        public static void SelectScheduleSetupData(int ev, out IEnumerable<UnscheduledSummaryModel> summary, out IEnumerable<ScheduleModel> schedule)
+        public static void UpdateSchedule(ScheduleModel schedule, out IEnumerable<ScheduleModel> schedules, out IEnumerable<Judge> judges)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                var multi = connection.QueryMultiple("UpdateSchedule", schedule, commandType: CommandType.StoredProcedure);
+                schedules = multi.Read<ScheduleModel>();
+                judges = multi.Read<Judge>();
+            }
+        }
+
+        public static void DeleteSchedule(int id, out IEnumerable<ScheduleModel> schedules, out IEnumerable<Judge> judges)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                var multi = connection.QueryMultiple("DeleteSchedule", new { id }, commandType: CommandType.StoredProcedure);
+                schedules = multi.Read<ScheduleModel>();
+                judges = multi.Read<Judge>();
+            }
+        }
+
+        public static void SelectScheduleSetupData(int ev, out IEnumerable<UnscheduledSummaryModel> summary,
+            out IEnumerable<ScheduleModel> schedules, out IEnumerable<Judge> judges)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 var multi=connection.QueryMultiple("SelectScheduleSetupData", new { ev }, commandType: CommandType.StoredProcedure);
                 summary = multi.Read<UnscheduledSummaryModel>();
-                schedule = multi.Read<ScheduleModel>();
+                schedules = multi.Read<ScheduleModel>();
+                judges = multi.Read<Judge>();
             }
         }
 

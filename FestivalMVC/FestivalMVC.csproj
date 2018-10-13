@@ -274,7 +274,7 @@
     <Content Include="Scripts\PersonApp.js" />
     <Content Include="Scripts\PreparePage.js" />
     <Content Include="Scripts\Register.js" />
-    <Content Include="Scripts\Schedule.js" />
+    <Content Include="Scripts\SchedulePage.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -330,6 +330,7 @@
     <Content Include="Views\Teacher\_FullStudent.cshtml" />
     <Content Include="Views\Teacher\Entries.cshtml" />
     <Content Include="Views\Shared\_Entries.cshtml" />
+    <Content Include="Views\Chair\_Schedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -54,6 +54,22 @@ namespace FestivalMVC.Controllers
             return View(new SchedulePageViewModel(theEvent.Event));
         }
 
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult UpdateSchedule(ScheduleModel schedule)
+        {
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            return PartialView("_Schedule",new SchedulePageViewModel(theEvent.Event,schedule));
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult DeleteSchedule(int id)
+        {
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            return PartialView("_Schedule", new SchedulePageViewModel(theEvent.Event, id));
+        }
+
 
         [ValidateAntiForgeryToken]
         [HttpPost]

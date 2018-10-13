@@ -80,7 +80,9 @@ var FestivalLib = (function () {
 
                 if (name in o) {
 
-                    var val = o[name] || '';
+                    var val = o[name];
+                    if (val === null || val === undefined)
+                        val= '';
 
                     if (control.type === 'checkbox') {
                         if (isMulti)

@@ -31,16 +31,16 @@
 
                     @foreach (string page in new string[] { "Prepare", "Entries", "Schedule", "Ratings" })
                     {
-                    <li class="@LinkClass(page)">
-                        @if (IsDisabled(page.Substring(0, 1)))
-                        {
-                            @:<a href="#">@page</a>
-                        }
-                        else
-                        {
-                            @:<a href="/Chair/@page">@page</a>
-                        }
-                    </li>
+                        <li class="@LinkClass(page)">
+                            @if (IsDisabled(page.Substring(0, 1)))
+                            {
+                                @:<a href="#">@page</a>
+                            }
+                            else
+                            {
+                                @:<a href="/Chair/@page">@page</a>
+                            }
+                        </li>
                     }
                 </ul>
                 @Html.Partial("_LoginPartial")
@@ -58,6 +58,7 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
 </body>
 </html>
 

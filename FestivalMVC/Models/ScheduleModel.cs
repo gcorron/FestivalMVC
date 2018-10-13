@@ -18,6 +18,8 @@ namespace FestivalMVC.Models
         public int Judge { get; set; }
         public DateTime StartTime { get; set; }
         public Int16 Minutes { get; set; }
+        public char PrefHighLow { get; set; }
+        public char ClassType { get; set; }
     }
 
 }

@@ -23,7 +23,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @{ foreach (var summaryLine in Model.Summary)
+                    @{ bool lastTotal = false;
+                        foreach (var summaryLine in Model.Summary)
                         {
                             <tr>
                                 <td>@TotalBold(summaryLine.ClassTypeDesc)</td>
@@ -31,11 +32,25 @@
                                 <td class="text-right">@summaryLine.TotalMinutes</td>
                             </tr>
 
+                            if (summaryLine.AuditionMinutes == "Total")
+                            {
+                                if (!lastTotal)
+                                {
+                                    <tr><td></td><td></td><td></td></tr>
+                                }
+                                lastTotal = true;
+                            }
+                            else
+                            {
+                                lastTotal = false;
+                            }
+
                         }
                         IHtmlString TotalBold(string desc)
                         {
-                            if (desc == "Total") {
-                                return Html.Raw("<b>Total</b>");
+                            if (desc == "Total")
+                            {
+                                return Html.Raw(lastTotal ? "" : "<b>Total</b>");
                             }
                             else
                             {
@@ -45,35 +60,159 @@
                     }
                 </tbody>
             </table>
+            <a class="pull-right btn btn-sm btn-warning" onclick="scheduleApp.generateSchedule">Generate Student Schedule</a>
+            <div class="clear"></div>
         </div>
     </div>
     <div class="col-sm-6">
         <div class="well well-sm">
-            <h4>Judges Schedule</h4><input class="btn btn-sm btn-primary" onclick="ScheduleApp.addSchedule()"/>
+            <h4>Judges Schedule</h4><a class="btn btn-sm btn-primary pull-right" onclick="ScheduleApp.addSchedule()">Add</a>
+            <div class="clear"></div>
             <table class="table table-bordered table-condensed">
                 <thead>
                     <tr>
                         <th>Judge</th>
                         <th>Start Time</th>
-                        <th>Minutes</th>
+                        <th class="text-right">Minutes</th>
+                        <th>Class</th>
+                        <th>Level</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @{ foreach (var scheduleLine in Model.Schedule)
-                        {
-                            <tr>
-                                <td>@scheduleLine.Judge</td>
-                                <td>@Model.EventTime(scheduleLine.StartTime)</td>
-                                <td>@scheduleLine.Minutes</td>
-                            </tr>
-
-                        }
-                    }
-                </tbody>
+                @{Html.RenderPartial("_Schedule", Model);}
             </table>
-
-
         </div>
-
     </div>
 </div>
+
+<div class="modal fade" id="scheduleModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="scheduleForm">
+                <div class="well">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <input type="hidden" class="form-control" name="Id" />
+                            <div class="form-group">
+                                <label class="control-label" for="Judge">Judge:</label>
+                                <select class="form-control" name="Judge" required>
+                                    <option value="0" disabled selected hidden>Select ...</option>
+                                    @{ foreach (var judge in Model.Judges)
+                                        {
+                                            <option value="@judge.Id">@judge.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="StartHour">Start Hr:</label>
+                                            <select name="StartHour" class="form-control input-sm">
+                                                <option value="0" disabled selected hidden>Select ... </option>
+                                                <option value="7">7 AM</option>
+                                                <option value="8">8 AM</option>
+                                                <option value="9">9 AM</option>
+                                                <option value="10">10 AM</option>
+                                                <option value="11">11 AM</option>
+                                                <option value="12">12 PM</option>
+                                                <option value="13">1 PM</option>
+                                                <option value="14">2 PM</option>
+                                                <option value="15">3 PM</option>
+                                                <option value="16">4 PM</option>
+                                                <option value="17">5 PM</option>
+                                                <option value="18">6 PM</option>
+                                                <option value="19">7 PM</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="StartMinute">Start Min:</label>
+                                        <select name="StartMinute" class="form-control input-sm">
+                                            <option value="0">:00</option>
+                                            <option value="10">:10</option>
+                                            <option value="20">:20</option>
+                                            <option value="30">:30</option>
+                                            <option value="40">:40</option>
+                                            <option value="50">:50</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="StartDay">Day:</label>
+                                            <select name="StartDay" class="form-control input-sm" data-eventDate="@Json.Encode(Model.EventDate)">
+                                                <option value="0">Day 1</option>
+                                                <option value="1">Day 2</option>
+                                                <option value="2">Day 3</option>
+                                                <option value="3">Day 4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="Minutes">Span:</label>
+                                        <select name="Minutes" class="form-control input-sm">
+                                            <option value="60">1 hr</option>
+                                            <option value="90">1.5</option>
+                                            <option value="120">2 hr</option>
+                                            <option value="150">2.5</option>
+                                            <option value="180">3 hr</option>
+                                            <option value="210">3.5</option>
+                                            <option value="240">4 hr</option>
+                                            <option value="270">4.5</option>
+                                            <option value="300">5 hr</option>
+                                            <option value="330">5.5</option>
+                                            <option value="360">6 hr</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="ClassType">Class:</label>
+                                    <select class="form-control" name="ClassType" required>
+                                        <option value="*" selected>Any</option>
+                                        @{ foreach (char classType in Model.ClassTypes)
+                                            {
+                                                <option value="@classType">@classType</option>
+                                            }}
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="PrefHighLow">Level</label>
+                                    <select class="form-control" name="PrefHighLow" required>
+                                        <option value="*" selected>Any</option>
+                                        <option value="H">High</option>
+                                        <option value="L">Low</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <a class="btn btn-default" onclick="ScheduleApp.updateSchedule()">Save</a>
+                                <a class="btn btn-default" onclick="$('#scheduleModal').modal('hide')" title="Close">Cancel</a>
+                                <a name="deleteButton" class="btn btn-warning" onclick="ScheduleApp.deleteSchedule()" title="Delete">Delete</a>
+                            </div>
+                            <div class="alert alert-danger" name="submitError">
+                                <strong>Server error! </strong><span></span>
+                            </div>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="clear"></div>
+@section Scripts
+{
+
+    @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/SchedulePage.js")
+
+}
+
