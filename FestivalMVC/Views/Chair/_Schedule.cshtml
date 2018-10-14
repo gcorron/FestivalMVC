@@ -3,7 +3,7 @@
     @{ Int16 total = 0;
         foreach (var scheduleLine in Model.Schedule)
         {
-            <tr data-schedule="@Json.Encode(scheduleLine)" onclick="ScheduleApp.editSchedule(this)">
+            <tr data-schedule="@Json.Encode(scheduleLine)" onclick="@(Model.CanSchedule ? "ScheduleApp.editSchedule(this)" : "") ">
                 <td>@Model.JudgeName(@scheduleLine.Judge)</td>
                 <td>@Model.EventTime(scheduleLine)</td>
                 <td class="text-right">@scheduleLine.Minutes</td>

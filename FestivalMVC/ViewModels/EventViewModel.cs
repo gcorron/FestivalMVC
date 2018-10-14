@@ -89,6 +89,20 @@ namespace FestivalMVC.ViewModels
                 return (Event.Status == EventStatusTypes.Open);
         }
 
+        public bool ComputeIfScheduling()
+        {
+            if (CurrentTime.CompareTo(Event.EventDate) >= 0)
+                return false;
+            if (ComputeIfOpen())
+                return false;
+            return Event.Status != EventStatusTypes.Completed;
+        }
+        public bool ComputeIfRating()
+        {
+            if (CurrentTime.CompareTo(Event.EventDate) >= 0)
+                return Event.Status != EventStatusTypes.Completed;
+            return false;
+        }
 
     }
 

@@ -10,8 +10,11 @@ namespace FestivalMVC
 {
     public class SQLData
     {
+
+        #region ChairSchedule
         public static void InsertAudition(ProcessAuditionModel audition)
         {
+
             using (IDbConnection connection = GetDBConnection())
             {
                 connection.Execute("InsertAudition", new { audition.Id, audition.Schedule,audition.AuditionTime }, commandType: CommandType.StoredProcedure);
@@ -70,6 +73,7 @@ namespace FestivalMVC
             }
 
         }
+        #endregion
 
         #region TeacherEntry
 
@@ -131,7 +135,6 @@ namespace FestivalMVC
 
         }
         #endregion
-
 
         #region TeacherRegister
         public static PayReg UpdateEntryPaid(int ev, int teacher, decimal totalAmt)

@@ -8,13 +8,13 @@ namespace FestivalMVC.ViewModels
 {
     public class EntryViewModel
     {
-        private IEnumerable<EntryBase> _entries;
-        private IEnumerable<EntryDetails> _entryDetails;
-        private IDictionary<int, string> _entryDetailsRequired;
-        private IEnumerable<StudentName> _studentNames;
-        private IEnumerable<ClassTypeData> _classTypes;
-        private IEnumerable<ContactShort> _teachers;
-        private EventViewModel _eventVM;
+        private readonly IEnumerable<EntryBase> _entries;
+        private readonly IEnumerable<EntryDetails> _entryDetails;
+        private readonly IDictionary<int, string> _entryDetailsRequired;
+        private readonly IEnumerable<StudentName> _studentNames;
+        private readonly IEnumerable<ClassTypeData> _classTypes;
+        private readonly IEnumerable<ContactShort> _teachers;
+        private readonly EventViewModel _eventVM;
 
         public EntryViewModel(EventViewModel eventVM, int teacher)
         {

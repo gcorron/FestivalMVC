@@ -51,7 +51,7 @@ namespace FestivalMVC.Controllers
             ViewBag.Title = "Schedule";
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
 
-            return View(new SchedulePageViewModel(theEvent.Event));
+            return View(new SchedulePageViewModel(theEvent));
         }
 
         [ValidateAntiForgeryToken]
@@ -70,7 +70,7 @@ namespace FestivalMVC.Controllers
         public ActionResult UpdateSchedule(ScheduleModel schedule)
         {
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-            return PartialView("_Schedule",new SchedulePageViewModel(theEvent.Event,schedule));
+            return PartialView("_Schedule",new SchedulePageViewModel(theEvent,schedule));
         }
 
         [ValidateAntiForgeryToken]
@@ -78,7 +78,7 @@ namespace FestivalMVC.Controllers
         public ActionResult DeleteSchedule(int id)
         {
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-            return PartialView("_Schedule", new SchedulePageViewModel(theEvent.Event, id));
+            return PartialView("_Schedule", new SchedulePageViewModel(theEvent, id));
         }
 
 

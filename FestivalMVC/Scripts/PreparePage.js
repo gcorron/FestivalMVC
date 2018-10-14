@@ -3,6 +3,7 @@
 var PreparePageApp = (function () {
     return {
         init: function () {
+            FestivalLib.initAjaxCursor();
             PersonApp.setAssignFunction(changeParticipate);
         },
 

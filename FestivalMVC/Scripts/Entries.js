@@ -8,6 +8,8 @@ var EntriesApp = (function () {
     return {
         init: function (requiredVersion) { //version of required pieces database cached in local storage
 
+            FestivalLib.initAjaxCursor();
+
             $('tr[name]').each(function (i, v) {
                 FestivalLib.convertJqueryData(v, 'entry');
             });

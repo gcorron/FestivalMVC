@@ -62,9 +62,9 @@
                             }
                         </tbody>
                     </table>
-                                }
-                                else //all scheduled, show the entry schedule
-                                {
+                }
+                else //all scheduled, show the entry schedule
+                {
                     <h4>Scheduled Entry Summary</h4>
                     <table class="table table-bordered table-condensed">
                         <thead>
@@ -79,13 +79,13 @@
                         <tbody>
                             @{ foreach (var schedule in Model.EntrySchedule)
                                 {
-                            <tr>
-                                <td>@schedule.StudentName</td>
-                                <td>@schedule.ClassType</td>
-                                <td>@schedule.ClassAbbr</td>
-                                <td>@schedule.JudgeName</td>
-                                <th>@schedule.AuditionTimeString</th>
-                            </tr>
+                                    <tr>
+                                        <td>@schedule.StudentName</td>
+                                        <td>@schedule.ClassType</td>
+                                        <td>@schedule.ClassAbbr</td>
+                                        <td>@schedule.JudgeName</td>
+                                        <th>@schedule.AuditionTimeString</th>
+                                    </tr>
                                 }
                             }
                         </tbody>
@@ -93,15 +93,23 @@
 
                 }
             }
-
-            <a class="pull-right btn btn-sm btn-warning" onclick="ScheduleApp.generateNewSchedule()">Generate Student Schedule</a>
-            <div class="clear"></div>
-
         </div>
     </div>
+
+
     <div class="col-sm-6">
         <div class="well well-sm">
-            <h4>Judges Schedule</h4><a class="btn btn-sm btn-primary pull-right" onclick="ScheduleApp.addSchedule()">Add</a>
+            <h4>Audition Time Blocks</h4>
+            @if (Model.CanSchedule)
+            {
+                <a class="btn btn-sm btn-primary pull-right" onclick="ScheduleApp.addSchedule()">Add</a>
+                <a class="pull-right btn btn-sm btn-warning" onclick="ScheduleApp.generateNewSchedule()">Generate Student Schedule</a>
+            }
+            else
+            {
+                <i class="bg-warning">Scheduling permitted only when event is closed.</i>
+            }
+
             <div class="clear"></div>
             <table class="table table-bordered table-condensed">
                 <thead>

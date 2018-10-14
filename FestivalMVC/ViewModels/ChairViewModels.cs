@@ -27,28 +27,28 @@ namespace FestivalMVC.ViewModels
 
     public class SchedulePageViewModel
     {
-        private IEnumerable<ScheduleModel> _schedule;
-        private IEnumerable<UnscheduledSummaryModel> _summary;
-        private IEnumerable<ScheduledSummaryModel> _entrySchedule;
-        private IEnumerable<Judge> _judges;
+        private readonly IEnumerable<ScheduleModel> _schedule;
+        private readonly IEnumerable<UnscheduledSummaryModel> _summary;
+        private readonly IEnumerable<ScheduledSummaryModel> _entrySchedule;
+        private readonly IEnumerable<Judge> _judges;
 
-        private Event _event;
+        private EventViewModel _event;
 
 
 #region constructors
-        public SchedulePageViewModel(Event ev)
+        public SchedulePageViewModel(EventViewModel ev)
         {
-            SQLData.SelectScheduleSetupData(ev.Id, out _summary, out _entrySchedule, out _schedule, out _judges);
+            SQLData.SelectScheduleSetupData(ev.Event.Id, out _summary, out _entrySchedule, out _schedule, out _judges);
             _event = ev;
         }
 
-        public SchedulePageViewModel(Event ev, ScheduleModel schedule)
+        public SchedulePageViewModel(EventViewModel ev, ScheduleModel schedule)
         {
             SQLData.UpdateSchedule(schedule,out _schedule, out _judges);
             _event = ev;
         }
 
-        public SchedulePageViewModel(Event ev, int id)
+        public SchedulePageViewModel(EventViewModel ev, int id)
         {
             SQLData.DeleteSchedule(id, out _schedule, out _judges);
             _event = ev;
@@ -59,8 +59,9 @@ namespace FestivalMVC.ViewModels
         public IEnumerable<UnscheduledSummaryModel> Summary { get => _summary; }
         public IEnumerable<Judge> Judges { get => _judges; }
         public IEnumerable<ScheduledSummaryModel> EntrySchedule { get => _entrySchedule; }
-        public DateTime EventDate { get => _event.EventDate;}
-        public string ClassTypes { get => _event.ClassTypes; }
+        public DateTime EventDate { get => _event.Event.EventDate;}
+        public bool CanSchedule { get => _event.ComputeIfScheduling(); }
+        public string ClassTypes { get => _event.Event.ClassTypes; }
 
         public string JudgeName(int id)
         {
@@ -72,7 +73,7 @@ namespace FestivalMVC.ViewModels
         public string EventTime(ScheduleModel schedule)
         {
             var endtime = schedule.StartTime.AddMinutes(schedule.Minutes);
-            return $"Day { (schedule.StartTime - _event.EventDate).Days + 1 } { schedule.StartTime:h:mm tt} - { endtime:h:mm tt}";
+            return $"Day { (schedule.StartTime - _event.Event.EventDate).Days + 1 } { schedule.StartTime:h:mm tt} - { endtime:h:mm tt}";
         }
         public string LevelPreference(char prefHighLow)
         {

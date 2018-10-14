@@ -4,6 +4,9 @@ var RegisterApp = (function () {
     var _classTypes;
     return {
         init: function () {
+
+            FestivalLib.initAjaxCursor();
+
             $('#students tr[name]').each(function (i, v) {
                 FestivalLib.convertJqueryData(v, 'register');
                 FestivalLib.convertJqueryData($(v).find('div[data-student]')[0], 'student');

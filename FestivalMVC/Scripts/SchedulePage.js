@@ -8,6 +8,7 @@ var ScheduleApp = (function () {
         init: function () {
             _eventDate = FestivalLib.convertJqueryData(FestivalLib.$formElt('schedule', 'StartDay')[0], 'eventDate');
             convertScheduleData();
+            FestivalLib.initAjaxCursor();
         },
 
         addSchedule: function () {

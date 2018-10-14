@@ -34,6 +34,8 @@ var AdminApp = (function () {
         },
 
         init: function () {
+            FestivalLib.initAjaxCursor();
+
             $('#locations tr').each(function (i, v) {
                 FestivalLib.convertJqueryData(v, 'location');
             });

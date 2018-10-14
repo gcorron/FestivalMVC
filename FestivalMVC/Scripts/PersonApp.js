@@ -8,6 +8,7 @@ var PersonApp = (function () {
 
     return {
         init: function (forTeacher) {
+            FestivalLib.initAjaxCursor();
             $('#persons tr').each(function (i, v) {
                 installPersonRow(v);
             });
