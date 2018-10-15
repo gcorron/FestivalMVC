@@ -77,23 +77,20 @@ namespace FestivalMVC.ViewModels
             }
         }
 
-        public static int LocationIdSecured
+        public static int LocationIdSecured()
         {
-            get
-            {
                 string userData;
                 try
                 {
                     userData = FormsAuthentication.Decrypt(HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName].Value).UserData;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new Exception("Session expired. Please log in again to continue.");
                 }
                 string role = userData.Substring(0, 1);
                 string id = userData.Substring(1);
                 return int.Parse(id);
-            }
         }
 
         public static string CreateUser(Contact person)

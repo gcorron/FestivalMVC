@@ -106,7 +106,7 @@ namespace FestivalMVC.Models
                     {
                         foundEntry = query.Select(p => p).First();
                     }
-                    catch (Exception e) //none matching, toss the schedule
+                    catch (Exception) //none matching, toss the schedule
                     {
                         _schedules.Remove(schedule);
                         continue;

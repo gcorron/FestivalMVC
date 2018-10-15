@@ -61,7 +61,7 @@ namespace FestivalMVC.Controllers
             {
                 SQLData.UpdateContactForAccount(model);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 message = ManageMessageId.Error;
             }

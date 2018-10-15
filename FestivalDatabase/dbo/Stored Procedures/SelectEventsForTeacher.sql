@@ -9,7 +9,7 @@ BEGIN
 	select id, instrument from instrument
 
 
-	select * from location
+	select id,parentlocation,locationtype,locationname,contactid from location
 	where id=@parentlocation
 
   END

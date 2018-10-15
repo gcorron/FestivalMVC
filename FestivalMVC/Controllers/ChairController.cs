@@ -193,7 +193,7 @@ namespace FestivalMVC.Controllers
         public ActionResult UpdatePerson(Contact person, int assignedToLocation)
         {
 
-            person.ParentLocation = Admin.LocationIdSecured;
+            person.ParentLocation = Admin.LocationIdSecured();
 
             var theEvent = (EventViewModel)Session["SelectedEvent"];
             person.Instrument = theEvent.Event.Instrument;

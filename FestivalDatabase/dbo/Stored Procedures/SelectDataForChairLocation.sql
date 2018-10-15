@@ -10,7 +10,7 @@ BEGIN
 
 set nocount off
 
--- everything needed for first three steps
+-- everything needed for preparing and setting up events
 
 	select id, userName, lastName,firstName, email, phone, available,instrument 
 	from Contact
@@ -20,7 +20,7 @@ set nocount off
 	where location=@location and status<>'H' --history, previous years events
 
 	select event,teacher from teacherevent -- this table is purged - no history kept, just for enrollment phase
-	where location=@location
+	where event in (select id from event where location=@location)
 
 
 

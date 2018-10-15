@@ -7,3 +7,10 @@
 
 
 
+
+
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [IX_Audition]
+    ON [dbo].[Audition]([id] ASC);
+

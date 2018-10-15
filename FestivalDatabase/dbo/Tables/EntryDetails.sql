@@ -9,3 +9,14 @@
     [Notes]             NVARCHAR (50) NULL
 );
 
+
+
+
+
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [IX_EntryDetails]
+    ON [dbo].[EntryDetails]([Id] ASC);
+
+
+

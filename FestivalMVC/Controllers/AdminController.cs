@@ -64,7 +64,7 @@ namespace FestivalMVC.Controllers
         public ActionResult UpdatePerson(Contact person, int assignedToLocation)
         {
 
-            person.ParentLocation = Admin.LocationIdSecured;
+            person.ParentLocation = Admin.LocationIdSecured();
             if (person.Id == 0)
             {
                 person.UserName = Admin.CreateUser(person);

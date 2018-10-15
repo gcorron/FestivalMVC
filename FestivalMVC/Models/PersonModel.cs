@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using Dapper.Contrib.Extensions;
 
 namespace FestivalMVC.Models
 {

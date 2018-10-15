@@ -29,7 +29,7 @@ select classtype,typename,requireschoicepiece,RequiresAccomp
 from eventclasstype
 where charindex(classtype,@classtypes)>0
 
-select * from @entries
+select id,student,classtype,classabbr,status from @entries
 
 select a.id, requiredPiece,RequiredExtension, ChoicePiece,ChoiceComposer,Publisher,Accompanist, Notes
 from EntryDetails a inner join @entries b on a.id=b.id

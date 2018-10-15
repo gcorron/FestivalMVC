@@ -48,6 +48,7 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <SuppressTSqlWarnings>71558</SuppressTSqlWarnings>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -88,7 +89,6 @@
     <Build Include="dbo\Tables\Contact.sql" />
     <Build Include="dbo\Stored Procedures\UpdateLocation.sql" />
     <Build Include="dbo\Stored Procedures\UpdateContact.sql" />
-    <Build Include="dbo\Stored Procedures\SelectLocation.sql" />
     <Build Include="dbo\Stored Procedures\GetLoginPerson.sql" />
     <Build Include="dbo\Stored Procedures\GenerateUserName.sql" />
     <Build Include="dbo\Stored Procedures\DeleteContact.sql" />

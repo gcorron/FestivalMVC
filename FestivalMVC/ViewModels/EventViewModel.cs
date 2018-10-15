@@ -115,7 +115,7 @@ namespace FestivalMVC.ViewModels
 
         public EventsViewModel(bool forTeacher)
         {
-            var location = Admin.LocationIdSecured;
+            var location = Admin.LocationIdSecured();
             _forTeacher = forTeacher;
 
             if (forTeacher)
