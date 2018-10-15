@@ -25,6 +25,21 @@ namespace FestivalMVC.ViewModels
 
     }
 
+    public class RatingsPageViewModel
+    {
+        private readonly IEnumerable<EntryRating> _ratings;
+        private EventViewModel _event;
+
+        public RatingsPageViewModel(EventViewModel ev)
+        {
+            _ratings=SQLData.SelectAuditionForEventRating(ev.Event.Id);
+            _event = ev;
+        }
+
+        public bool CanRate { get => _event.ComputeIfRating(); }
+        public IEnumerable<EntryRating> Ratings { get => _ratings; }
+    }
+
     public class SchedulePageViewModel
     {
         private readonly IEnumerable<ScheduleModel> _schedule;

@@ -21,6 +21,17 @@ namespace FestivalMVC.Controllers
             return View("Index", ViewData);
         }
 
+        public ActionResult Reports()
+        {
+            return View();
+        }
+
+        public ActionResult Rollup ()
+        {
+            return View();
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateLocation(Location location)

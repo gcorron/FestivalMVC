@@ -1,14 +1,122 @@
-﻿
-<!DOCTYPE html>
+﻿@model FestivalMVC.ViewModels.RatingsPageViewModel
+<form id="__AjaxAntiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+<div class="col-sm-6">
+    <div class="well well-sm">
+        <h4>Award Ratings</h4>
+        @if (Model.CanRate)
+        {
+            <a class="btn btn-warning btn-sm" onclick="RatingApp.complete()">Complete</a>
+        }
+        else
+        {
+            <i class="bg-warning">Rating is not permitted until event date, and event status must not be complete.</i>
+        }
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Class Type</th>
+                    <th>Class Level</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody id="ratings">
+                @{ foreach (var rating in Model.Ratings)
+                    {
+                        <tr name="@rating.Id" data-rating="@Json.Encode(rating)" onclick="@(Model.CanRate  ? "RatingApp.editRating(this)":"")">
+                            <td>@rating.StudentName</td>
+                            <td>@rating.ClassType</td>
+                            <td>@rating.ClassAbbr</td>
+                            <td name="awardRating">@rating.AwardRating</td>
+                        </tr>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title></title>
-</head>
-<body>
-    <div>
-    <h1>Ratings</h1>
+                    }
+                }
+            </tbody>
+        </table>
     </div>
-</body>
-</html>
+</div>
+<div class="clear"></div>
+
+<div class="modal fade" id="ratingModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="ratingForm">
+                <div class="well">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <input type="hidden" class="form-control" name="Id" />
+                            <div class="form-group">
+                                <label class="control-label" for="StudentName">Student:</label>
+                                <input name="StudentName" type="text" class="form-control" readonly />
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="form-group">
+                                        <label class="control-label" for="ClassType">Class Type:</label>
+                                        <input name="ClassType" type="text" class="form-control" readonly />
+                                    </div>
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="form-group">
+                                        <label class="control-label" for="ClassAbbr">Class Level:</label>
+                                        <input name="ClassAbbr" type="text" class="form-control" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="AwardRating">Rating:</label>
+                                <select name="AwardRating" class="form-control">
+                                    <option value="-" disabled selected hidden>Select ... </option>
+                                    <option value="S">Superior</option>
+                                    <option value="E">Excellent</option>
+                                    <option value="G">Good</option>
+                                    <option value="F">Fair</option>
+                                    <option value="N">No-Show</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <a class="btn btn-default" onclick="RatingApp.updateRating()">Save</a>
+                                <a class="btn btn-default" onclick="$('#ratingModal').modal('hide')" title="Close">Cancel</a>
+                            </div>
+                            <div class="alert alert-danger" name="submitError">
+                                <strong>Server error! </strong><span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="infoModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a small modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+@section Scripts
+{
+
+    @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/RatingsPage.js")
+
+}

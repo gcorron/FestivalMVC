@@ -7,9 +7,15 @@ BEGIN
 	from student
 		where teacher=@teacher
 
+	;with cteHistory as(
 	select student, classtype, classabbr, awardrating, consecutivesuperior, accumulatedpoints
-	from history a inner join student b on a.student=b.id
-	where teacher=@teacher
+	,ROW_NUMBER() over(partition by student,classtype order by eventdate desc) as rn
+	from history
+	 a inner join student b on a.student=b.id
+	where teacher=@teacher)
+	
+	select student,classtype,classabbr,awardrating,consecutivesuperior,accumulatedpoints
+	from cteHistory where rn=1
 
 	select student,classtype, classabbr,status
 	from entry

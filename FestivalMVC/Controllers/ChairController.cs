@@ -54,6 +54,31 @@ namespace FestivalMVC.Controllers
             return View(new SchedulePageViewModel(theEvent));
         }
 
+        public ActionResult Ratings()
+        {
+            ViewBag.Title = "Ratings";
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+
+            return View(new RatingsPageViewModel(theEvent));
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult UpdateEventCompleted()
+        {
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            SQLData.UpdateEventCompleted(theEvent.Event.Id);
+            return Json(Url.Action("Index"));
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult UpdateAwardRating(EntryRatingUpdate rating)
+        {
+            SQLData.UpdateAwardRating(rating);
+            return Json(rating);
+        }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult GenerateNewSchedule()
@@ -101,12 +126,6 @@ namespace FestivalMVC.Controllers
             SQLData.UpdateAllEntryStatus(theEvent.Event.Id, teacher, EntryStatusTypes.Approved);
             return Json(0);
 
-        }
-
-        public ActionResult Ratings()
-        {
-            ViewBag.Title = "Ratings";
-            return View();
         }
 
         [ValidateAntiForgeryToken]

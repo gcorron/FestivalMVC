@@ -1,13 +1,22 @@
-﻿@{
+﻿@using FestivalMVC.Models
+@{
 
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     if (!(Session["TheUser"] is null))
     {
-        FestivalMVC.Models.LoginPerson theUser = (FestivalMVC.Models.LoginPerson)Session["TheUser"];
-        if (theUser.RoleType == 'E')
+        var theUser = (LoginPerson)Session["TheUser"];
+        switch (theUser.RoleType)
         {
-            Layout = "~/Views/Chair/_ChairLayout.cshtml";
+            case LoginPerson.Chair:
+                Layout = "~/Views/Chair/_ChairLayout.cshtml";
+                break;
+            case LoginPerson.Admin:
+            case LoginPerson.Coordinator:
+            case LoginPerson.Director:
+            case LoginPerson.Manager:
+                Layout = "~/Views/Admin/_AdminLayout.cshtml";
+                break;
         }
     }
 }

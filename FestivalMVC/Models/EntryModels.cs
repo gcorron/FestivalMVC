@@ -13,6 +13,7 @@ namespace FestivalMVC.Models
         public const char Approved = 'A';
         public const char Rejected = '?';
         public const char Resubmitted = 'R';
+        public const char Complete = 'C';
     }
 
     public struct ClassTypeData
@@ -85,4 +86,18 @@ namespace FestivalMVC.Models
         public string Notes { get; set; }
     }
 
+    public struct EntryRating
+    {
+        public int Id { get; }
+        public string StudentName { get;}
+        public char ClassType { get; }
+        public string ClassAbbr { get; }
+        public char AwardRating { get; }
+    }
+
+    public struct EntryRatingUpdate
+    {
+        public int Id { get; set; }
+        public char AwardRating { get; set; }
+    }
 }

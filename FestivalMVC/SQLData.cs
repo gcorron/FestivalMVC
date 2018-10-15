@@ -11,6 +11,36 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        #region ChairRating
+
+        public static void UpdateEventCompleted(int ev)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("UpdateEventCompleted", new { ev }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+
+        public static void UpdateAwardRating(EntryRatingUpdate rating)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("UpdateAwardRating", rating, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public static IEnumerable<EntryRating> SelectAuditionForEventRating(int ev)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.Query<EntryRating>("SelectAuditionForEventRating", new { ev }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        #endregion
+
+
         #region ChairSchedule
         public static void InsertAudition(ProcessAuditionModel audition)
         {

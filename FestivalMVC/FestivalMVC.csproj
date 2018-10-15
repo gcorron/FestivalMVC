@@ -273,6 +273,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\PersonApp.js" />
     <Content Include="Scripts\PreparePage.js" />
+    <Content Include="Scripts\RatingsPage.js" />
     <Content Include="Scripts\Register.js" />
     <Content Include="Scripts\SchedulePage.js" />
     <Content Include="Web.config" />
@@ -319,6 +320,9 @@
     <Content Include="Views\Chair\Ratings.cshtml" />
     <Content Include="Views\Chair\Schedule.cshtml" />
     <Content Include="Views\Shared\_Event.cshtml" />
+    <Content Include="Views\Admin\_AdminLayout.cshtml" />
+    <Content Include="Views\Admin\Reports.cshtml" />
+    <Content Include="Views\Admin\Rollup.cshtml" />
     <None Include="Views\Chair\_EventEdit.cshtml" />
     <Content Include="Views\Shared\_People.cshtml" />
     <Content Include="Views\Chair\_Judges.cshtml" />
