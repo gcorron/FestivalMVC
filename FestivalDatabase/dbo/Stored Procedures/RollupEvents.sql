@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE RollupEvents @testing bit
+﻿CREATE PROCEDURE [dbo].[RollupEvents] @testing bit
 as
 BEGIN
 declare @eventid int, @eventdate smalldatetime
@@ -6,6 +6,7 @@ declare @eventid int, @eventdate smalldatetime
 declare mycsr cursor for
 select id,eventdate from event
 where status='D'
+and datediff(d,eventdate,getdate())>36 -- allow 6 weeks past event date until rollup, unless testing
 
 open mycsr
 fetch next from mycsr into @eventid, @eventdate
@@ -35,11 +36,11 @@ BEGIN
 		where rn=1
 	update event
 		set status='H'
+	where id=@eventid
 	
 fetch next from mycsr into @eventid, @eventdate
 END
 deallocate mycsr
-close mycsr
 
 if @testing=1 
 	return
@@ -49,7 +50,7 @@ declare mycsr cursor for
 select id from event
 	where status='H'
 open mycsr
-fetch next from mycsor into @eventid
+fetch next from mycsr into @eventid
 while @@FETCH_STATUS=0
 BEGIN
 	delete entrydetails
@@ -64,8 +65,7 @@ BEGIN
 	delete judge
 	where event=@eventid
 	
-fetch next from mycsor into @eventid
+fetch next from mycsr into @eventid
 END
 deallocate mycsr
-close mycsr
 END

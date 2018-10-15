@@ -1,3 +1,55 @@
-﻿<div>
+﻿@model int
+<div>
     <h3>Rollup</h3>
+
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="well">
+
+                @{
+                    string avail;
+                    bool canRollup = false;
+                    switch (Model)
+                    {
+                        case 0:
+                            avail = "no events";
+                            break;
+                        case 1:
+                            avail = "one event";
+                            canRollup = true;
+                            break;
+                        default:
+                            avail = $"{Model} events";
+                            canRollup = true;
+                            break;
+                    }
+                    <p id="prompt">Currently @avail  eligible for rollup.</p>
+                    <br />
+                    if (canRollup)
+                    {
+                        <form onsubmit="runRollup();" method="post" action="/Admin/Rollup">
+                            <button id="submitButton" class="btn btn-sm btn-warning" type="submit">Run Rollup</button>
+                            <input type="hidden" name="dummy" value="0"/>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
 </div>
+<div class="clear"></div>
+@section Scripts
+{
+    <script>
+        function runRollup() {
+            if (confirm('Run rollup on all available events - are you sure?')) {
+                document.getElementById('prompt').innerHTML = 'Running rollup on server. Please wait ...';
+                document.getElementById('submitButton').setAttribute('disabled', true);
+                return true;
+            }
+            return false;
+        }
+    </script>
+    }

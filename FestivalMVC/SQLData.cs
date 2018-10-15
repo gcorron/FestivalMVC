@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Threading.Tasks;
 using Dapper;
 using FestivalMVC.Models;
 using FestivalMVC.ViewModels;
@@ -10,6 +11,22 @@ namespace FestivalMVC
 {
     public class SQLData
     {
+
+        public static void RollupEvents()
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("RollupEvents", new { testing = true }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public static int SelectEventCountForRollup()
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.QuerySingleAsync<int>("SelectEventCountForRollup", commandType: CommandType.StoredProcedure).Result;
+            }
+        }
 
         #region ChairRating
 
@@ -47,7 +64,7 @@ namespace FestivalMVC
 
             using (IDbConnection connection = GetDBConnection())
             {
-                connection.Execute("InsertAudition", new { audition.Id, audition.Schedule,audition.AuditionTime }, commandType: CommandType.StoredProcedure);
+                connection.Execute("InsertAudition", new { audition.Id, audition.Schedule, audition.AuditionTime }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -83,11 +100,11 @@ namespace FestivalMVC
         }
 
         public static void SelectScheduleSetupData(int ev, out IEnumerable<UnscheduledSummaryModel> summary,
-            out IEnumerable <ScheduledSummaryModel> summary2, out IEnumerable<ScheduleModel> schedules, out IEnumerable<Judge> judges)
+            out IEnumerable<ScheduledSummaryModel> summary2, out IEnumerable<ScheduleModel> schedules, out IEnumerable<Judge> judges)
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                var multi=connection.QueryMultiple("SelectScheduleSetupData", new { ev }, commandType: CommandType.StoredProcedure);
+                var multi = connection.QueryMultiple("SelectScheduleSetupData", new { ev }, commandType: CommandType.StoredProcedure);
                 summary = multi.Read<UnscheduledSummaryModel>();
                 summary2 = multi.Read<ScheduledSummaryModel>();
                 schedules = multi.Read<ScheduleModel>();

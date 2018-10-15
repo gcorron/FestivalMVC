@@ -133,6 +133,7 @@
     <Build Include="dbo\Stored Procedures\UpdateAwardRating.sql" />
     <Build Include="dbo\Stored Procedures\SelectAuditionForEventRating.sql" />
     <Build Include="dbo\Stored Procedures\RollupEvents.sql" />
+    <Build Include="dbo\Stored Procedures\SelectEventCountForRollup.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

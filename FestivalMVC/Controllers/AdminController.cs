@@ -28,9 +28,20 @@ namespace FestivalMVC.Controllers
 
         public ActionResult Rollup ()
         {
-            return View();
+            return View(SQLData.SelectEventCountForRollup());
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Rollup(string dummy)
+        {
+            var theUser = (LoginPerson)Session["TheUser"];
+            if (theUser.RoleType != LoginPerson.Admin)
+                throw new Exception("Only the top level Admin can perform a rollup.");
+            SQLData.RollupEvents();
+            return RedirectToAction("Rollup");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
