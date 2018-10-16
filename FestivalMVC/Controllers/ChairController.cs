@@ -62,6 +62,12 @@ namespace FestivalMVC.Controllers
             return View(new RatingsPageViewModel(theEvent));
         }
 
+        public ActionResult Reports()
+        {
+            return View();
+        }
+
+
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult UpdateEventCompleted()

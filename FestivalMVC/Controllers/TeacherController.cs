@@ -61,6 +61,11 @@ namespace FestivalMVC.Controllers
             return View(EntryViewModel);
         }
 
+        public ActionResult Reports()
+        {
+            return View();
+        }
+
         public ActionResult Composers()
         {
             return Json(SQLData.SelectComposers(),JsonRequestBehavior.AllowGet);

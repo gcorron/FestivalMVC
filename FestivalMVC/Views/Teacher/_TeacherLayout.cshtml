@@ -29,10 +29,10 @@
                 <ul class="nav navbar-nav">
                     <li class="@LinkClass("Index")">@Html.ActionLink("Events", "Index", "Teacher")</li>
 
-                    @foreach (string page in new string[] { "Register", "Entries"})
+                    @foreach (string page in new string[] { "Register", "Entries","Reports"})
                     {
                         <li class="@LinkClass(page)">
-                            @if (IsDisabled(page.Substring(0, 1)))
+                            @if (IsDisabled(page))
                             {
                                 @:<a href="#">@page</a>
                             }
@@ -64,14 +64,13 @@
 @{
     string LinkClass(string page)
     {
-        string key = page.Substring(0, 1);
-        bool disabled = IsDisabled(key);
+        bool disabled = IsDisabled(page);
 
         return (ViewBag.Title == page ? "active" : "") + (disabled ? " disabled" : "");
     }
-    bool IsDisabled(string key)
+    bool IsDisabled(string page)
     {
-        if ("I" == key)
+        if ("Index" == page)
         {
             return false;
         }

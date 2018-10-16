@@ -357,6 +357,7 @@
     <Content Include="Views\Admin\_AdminLayout.cshtml" />
     <Content Include="Views\Admin\Reports.cshtml" />
     <Content Include="Views\Admin\Rollup.cshtml" />
+    <Content Include="Views\Chair\Reports.cshtml" />
     <None Include="Views\Chair\_EventEdit.cshtml" />
     <Content Include="Views\Shared\_People.cshtml" />
     <Content Include="Views\Chair\_Judges.cshtml" />
@@ -369,10 +370,10 @@
     <Content Include="Views\Teacher\Entries.cshtml" />
     <Content Include="Views\Shared\_Entries.cshtml" />
     <Content Include="Views\Chair\_Schedule.cshtml" />
+    <Content Include="Views\Teacher\Reports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Festival\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
