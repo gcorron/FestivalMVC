@@ -9,8 +9,13 @@
     [Venue]      NVARCHAR (50) NOT NULL,
     [Notes]      VARCHAR (256) NOT NULL,
     [ClassTypes] VARCHAR (5)   NOT NULL,
-    CONSTRAINT [PK_Event] PRIMARY KEY CLUSTERED ([Id] ASC)
+    CONSTRAINT [PK_Event] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Event_Instrument] FOREIGN KEY ([Instrument]) REFERENCES [dbo].[Instrument] ([Id]),
+    CONSTRAINT [FK_Event_Instrument1] FOREIGN KEY ([Instrument]) REFERENCES [dbo].[Instrument] ([Id]),
+    CONSTRAINT [FK_Event_Location] FOREIGN KEY ([Location]) REFERENCES [dbo].[Location] ([Id])
 );
+
+
 
 
 

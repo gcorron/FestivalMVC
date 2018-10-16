@@ -5,8 +5,11 @@
     [LocationName]   VARCHAR (30) NOT NULL,
     [ContactId]      INT          NULL,
     CONSTRAINT [PK_Location_1] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Location_Contact] FOREIGN KEY ([ContactId]) REFERENCES [dbo].[Contact] ([Id]),
     CONSTRAINT [FK_Location_Location] FOREIGN KEY ([ParentLocation]) REFERENCES [dbo].[Location] ([Id])
 );
+
+
 
 
 

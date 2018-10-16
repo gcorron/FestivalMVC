@@ -8,8 +8,13 @@
     [ParentLocation] INT           NULL,
     [Available]      BIT           NOT NULL,
     [Instrument]     CHAR (1)      NOT NULL,
-    CONSTRAINT [PK_Contact] PRIMARY KEY CLUSTERED ([Id] ASC)
+    CONSTRAINT [PK_Contact] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Contact_Instrument] FOREIGN KEY ([Instrument]) REFERENCES [dbo].[Instrument] ([Id]),
+    CONSTRAINT [FK_Contact_Instrument1] FOREIGN KEY ([Instrument]) REFERENCES [dbo].[Instrument] ([Id]),
+    CONSTRAINT [FK_Contact_Location] FOREIGN KEY ([ParentLocation]) REFERENCES [dbo].[Location] ([Id])
 );
+
+
 
 
 

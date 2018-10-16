@@ -7,8 +7,14 @@
     [AwardRating]         CHAR (1)      NOT NULL,
     [AwardPoints]         TINYINT       NOT NULL,
     [ConsecutiveSuperior] TINYINT       NOT NULL,
-    [AccumulatedPoints]   TINYINT       NOT NULL
+    [AccumulatedPoints]   TINYINT       NOT NULL,
+    CONSTRAINT [FK_History_Event] FOREIGN KEY ([Event]) REFERENCES [dbo].[Event] ([Id]),
+    CONSTRAINT [FK_History_EventClass] FOREIGN KEY ([ClassAbbr]) REFERENCES [dbo].[EventClass] ([ClassAbbr]),
+    CONSTRAINT [FK_History_EventClassType] FOREIGN KEY ([ClassType]) REFERENCES [dbo].[EventClassType] ([ClassType]),
+    CONSTRAINT [FK_History_Student] FOREIGN KEY ([Student]) REFERENCES [dbo].[Student] ([Id])
 );
+
+
 
 
 

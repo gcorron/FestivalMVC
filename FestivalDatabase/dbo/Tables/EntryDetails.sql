@@ -6,7 +6,8 @@
     [ChoiceComposer]    NVARCHAR (50) NULL,
     [Publisher]         NVARCHAR (20) NULL,
     [Accompanist]       NVARCHAR (50) NULL,
-    [Notes]             NVARCHAR (50) NULL
+    [Notes]             NVARCHAR (50) NULL,
+    CONSTRAINT [PK_EntryDetails] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 
@@ -14,9 +15,10 @@
 
 
 
+
+
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_EntryDetails]
-    ON [dbo].[EntryDetails]([Id] ASC);
+
 
 
 
