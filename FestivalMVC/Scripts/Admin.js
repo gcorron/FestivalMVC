@@ -24,7 +24,7 @@ var AdminApp = (function () {
                 }
             }
             else { //changed mode, update the UI
-                changeAlertBox('#locationsAlert', 'Now, select a person with a ' + FestivalLib.spanIcon(personAvailIcon) + ' or click the cancel link.');
+                changeAlertBox('#locationsAlert', 'Now, click on the ' + FestivalLib.spanIcon(personAvailIcon) + ' for the person to assign, or click the cancel link.');
                 changeAlertBox('#peopleAlert', 'You are selecting a person for ' + blob.location.LocationName + '.');
                 $('#addPerson').hide();
                 $(elt).children('td')[1].append($('#cancelAssignment > a')[0]); //move the the cancel link out of the invisible div
@@ -39,6 +39,7 @@ var AdminApp = (function () {
             $('#locations tr').each(function (i, v) {
                 FestivalLib.convertJqueryData(v, 'location');
             });
+
         }
     };
 

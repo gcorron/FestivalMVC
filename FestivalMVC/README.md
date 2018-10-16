@@ -13,7 +13,7 @@ Prospective employers can load the project and peruse the source code. Some quic
 ** C# code which demonstrates a thorough understanding of the language elements.
 
 * Project begun Sept 3, 2018 as a Web Forms ASP.NET project. Two weeks later, converted and continued as an MVC project.
-* Core functionality, minus reports, finished Oct 15, 2018.
+* Core functionality, minus reports and email notifications, finished Oct 15, 2018.
 * See the Project Blueprint in the Solution Items folder for an overview.
 
 ### Installing
@@ -23,7 +23,7 @@ Prospective employers can load the project and peruse the source code. Some quic
 * edit web.config connection string to point to your server
 * Right-click on the database project, FestivalDatabase, and do a schema compare.
 * Update the database schema from the project (select your server as the target first.)
-* Run the project. Sample user names: accc1000 (top level Admin role), hcard1000 (Chair role), gbroo1000 (Teacher role). All passwords are 'Festival@2020'.
+* Run the project. Sample user names: accc1000 (top level Admin role), hcard1000 (Chair role), gbroo1000 (Teacher role). All passwords are 'Festival@2020'. 
 
 
 ## Built With

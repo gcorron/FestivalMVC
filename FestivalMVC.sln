@@ -14,22 +14,38 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		FestivalMVC\README.md = FestivalMVC\README.md
 	EndProjectSection
 EndProject
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "FestivalReports", "FestivalReports\FestivalReports.rptproj", "{DF9B44C1-5743-4B02-B02F-B1F477561885}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		DebugLocal|Any CPU = DebugLocal|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A384819D-C448-4E0E-8A57-1E1F06EC58DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A384819D-C448-4E0E-8A57-1E1F06EC58DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A384819D-C448-4E0E-8A57-1E1F06EC58DA}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{A384819D-C448-4E0E-8A57-1E1F06EC58DA}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
 		{A384819D-C448-4E0E-8A57-1E1F06EC58DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A384819D-C448-4E0E-8A57-1E1F06EC58DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.DebugLocal|Any CPU.Deploy.0 = Debug|Any CPU
 		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6693765-0F71-4AFA-9C2E-484E7680AF0D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{DF9B44C1-5743-4B02-B02F-B1F477561885}.Debug|Any CPU.ActiveCfg = Debug
+		{DF9B44C1-5743-4B02-B02F-B1F477561885}.Debug|Any CPU.Build.0 = Debug
+		{DF9B44C1-5743-4B02-B02F-B1F477561885}.Debug|Any CPU.Deploy.0 = Debug
+		{DF9B44C1-5743-4B02-B02F-B1F477561885}.DebugLocal|Any CPU.ActiveCfg = DebugLocal
+		{DF9B44C1-5743-4B02-B02F-B1F477561885}.DebugLocal|Any CPU.Build.0 = DebugLocal
+		{DF9B44C1-5743-4B02-B02F-B1F477561885}.Release|Any CPU.ActiveCfg = Release
+		{DF9B44C1-5743-4B02-B02F-B1F477561885}.Release|Any CPU.Build.0 = Release
+		{DF9B44C1-5743-4B02-B02F-B1F477561885}.Release|Any CPU.Deploy.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

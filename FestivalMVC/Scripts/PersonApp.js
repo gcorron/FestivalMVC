@@ -16,6 +16,7 @@ var PersonApp = (function () {
             $('#starsKey').attr('data-content', '<p>' + FestivalLib.spanIcon(personBusyIcon) + ' means the person has been assigned to an event or location.</p>' +
                 '<p>' + FestivalLib.spanIcon(personAvailIcon) + ' means the person has not been assigned.</p>'
                 + (forTeacher ? '' : '<p> No star means the person has been designated not available to be assigned.</p>')).popover();
+            FestivalLib.$formElt('person','deleteButton').popover();
             controllerUrl = forTeacher ? '/Chair' : '/Admin';
         },
 

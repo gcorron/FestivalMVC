@@ -108,9 +108,9 @@ var FestivalLib = (function () {
             FestivalLib.$formElt(formNamePart, 'submitError').hide();
 
             if (canDelete)
-                FestivalLib.$formElt(formNamePart, 'deleteButton').show();
+                FestivalLib.$formElt(formNamePart, 'deleteButton').attr('disabled', false);
             else
-                FestivalLib.$formElt(formNamePart, 'deleteButton').hide();
+                FestivalLib.$formElt(formNamePart, 'deleteButton').attr('disabled',true);
 
             if (typeof optionalFields !== 'undefined') {
                 if (optionalFields) {
