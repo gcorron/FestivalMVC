@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [Festival]    Script Date: 10/15/2018 7:09:20 PM ******/
+/****** Object:  Database [Festival]    Script Date: 10/17/2018 6:12:57 PM ******/
 CREATE DATABASE [Festival] ON  PRIMARY 
 ( NAME = N'Festival', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL14.SQLEXPRESS\MSSQL\DATA\Festival.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
@@ -65,12 +65,12 @@ ALTER DATABASE [Festival] SET DB_CHAINING OFF
 GO
 USE [Festival]
 GO
-/****** Object:  User [Joe]    Script Date: 10/15/2018 7:09:20 PM ******/
+/****** Object:  User [Joe]    Script Date: 10/17/2018 6:12:57 PM ******/
 CREATE USER [Joe] FOR LOGIN [Joe] WITH DEFAULT_SCHEMA=[dbo]
 GO
 sys.sp_addrolemember @rolename = N'db_owner', @membername = N'Joe'
 GO
-/****** Object:  Table [dbo].[__MigrationHistory]    Script Date: 10/15/2018 7:09:20 PM ******/
+/****** Object:  Table [dbo].[__MigrationHistory]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -87,7 +87,7 @@ CREATE TABLE [dbo].[__MigrationHistory](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AspNetRoles]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[AspNetRoles]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -101,7 +101,7 @@ CREATE TABLE [dbo].[AspNetRoles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AspNetUserClaims]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[AspNetUserClaims]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -117,7 +117,7 @@ CREATE TABLE [dbo].[AspNetUserClaims](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AspNetUserLogins]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[AspNetUserLogins]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -134,7 +134,7 @@ CREATE TABLE [dbo].[AspNetUserLogins](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AspNetUserRoles]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[AspNetUserRoles]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -149,7 +149,7 @@ CREATE TABLE [dbo].[AspNetUserRoles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AspNetUsers]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[AspNetUsers]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -173,7 +173,7 @@ CREATE TABLE [dbo].[AspNetUsers](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Audition]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Audition]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -182,16 +182,14 @@ CREATE TABLE [dbo].[Audition](
 	[id] [int] NOT NULL,
 	[Schedule] [int] NOT NULL,
 	[AuditionTime] [smalldatetime] NOT NULL,
-	[AwardRating] [char](1) NOT NULL
-) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_Audition]    Script Date: 10/15/2018 7:09:21 PM ******/
-CREATE UNIQUE CLUSTERED INDEX [IX_Audition] ON [dbo].[Audition]
+	[AwardRating] [char](1) NOT NULL,
+ CONSTRAINT [PK_Audition] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Composer]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Composer]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -199,10 +197,14 @@ GO
 CREATE TABLE [dbo].[Composer](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Composer] [nvarchar](50) NOT NULL,
-	[Nationality] [varchar](50) NOT NULL
+	[Nationality] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_Composer] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Contact]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Contact]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -223,7 +225,7 @@ CREATE TABLE [dbo].[Contact](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Entry]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Entry]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -242,7 +244,7 @@ CREATE TABLE [dbo].[Entry](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[EntryDetails]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[EntryDetails]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -255,16 +257,14 @@ CREATE TABLE [dbo].[EntryDetails](
 	[ChoiceComposer] [nvarchar](50) NULL,
 	[Publisher] [nvarchar](20) NULL,
 	[Accompanist] [nvarchar](50) NULL,
-	[Notes] [nvarchar](50) NULL
-) ON [PRIMARY]
-GO
-/****** Object:  Index [IX_EntryDetails]    Script Date: 10/15/2018 7:09:21 PM ******/
-CREATE UNIQUE CLUSTERED INDEX [IX_EntryDetails] ON [dbo].[EntryDetails]
+	[Notes] [nvarchar](50) NULL,
+ CONSTRAINT [PK_EntryDetails] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Event]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Event]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -286,7 +286,7 @@ CREATE TABLE [dbo].[Event](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[EventClass]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[EventClass]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -302,7 +302,7 @@ CREATE TABLE [dbo].[EventClass](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[EventClassType]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[EventClassType]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -311,10 +311,14 @@ CREATE TABLE [dbo].[EventClassType](
 	[ClassType] [char](1) NOT NULL,
 	[TypeName] [varchar](50) NOT NULL,
 	[RequiresChoicePiece] [bit] NOT NULL,
-	[RequiresAccomp] [bit] NOT NULL
+	[RequiresAccomp] [bit] NOT NULL,
+ CONSTRAINT [PK_EventClassType] PRIMARY KEY CLUSTERED 
+(
+	[ClassType] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[History]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[History]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -331,14 +335,14 @@ CREATE TABLE [dbo].[History](
 	[AccumulatedPoints] [tinyint] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_History]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_History]    Script Date: 10/17/2018 6:12:57 PM ******/
 CREATE CLUSTERED INDEX [IX_History] ON [dbo].[History]
 (
 	[Student] ASC,
 	[Event] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Instrument]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Instrument]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -352,7 +356,7 @@ CREATE TABLE [dbo].[Instrument](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Judge]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Judge]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -367,7 +371,7 @@ CREATE TABLE [dbo].[Judge](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Location]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Location]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -384,7 +388,7 @@ CREATE TABLE [dbo].[Location](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Piece]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Piece]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -394,10 +398,14 @@ CREATE TABLE [dbo].[Piece](
 	[ClassAbbr] [varchar](10) NOT NULL,
 	[Composition] [varchar](100) NOT NULL,
 	[Composer] [int] NOT NULL,
-	[Extension] [tinyint] NOT NULL
+	[Extension] [tinyint] NOT NULL,
+ CONSTRAINT [PK_Piece] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Schedule]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Schedule]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -408,10 +416,14 @@ CREATE TABLE [dbo].[Schedule](
 	[StartTime] [smalldatetime] NOT NULL,
 	[Minutes] [smallint] NOT NULL,
 	[ClassType] [char](1) NOT NULL,
-	[PrefHighLow] [char](1) NOT NULL
+	[PrefHighLow] [char](1) NOT NULL,
+ CONSTRAINT [PK_Schedule] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Student]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[Student]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -423,10 +435,14 @@ CREATE TABLE [dbo].[Student](
 	[BirthDate] [smalldatetime] NOT NULL,
 	[Phone] [varchar](20) NOT NULL,
 	[LastName] [nvarchar](50) NOT NULL,
-	[FirstName] [nvarchar](50) NOT NULL
+	[FirstName] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Student] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TeacherEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Table [dbo].[TeacherEvent]    Script Date: 10/17/2018 6:12:57 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -795,11 +811,12 @@ INSERT [dbo].[EventClass] ([ClassAbbr], [ClassType], [Active], [AuditionMinutes]
 INSERT [dbo].[EventClass] ([ClassAbbr], [ClassType], [Active], [AuditionMinutes]) VALUES (N'SR', N'C', 1, 14)
 INSERT [dbo].[EventClass] ([ClassAbbr], [ClassType], [Active], [AuditionMinutes]) VALUES (N'VDI', N'S', 1, 20)
 INSERT [dbo].[EventClass] ([ClassAbbr], [ClassType], [Active], [AuditionMinutes]) VALUES (N'VDII', N'S', 1, 20)
-INSERT [dbo].[EventClassType] ([ClassType], [TypeName], [RequiresChoicePiece], [RequiresAccomp]) VALUES (N'S', N'Solo', 1, 0)
 INSERT [dbo].[EventClassType] ([ClassType], [TypeName], [RequiresChoicePiece], [RequiresAccomp]) VALUES (N'C', N'Concerto', 0, 1)
-INSERT [dbo].[History] ([Student], [ClassType], [Event], [EventDate], [ClassAbbr], [AwardRating], [AwardPoints], [ConsecutiveSuperior], [AccumulatedPoints]) VALUES (1, N'S', 2, CAST(N'2017-10-01T00:00:00' AS SmallDateTime), N'MED', N'S', 4, 2, 12)
-INSERT [dbo].[History] ([Student], [ClassType], [Event], [EventDate], [ClassAbbr], [AwardRating], [AwardPoints], [ConsecutiveSuperior], [AccumulatedPoints]) VALUES (1, N'S', 3, CAST(N'2016-10-01T00:00:00' AS SmallDateTime), N'PP', N'S', 4, 1, 8)
-INSERT [dbo].[History] ([Student], [ClassType], [Event], [EventDate], [ClassAbbr], [AwardRating], [AwardPoints], [ConsecutiveSuperior], [AccumulatedPoints]) VALUES (14, N'C', 2, CAST(N'2017-10-01T00:00:00' AS SmallDateTime), N'JR-III', N'E', 3, 0, 9)
+INSERT [dbo].[EventClassType] ([ClassType], [TypeName], [RequiresChoicePiece], [RequiresAccomp]) VALUES (N'S', N'Solo', 1, 0)
+INSERT [dbo].[History] ([Student], [ClassType], [Event], [EventDate], [ClassAbbr], [AwardRating], [AwardPoints], [ConsecutiveSuperior], [AccumulatedPoints]) VALUES (1, N'S', 4, CAST(N'2017-10-01T00:00:00' AS SmallDateTime), N'MED', N'S', 4, 2, 12)
+INSERT [dbo].[History] ([Student], [ClassType], [Event], [EventDate], [ClassAbbr], [AwardRating], [AwardPoints], [ConsecutiveSuperior], [AccumulatedPoints]) VALUES (1, N'S', 4, CAST(N'2016-10-01T00:00:00' AS SmallDateTime), N'PP', N'S', 4, 1, 8)
+INSERT [dbo].[History] ([Student], [ClassType], [Event], [EventDate], [ClassAbbr], [AwardRating], [AwardPoints], [ConsecutiveSuperior], [AccumulatedPoints]) VALUES (14, N'C', 4, CAST(N'2017-10-01T00:00:00' AS SmallDateTime), N'JRIII', N'E', 3, 0, 9)
+INSERT [dbo].[Instrument] ([Id], [Instrument]) VALUES (N'-', N'None')
 INSERT [dbo].[Instrument] ([Id], [Instrument]) VALUES (N'P', N'Piano')
 INSERT [dbo].[Instrument] ([Id], [Instrument]) VALUES (N'S', N'Strings')
 INSERT [dbo].[Instrument] ([Id], [Instrument]) VALUES (N'V', N'Voice')
@@ -1316,8 +1333,6 @@ INSERT [dbo].[Piece] ([Id], [ClassAbbr], [Composition], [Composer], [Extension])
 SET IDENTITY_INSERT [dbo].[Piece] OFF
 SET IDENTITY_INSERT [dbo].[Schedule] ON 
 
-INSERT [dbo].[Schedule] ([Id], [Judge], [StartTime], [Minutes], [ClassType], [PrefHighLow]) VALUES (1, 0, CAST(N'2018-09-01T02:00:00' AS SmallDateTime), 240, N'*', N'*')
-INSERT [dbo].[Schedule] ([Id], [Judge], [StartTime], [Minutes], [ClassType], [PrefHighLow]) VALUES (2, 0, CAST(N'2018-09-01T02:00:00' AS SmallDateTime), 240, N'*', N'*')
 INSERT [dbo].[Schedule] ([Id], [Judge], [StartTime], [Minutes], [ClassType], [PrefHighLow]) VALUES (5, 20, CAST(N'2018-10-26T09:00:00' AS SmallDateTime), 150, N'S', N'*')
 INSERT [dbo].[Schedule] ([Id], [Judge], [StartTime], [Minutes], [ClassType], [PrefHighLow]) VALUES (8, 21, CAST(N'2018-10-26T09:00:00' AS SmallDateTime), 240, N'C', N'*')
 SET IDENTITY_INSERT [dbo].[Schedule] OFF
@@ -1327,31 +1342,30 @@ INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [La
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (2, N'S', 36, CAST(N'2002-03-03T00:00:00' AS SmallDateTime), N'2344434', N'zBean', N'Roy')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (3, N'S', 36, CAST(N'1975-01-01T00:00:00' AS SmallDateTime), N'9999999', N'Tesla', N'Nick')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (4, N'S', 36, CAST(N'1977-02-04T00:00:00' AS SmallDateTime), N'4343434', N'Beale', N'Howard')
-INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (10, N'S', NULL, CAST(N'2000-01-01T00:00:00' AS SmallDateTime), N'2349094', N'Bbbbb', N'Aaaa')
-INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (11, N'S', 36, CAST(N'1995-05-05T00:00:00' AS SmallDateTime), N'555555', N'Bob', N'Buffalo')
-INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (16, N'S', NULL, CAST(N'1959-09-17T00:00:00' AS SmallDateTime), N'3324432', N'Carson', N'Johnny')
-INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (17, N'S', 36, CAST(N'1959-09-17T00:00:00' AS SmallDateTime), N'2324344', N'Carsonino', N'Johnny')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (5, N'S', 36, CAST(N'1999-09-09T00:00:00' AS SmallDateTime), N'578234', N'Faraday', N'Michael')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (6, N'S', NULL, CAST(N'2012-12-12T00:00:00' AS SmallDateTime), N'121212', N'One', N'Another')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (7, N'S', NULL, CAST(N'2000-12-12T00:00:00' AS SmallDateTime), N'20000', N'Another', N'Yeti')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (8, N'S', 36, CAST(N'1999-09-09T00:00:00' AS SmallDateTime), N'test', N'eagle', N'bald')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (9, N'S', 36, CAST(N'2003-03-03T00:00:00' AS SmallDateTime), N'2003', N'Gregory', N'Helen')
+INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (10, N'S', NULL, CAST(N'2000-01-01T00:00:00' AS SmallDateTime), N'2349094', N'Bbbbb', N'Aaaa')
+INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (11, N'S', 36, CAST(N'1995-05-05T00:00:00' AS SmallDateTime), N'555555', N'Bob', N'Buffalo')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (12, N'S', NULL, CAST(N'1994-09-04T00:00:00' AS SmallDateTime), N'244342', N'One', N'Last')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (13, N'S', 36, CAST(N'1977-07-07T00:00:00' AS SmallDateTime), N'2343434', N'Stone', N'Rosetta')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (14, N'S', 36, CAST(N'1988-12-15T00:00:00' AS SmallDateTime), N'8888888', N'Pear', N'Prickly')
 INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (15, N'S', 36, CAST(N'1977-07-07T00:00:00' AS SmallDateTime), N'2340904', N'Monument', N'Saguaro')
+INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (16, N'S', NULL, CAST(N'1959-09-17T00:00:00' AS SmallDateTime), N'3324432', N'Carson', N'Johnny')
+INSERT [dbo].[Student] ([Id], [Instrument], [Teacher], [BirthDate], [Phone], [LastName], [FirstName]) VALUES (17, N'S', 36, CAST(N'1959-09-17T00:00:00' AS SmallDateTime), N'2324344', N'Carsonino', N'Johnny')
 SET IDENTITY_INSERT [dbo].[Student] OFF
 INSERT [dbo].[TeacherEvent] ([Teacher], [Event]) VALUES (31, 4)
 INSERT [dbo].[TeacherEvent] ([Teacher], [Event]) VALUES (32, 4)
 INSERT [dbo].[TeacherEvent] ([Teacher], [Event]) VALUES (33, 4)
 INSERT [dbo].[TeacherEvent] ([Teacher], [Event]) VALUES (34, 4)
-INSERT [dbo].[TeacherEvent] ([Teacher], [Event]) VALUES (35, 4)
 INSERT [dbo].[TeacherEvent] ([Teacher], [Event]) VALUES (36, 4)
 INSERT [dbo].[TeacherEvent] ([Teacher], [Event]) VALUES (31, 6)
 INSERT [dbo].[TeacherEvent] ([Teacher], [Event]) VALUES (36, 6)
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [RoleNameIndex]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [RoleNameIndex]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE UNIQUE NONCLUSTERED INDEX [RoleNameIndex] ON [dbo].[AspNetRoles]
 (
 	[Name] ASC
@@ -1359,7 +1373,7 @@ CREATE UNIQUE NONCLUSTERED INDEX [RoleNameIndex] ON [dbo].[AspNetRoles]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_UserId]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_UserId]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_UserId] ON [dbo].[AspNetUserClaims]
 (
 	[UserId] ASC
@@ -1367,7 +1381,7 @@ CREATE NONCLUSTERED INDEX [IX_UserId] ON [dbo].[AspNetUserClaims]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_UserId]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_UserId]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_UserId] ON [dbo].[AspNetUserLogins]
 (
 	[UserId] ASC
@@ -1375,7 +1389,7 @@ CREATE NONCLUSTERED INDEX [IX_UserId] ON [dbo].[AspNetUserLogins]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_RoleId]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_RoleId]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_RoleId] ON [dbo].[AspNetUserRoles]
 (
 	[RoleId] ASC
@@ -1383,7 +1397,7 @@ CREATE NONCLUSTERED INDEX [IX_RoleId] ON [dbo].[AspNetUserRoles]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_UserId]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_UserId]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_UserId] ON [dbo].[AspNetUserRoles]
 (
 	[UserId] ASC
@@ -1391,37 +1405,37 @@ CREATE NONCLUSTERED INDEX [IX_UserId] ON [dbo].[AspNetUserRoles]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [UserNameIndex]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [UserNameIndex]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE UNIQUE NONCLUSTERED INDEX [UserNameIndex] ON [dbo].[AspNetUsers]
 (
 	[UserName] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Contact]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_Contact]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Contact] ON [dbo].[Contact]
 (
 	[ParentLocation] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Event]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_Event]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Event] ON [dbo].[Event]
 (
 	[Location] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Event_1]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_Event_1]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Event_1] ON [dbo].[Event]
 (
 	[EventDate] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Judge]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_Judge]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Judge] ON [dbo].[Judge]
 (
 	[event] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_TeacherEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  Index [IX_TeacherEvent]    Script Date: 10/17/2018 6:12:58 PM ******/
 CREATE NONCLUSTERED INDEX [IX_TeacherEvent] ON [dbo].[TeacherEvent]
 (
 	[Event] ASC
@@ -1451,12 +1465,157 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[AspNetUserRoles] CHECK CONSTRAINT [FK_dbo.AspNetUserRoles_dbo.AspNetUsers_UserId]
 GO
+ALTER TABLE [dbo].[Audition]  WITH CHECK ADD  CONSTRAINT [FK_Audition_Entry] FOREIGN KEY([id])
+REFERENCES [dbo].[Entry] ([Id])
+GO
+ALTER TABLE [dbo].[Audition] CHECK CONSTRAINT [FK_Audition_Entry]
+GO
+ALTER TABLE [dbo].[Audition]  WITH CHECK ADD  CONSTRAINT [FK_Audition_Schedule] FOREIGN KEY([Schedule])
+REFERENCES [dbo].[Schedule] ([Id])
+GO
+ALTER TABLE [dbo].[Audition] CHECK CONSTRAINT [FK_Audition_Schedule]
+GO
+ALTER TABLE [dbo].[Contact]  WITH CHECK ADD  CONSTRAINT [FK_Contact_Instrument] FOREIGN KEY([Instrument])
+REFERENCES [dbo].[Instrument] ([Id])
+GO
+ALTER TABLE [dbo].[Contact] CHECK CONSTRAINT [FK_Contact_Instrument]
+GO
+ALTER TABLE [dbo].[Contact]  WITH CHECK ADD  CONSTRAINT [FK_Contact_Instrument1] FOREIGN KEY([Instrument])
+REFERENCES [dbo].[Instrument] ([Id])
+GO
+ALTER TABLE [dbo].[Contact] CHECK CONSTRAINT [FK_Contact_Instrument1]
+GO
+ALTER TABLE [dbo].[Contact]  WITH CHECK ADD  CONSTRAINT [FK_Contact_Location] FOREIGN KEY([ParentLocation])
+REFERENCES [dbo].[Location] ([Id])
+GO
+ALTER TABLE [dbo].[Contact] CHECK CONSTRAINT [FK_Contact_Location]
+GO
+ALTER TABLE [dbo].[Entry]  WITH CHECK ADD  CONSTRAINT [FK_Entry_Contact] FOREIGN KEY([Teacher])
+REFERENCES [dbo].[Contact] ([Id])
+GO
+ALTER TABLE [dbo].[Entry] CHECK CONSTRAINT [FK_Entry_Contact]
+GO
+ALTER TABLE [dbo].[Entry]  WITH CHECK ADD  CONSTRAINT [FK_Entry_EntryDetails] FOREIGN KEY([Id])
+REFERENCES [dbo].[EntryDetails] ([Id])
+GO
+ALTER TABLE [dbo].[Entry] CHECK CONSTRAINT [FK_Entry_EntryDetails]
+GO
+ALTER TABLE [dbo].[Entry]  WITH CHECK ADD  CONSTRAINT [FK_Entry_Event] FOREIGN KEY([Event])
+REFERENCES [dbo].[Event] ([Id])
+GO
+ALTER TABLE [dbo].[Entry] CHECK CONSTRAINT [FK_Entry_Event]
+GO
+ALTER TABLE [dbo].[Entry]  WITH CHECK ADD  CONSTRAINT [FK_Entry_EventClass] FOREIGN KEY([ClassAbbr])
+REFERENCES [dbo].[EventClass] ([ClassAbbr])
+GO
+ALTER TABLE [dbo].[Entry] CHECK CONSTRAINT [FK_Entry_EventClass]
+GO
+ALTER TABLE [dbo].[Entry]  WITH CHECK ADD  CONSTRAINT [FK_Entry_EventClassType] FOREIGN KEY([ClassType])
+REFERENCES [dbo].[EventClassType] ([ClassType])
+GO
+ALTER TABLE [dbo].[Entry] CHECK CONSTRAINT [FK_Entry_EventClassType]
+GO
+ALTER TABLE [dbo].[Entry]  WITH CHECK ADD  CONSTRAINT [FK_Entry_Student] FOREIGN KEY([Student])
+REFERENCES [dbo].[Student] ([Id])
+GO
+ALTER TABLE [dbo].[Entry] CHECK CONSTRAINT [FK_Entry_Student]
+GO
+ALTER TABLE [dbo].[Event]  WITH CHECK ADD  CONSTRAINT [FK_Event_Instrument] FOREIGN KEY([Instrument])
+REFERENCES [dbo].[Instrument] ([Id])
+GO
+ALTER TABLE [dbo].[Event] CHECK CONSTRAINT [FK_Event_Instrument]
+GO
+ALTER TABLE [dbo].[Event]  WITH CHECK ADD  CONSTRAINT [FK_Event_Instrument1] FOREIGN KEY([Instrument])
+REFERENCES [dbo].[Instrument] ([Id])
+GO
+ALTER TABLE [dbo].[Event] CHECK CONSTRAINT [FK_Event_Instrument1]
+GO
+ALTER TABLE [dbo].[Event]  WITH CHECK ADD  CONSTRAINT [FK_Event_Location] FOREIGN KEY([Location])
+REFERENCES [dbo].[Location] ([Id])
+GO
+ALTER TABLE [dbo].[Event] CHECK CONSTRAINT [FK_Event_Location]
+GO
+ALTER TABLE [dbo].[EventClass]  WITH CHECK ADD  CONSTRAINT [FK_EventClass_EventClassType] FOREIGN KEY([ClassType])
+REFERENCES [dbo].[EventClassType] ([ClassType])
+GO
+ALTER TABLE [dbo].[EventClass] CHECK CONSTRAINT [FK_EventClass_EventClassType]
+GO
+ALTER TABLE [dbo].[History]  WITH CHECK ADD  CONSTRAINT [FK_History_Event] FOREIGN KEY([Event])
+REFERENCES [dbo].[Event] ([Id])
+GO
+ALTER TABLE [dbo].[History] CHECK CONSTRAINT [FK_History_Event]
+GO
+ALTER TABLE [dbo].[History]  WITH CHECK ADD  CONSTRAINT [FK_History_EventClass] FOREIGN KEY([ClassAbbr])
+REFERENCES [dbo].[EventClass] ([ClassAbbr])
+GO
+ALTER TABLE [dbo].[History] CHECK CONSTRAINT [FK_History_EventClass]
+GO
+ALTER TABLE [dbo].[History]  WITH CHECK ADD  CONSTRAINT [FK_History_EventClassType] FOREIGN KEY([ClassType])
+REFERENCES [dbo].[EventClassType] ([ClassType])
+GO
+ALTER TABLE [dbo].[History] CHECK CONSTRAINT [FK_History_EventClassType]
+GO
+ALTER TABLE [dbo].[History]  WITH CHECK ADD  CONSTRAINT [FK_History_Student] FOREIGN KEY([Student])
+REFERENCES [dbo].[Student] ([Id])
+GO
+ALTER TABLE [dbo].[History] CHECK CONSTRAINT [FK_History_Student]
+GO
+ALTER TABLE [dbo].[Judge]  WITH CHECK ADD  CONSTRAINT [FK_Judge_Event] FOREIGN KEY([event])
+REFERENCES [dbo].[Event] ([Id])
+GO
+ALTER TABLE [dbo].[Judge] CHECK CONSTRAINT [FK_Judge_Event]
+GO
+ALTER TABLE [dbo].[Location]  WITH CHECK ADD  CONSTRAINT [FK_Location_Contact] FOREIGN KEY([ContactId])
+REFERENCES [dbo].[Contact] ([Id])
+GO
+ALTER TABLE [dbo].[Location] CHECK CONSTRAINT [FK_Location_Contact]
+GO
 ALTER TABLE [dbo].[Location]  WITH CHECK ADD  CONSTRAINT [FK_Location_Location] FOREIGN KEY([ParentLocation])
 REFERENCES [dbo].[Location] ([Id])
 GO
 ALTER TABLE [dbo].[Location] CHECK CONSTRAINT [FK_Location_Location]
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteContact]    Script Date: 10/15/2018 7:09:21 PM ******/
+ALTER TABLE [dbo].[Piece]  WITH CHECK ADD  CONSTRAINT [FK_Piece_Composer] FOREIGN KEY([Composer])
+REFERENCES [dbo].[Composer] ([Id])
+GO
+ALTER TABLE [dbo].[Piece] CHECK CONSTRAINT [FK_Piece_Composer]
+GO
+ALTER TABLE [dbo].[Piece]  WITH CHECK ADD  CONSTRAINT [FK_Piece_EventClass] FOREIGN KEY([ClassAbbr])
+REFERENCES [dbo].[EventClass] ([ClassAbbr])
+GO
+ALTER TABLE [dbo].[Piece] CHECK CONSTRAINT [FK_Piece_EventClass]
+GO
+ALTER TABLE [dbo].[Schedule]  WITH CHECK ADD  CONSTRAINT [FK_Schedule_EventClassType] FOREIGN KEY([ClassType])
+REFERENCES [dbo].[EventClassType] ([ClassType])
+GO
+ALTER TABLE [dbo].[Schedule] CHECK CONSTRAINT [FK_Schedule_EventClassType]
+GO
+ALTER TABLE [dbo].[Schedule]  WITH CHECK ADD  CONSTRAINT [FK_Schedule_Judge] FOREIGN KEY([Judge])
+REFERENCES [dbo].[Judge] ([Id])
+GO
+ALTER TABLE [dbo].[Schedule] CHECK CONSTRAINT [FK_Schedule_Judge]
+GO
+ALTER TABLE [dbo].[Student]  WITH CHECK ADD  CONSTRAINT [FK_Student_Contact] FOREIGN KEY([Teacher])
+REFERENCES [dbo].[Contact] ([Id])
+GO
+ALTER TABLE [dbo].[Student] CHECK CONSTRAINT [FK_Student_Contact]
+GO
+ALTER TABLE [dbo].[Student]  WITH CHECK ADD  CONSTRAINT [FK_Student_Instrument] FOREIGN KEY([Instrument])
+REFERENCES [dbo].[Instrument] ([Id])
+GO
+ALTER TABLE [dbo].[Student] CHECK CONSTRAINT [FK_Student_Instrument]
+GO
+ALTER TABLE [dbo].[TeacherEvent]  WITH CHECK ADD  CONSTRAINT [FK_TeacherEvent_Contact] FOREIGN KEY([Teacher])
+REFERENCES [dbo].[Contact] ([Id])
+GO
+ALTER TABLE [dbo].[TeacherEvent] CHECK CONSTRAINT [FK_TeacherEvent_Contact]
+GO
+ALTER TABLE [dbo].[TeacherEvent]  WITH CHECK ADD  CONSTRAINT [FK_TeacherEvent_Event] FOREIGN KEY([Event])
+REFERENCES [dbo].[Event] ([Id])
+GO
+ALTER TABLE [dbo].[TeacherEvent] CHECK CONSTRAINT [FK_TeacherEvent_Event]
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteContact]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1471,7 +1630,7 @@ BEGIN
 	where id=@id
 END
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[DeleteEvent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1490,7 +1649,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteSchedule]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[DeleteSchedule]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1514,7 +1673,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[GenerateUserName]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[GenerateUserName]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1559,7 +1718,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[GetLoginPerson]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetLoginPerson]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1586,7 +1745,7 @@ BEGIN
 	
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertAudition]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[InsertAudition]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1596,7 +1755,7 @@ create procedure [dbo].[InsertAudition] @id int, @schedule int, @auditiontime sm
 	insert audition (id,schedule,auditiontime, awardrating)
 		values(@id,@schedule,@auditiontime, '-');
 GO
-/****** Object:  StoredProcedure [dbo].[RemoveStudentFromTeacher]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[RemoveStudentFromTeacher]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1612,7 +1771,7 @@ BEGIN
 		RAISERROR('Remove failed - system could not locate this student.',11,1,'RemoveStudentFromTeacher')
 END
 GO
-/****** Object:  StoredProcedure [dbo].[RollupEvents]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[RollupEvents]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1689,7 +1848,7 @@ END
 deallocate mycsr
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectAuditionForEventRating]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectAuditionForEventRating]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1708,7 +1867,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectComposers]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectComposers]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1720,7 +1879,7 @@ BEGIN
 	select id, composer from composer
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectContactForAccount]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectContactForAccount]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1738,7 +1897,7 @@ BEGIN
 	where UserName=@userName
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectDataForChairLocation]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectDataForChairLocation]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1775,7 +1934,7 @@ set nocount off
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectDataForGeneratingSchedule]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectDataForGeneratingSchedule]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1802,7 +1961,7 @@ where b.event=@ev
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectDataForLocation]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectDataForLocation]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1824,7 +1983,7 @@ GO
 	order by LocationName
 
 GO
-/****** Object:  StoredProcedure [dbo].[SelectDataForTeacherEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectDataForTeacherEvent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1866,7 +2025,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectEntryDetails]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectEntryDetails]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1925,7 +2084,7 @@ from EntryDetails a inner join @entries b on a.id=b.id
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectEvent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1951,7 +2110,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectEventCountForRollup]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectEventCountForRollup]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1963,7 +2122,7 @@ select count(*) as number from event
 where datediff(d,eventdate,getdate())>36 -- allow 6 weeks after event for any corrections
 and status='D'
 GO
-/****** Object:  StoredProcedure [dbo].[SelectEventsForDistrict]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectEventsForDistrict]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1994,7 +2153,7 @@ set nocount off
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectEventsForTeacher]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectEventsForTeacher]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2015,7 +2174,7 @@ BEGIN
 
   END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectJudgeScheduleForEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectJudgeScheduleForEvent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2037,7 +2196,7 @@ where event=@ev
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SelectPiecesForClassAbbr]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectPiecesForClassAbbr]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2051,7 +2210,7 @@ BEGIN
 	where classAbbr=@classAbbr
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SelectScheduleSetupData]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectScheduleSetupData]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2088,7 +2247,7 @@ exec SelectJudgeScheduleForEvent @ev
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SelectTeachersForEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[SelectTeachersForEvent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2130,7 +2289,7 @@ set nocount on
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[TransferStudent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[TransferStudent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2143,7 +2302,7 @@ BEGIN
 	where id=@id
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateAllEntryStatus]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateAllEntryStatus]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2156,7 +2315,7 @@ set status=@status
 where event=@ev and teacher=@teacher and status<>@status
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateAwardRating]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateAwardRating]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2171,7 +2330,7 @@ where id=@id
 update entry set status='C'
 where id=@id
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateContact]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateContact]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2254,7 +2413,7 @@ AS
 		select  @id as Id
 	END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateContactForAccount]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateContactForAccount]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2290,7 +2449,7 @@ BEGIN
 	COMMIT TRANSACTION
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateEntry]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateEntry]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2336,7 +2495,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateEntryDetails]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateEntryDetails]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2360,7 +2519,7 @@ set status='R'
 where id=@id and status in ('A','?')
 
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateEntryPaid]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateEntryPaid]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2404,7 +2563,7 @@ select @count as entries, @amountDue as amountDue, @message as message
 	
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateEntryStatus]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateEntryStatus]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2421,7 +2580,7 @@ BEGIN
 	where id=@id
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateEvent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2471,7 +2630,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateEventCompleted]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateEventCompleted]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2484,7 +2643,7 @@ BEGIN
 	where id=@ev
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateJudge]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateJudge]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2515,7 +2674,7 @@ BEGIN
 	order by Name
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateLocation]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateLocation]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2531,7 +2690,7 @@ BEGIN
 		raiserror('Location not found on server!', 11,1,'UpdateLocation')
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateSchedule]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateSchedule]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2555,7 +2714,7 @@ BEGIN
 		exec SelectJudgeScheduleForEvent @ev
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateStudent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateStudent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2578,7 +2737,7 @@ BEGIN
 END
 select @id as Id
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateStudentRegistration]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateStudentRegistration]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2604,7 +2763,7 @@ BEGIN
 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateTeacherEvent]    Script Date: 10/15/2018 7:09:21 PM ******/
+/****** Object:  StoredProcedure [dbo].[UpdateTeacherEvent]    Script Date: 10/17/2018 6:12:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
