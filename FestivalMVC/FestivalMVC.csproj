@@ -73,6 +73,9 @@
     <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.314.76\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
     </Reference>
+    <Reference Include="ReportViewerForMvc, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReportViewerForMvc14.140.1000.523\lib\net45\ReportViewerForMvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
@@ -241,6 +244,7 @@
       <DependentUpon>201809171421229_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ReportModel.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\EntryModels.cs" />
@@ -269,6 +273,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="ReportViewerWebForm.aspx" />
     <Content Include="Scripts\Admin.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -355,9 +360,8 @@
     <Content Include="Views\Chair\Schedule.cshtml" />
     <Content Include="Views\Shared\_Event.cshtml" />
     <Content Include="Views\Admin\_AdminLayout.cshtml" />
-    <Content Include="Views\Admin\Reports.cshtml" />
+    <Content Include="Views\Shared\Reports.cshtml" />
     <Content Include="Views\Admin\Rollup.cshtml" />
-    <Content Include="Views\Chair\Reports.cshtml" />
     <None Include="Views\Chair\_EventEdit.cshtml" />
     <Content Include="Views\Shared\_People.cshtml" />
     <Content Include="Views\Chair\_Judges.cshtml" />
@@ -370,7 +374,6 @@
     <Content Include="Views\Teacher\Entries.cshtml" />
     <Content Include="Views\Shared\_Entries.cshtml" />
     <Content Include="Views\Chair\_Schedule.cshtml" />
-    <Content Include="Views\Teacher\Reports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

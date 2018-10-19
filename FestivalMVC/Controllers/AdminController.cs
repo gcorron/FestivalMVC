@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Reporting.WebForms;
+using System.Web.UI.WebControls;
 
 namespace FestivalMVC.Controllers
 {
@@ -21,9 +23,34 @@ namespace FestivalMVC.Controllers
             return View("Index", ViewData);
         }
 
-        public ActionResult Reports()
+        public ActionResult Reports(int? Id)
         {
-            return View();
+            IEnumerable<ReportModel> reports = SQLData.SelectReports(role: 'A');
+            if ((Id ?? 0) == 0)
+            {
+                return View(reports);
+            }
+
+            ReportModel report = reports.Where(p => p.Id == Id).Single();
+
+            var reportViewer = new ReportViewer()
+            {
+                ProcessingMode = ProcessingMode.Remote,
+                SizeToReportContent = true,
+                Width = Unit.Percentage(100),
+                Height = Unit.Percentage(100)
+            };
+
+            LoginPerson theUser;
+            theUser = (LoginPerson)Session["TheUser"];
+
+            reportViewer.ServerReport.ReportPath = "/FestivalReports/" + report.Name;
+            reportViewer.ServerReport.ReportServerUrl = new Uri("http://localhost/ReportServer/");
+            if (report.Params.IndexOf('L')>=0)
+                reportViewer.ServerReport.SetParameters(new ReportParameter("Location", theUser.LocationId.ToString()));
+
+            ViewBag.ReportViewer = reportViewer;
+            return View(reports);
         }
 
         public ActionResult Rollup ()
@@ -83,6 +110,8 @@ namespace FestivalMVC.Controllers
 
             return PartialView("_Person", personOut);
         }
+
+
 
         //catch all unhandled exceptions that are thrown within scope of this controller
         protected override void OnException(ExceptionContext filterContext)

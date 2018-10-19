@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using FestivalMVC.ViewModels;
 using FestivalMVC.Models;
 using System.Net;
+using Microsoft.Reporting.WebForms;
+using System.Web.UI.WebControls;
 
 namespace FestivalMVC.Controllers
 {
@@ -62,11 +64,41 @@ namespace FestivalMVC.Controllers
             return View(new RatingsPageViewModel(theEvent));
         }
 
-        public ActionResult Reports()
+        public ActionResult Reports(int? Id)
         {
-            return View();
-        }
+            IEnumerable<ReportModel> reports = SQLData.SelectReports(role: 'C');
+            if ((Id ?? 0) == 0)
+            {
+                return View(reports);
+            }
 
+            ReportModel report = reports.Where(p => p.Id == Id).Single();
+
+            var reportViewer = new ReportViewer()
+            {
+                ProcessingMode = ProcessingMode.Remote,
+                SizeToReportContent = true,
+                Width = Unit.Percentage(100),
+                Height = Unit.Percentage(100)
+            };
+
+            LoginPerson theUser;
+            theUser = (LoginPerson)Session["TheUser"];
+            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+
+
+            reportViewer.ServerReport.ReportPath = "/FestivalReports/" + report.Name;
+            reportViewer.ServerReport.ReportServerUrl = new Uri("http://localhost/ReportServer/");
+            if (report.Params.IndexOf('L') >= 0)
+                reportViewer.ServerReport.SetParameters(new ReportParameter("Location", theUser.LocationId.ToString()));
+            if (report.Params.IndexOf('T') >= 0)
+                reportViewer.ServerReport.SetParameters(new ReportParameter("Teacher", theUser.Id.ToString()));
+            if (report.Params.IndexOf('E') >= 0)
+                reportViewer.ServerReport.SetParameters(new ReportParameter("Event", theEvent.Event.Id.ToString()));
+
+            ViewBag.ReportViewer = reportViewer;
+            return View(reports);
+        }
 
         [ValidateAntiForgeryToken]
         [HttpPost]

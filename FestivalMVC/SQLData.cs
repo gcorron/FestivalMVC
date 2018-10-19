@@ -12,11 +12,19 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static IEnumerable<ReportModel> SelectReports(char role)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.Query<ReportModel>("SelectReports", new { role }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public static void RollupEvents()
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                connection.Execute("RollupEvents", new { testing = true }, commandType: CommandType.StoredProcedure);
+                connection.Execute("RollupEvents", new { testing = true }, commandType: CommandType.StoredProcedure); //set testing to false to purge event entries
             }
         }
 
