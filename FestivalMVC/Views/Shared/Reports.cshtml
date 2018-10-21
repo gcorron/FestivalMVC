@@ -1,28 +1,47 @@
 ﻿@using ReportViewerForMvc;
 @model IEnumerable<FestivalMVC.Models.ReportModel>
-    <div>
-        @{ if (ViewBag.ReportViewer is null)
+
+    @{ViewBag.Title = "Reports";};
+
+<div>
+    @{ if (ViewBag.ReportViewer is null)
+        {
+            <h3>Reports</h3>
+            <br />
+            if (Model.Count() == 0)
             {
-                <h3>Reports</h3>
-                <br />
-                if (Model.Count() ==0)
-                {
-                    <h5>No reports are available.</h5>
-                }
-                else
-                { 
-                foreach (var report in Model)
-                {
-                    @Html.ActionLink(report.Description, "Reports", new { Id = report.Id });
-                    }
-                }
+                <h5>No reports are available.</h5>
             }
             else
             {
-                <br />
-                @Html.ReportViewer(
-             ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer,
-             new { scrolling = "no" })
+                foreach (var report in Model)
+                {
+                    @Html.ActionLink(report.Description, "Reports", new { Id = report.Id });
+                }
             }
         }
+        else
+        {
+            <br />
+            @Html.ReportViewer(
+         ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer,
+         new { scrolling = "no" })
+        }
+    }
 </div>
+@section Scripts {
+    <script>
+        $document.ready(function () {
+            $('#ReportViewer1').add_propertyChanged(viewPropertyChanged);
+        });
+
+        function viewPropertyChanged(sender, e) {
+            if (e.get_propertyname() == 'isLoading') {
+                alert('loading started');
+            }
+            else {
+                alert('loading stopped.');
+            }
+        }
+    </script>
+    }
