@@ -82,9 +82,7 @@
     <Build Include="dbo\Tables\Composer.sql" />
     <Build Include="dbo\Tables\Piece.sql" />
     <Build Include="dbo\Tables\Student.sql" />
-    <Build Include="Security\Joe.sql" />
     <Build Include="Security\Joe_1.sql" />
-    <Build Include="Security\RoleMemberships.sql" />
     <Build Include="dbo\Tables\Judge.sql" />
     <Build Include="dbo\Tables\Contact.sql" />
     <Build Include="dbo\Stored Procedures\UpdateLocation.sql" />
@@ -136,6 +134,7 @@
     <Build Include="dbo\Stored Procedures\SelectEventCountForRollup.sql" />
     <Build Include="dbo\Tables\Report.sql" />
     <Build Include="dbo\Stored Procedures\SelectReports.sql" />
+    <Build Include="dbo\Stored Procedures\ReportTeacherEntries.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

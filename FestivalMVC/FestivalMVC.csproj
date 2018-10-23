@@ -245,6 +245,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ReportModel.cs" />
+    <Compile Include="Reports\SQLReportData.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\EntryModels.cs" />
@@ -281,6 +282,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Reports\TeacherEntries.rdlc" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Entries.js" />
     <Content Include="Scripts\EventsPage.js" />
