@@ -54,6 +54,7 @@
   <ItemGroup>
     <Report Include="JudgesSchedule.rdl" />
     <Report Include="TeacherEntries.rdl" />
+    <Report Include="TeacherEntrySummary.rdl" />
     <Report Include="TeacherSchedule.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />

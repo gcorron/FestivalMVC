@@ -285,6 +285,7 @@
     <Content Include="Reports\TeacherSchedule.rdlc" />
     <None Include="Reports\TeacherEntries.rdlc" />
     <Content Include="Reports\JudgesSchedule.rdlc" />
+    <Content Include="Reports\TeacherEntrySummary.rdlc" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Entries.js" />
     <Content Include="Scripts\EventsPage.js" />
