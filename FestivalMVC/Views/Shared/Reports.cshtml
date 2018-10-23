@@ -16,7 +16,7 @@
             {
                 foreach (var report in Model)
                 {
-                    @Html.ActionLink(report.Description, "Reports", new { Id = report.Id });
+                <h4>@Html.ActionLink(report.Description, "Reports", new { Id = report.Id })</h4>
                 }
             }
         }

@@ -282,7 +282,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Reports\TeacherSchedule.rdlc" />
     <None Include="Reports\TeacherEntries.rdlc" />
+    <Content Include="Reports\JudgesSchedule.rdlc" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Entries.js" />
     <Content Include="Scripts\EventsPage.js" />

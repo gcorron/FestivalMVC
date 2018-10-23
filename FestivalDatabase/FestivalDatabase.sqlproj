@@ -65,6 +65,7 @@
     <Folder Include="Security\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\Views\" />
+    <Folder Include="dbo\Functions\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Entry.sql" />
@@ -135,6 +136,10 @@
     <Build Include="dbo\Tables\Report.sql" />
     <Build Include="dbo\Stored Procedures\SelectReports.sql" />
     <Build Include="dbo\Stored Procedures\ReportTeacherEntries.sql" />
+    <Build Include="dbo\Functions\EntryStatus.sql" />
+    <Build Include="dbo\Stored Procedures\ReportTeacherSchedule.sql" />
+    <Build Include="dbo\Stored Procedures\ReportTeacherEntrySummary.sql" />
+    <Build Include="dbo\Stored Procedures\ReportJudgesSchedule.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

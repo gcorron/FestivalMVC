@@ -8,6 +8,7 @@ using FestivalMVC.Models;
 using System.Net;
 using Microsoft.Reporting.WebForms;
 using System.Web.UI.WebControls;
+using System.Text;
 
 namespace FestivalMVC.Controllers
 {
@@ -86,15 +87,21 @@ namespace FestivalMVC.Controllers
             theUser = (LoginPerson)Session["TheUser"];
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
 
+            StringBuilder parms = new StringBuilder(100);
 
-            reportViewer.ServerReport.ReportPath = "/FestivalReports/" + report.Name;
-            reportViewer.ServerReport.ReportServerUrl = new Uri("http://localhost/ReportServer/");
             if (report.Params.IndexOf('L') >= 0)
-                reportViewer.ServerReport.SetParameters(new ReportParameter("Location", theUser.LocationId.ToString()));
+                parms.Append($",@location={theUser.LocationId}");
+
             if (report.Params.IndexOf('T') >= 0)
-                reportViewer.ServerReport.SetParameters(new ReportParameter("Teacher", theUser.Id.ToString()));
+                parms.Append($",@teacher={theUser.Id}");
+
             if (report.Params.IndexOf('E') >= 0)
-                reportViewer.ServerReport.SetParameters(new ReportParameter("Event", theEvent.Event.Id.ToString()));
+                parms.Append($",@ev={theEvent.Event.Id}");
+
+            if (parms.Length > 0)
+                parms.Remove(0, 1); //extra comma
+
+            FestivalMVC.Reports.SQLReportData.PrepareReport(reportViewer, report.Name, parms.ToString());
 
             ViewBag.ReportViewer = reportViewer;
             return View(reports);
