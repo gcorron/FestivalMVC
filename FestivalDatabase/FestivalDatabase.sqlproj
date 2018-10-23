@@ -140,6 +140,11 @@
     <Build Include="dbo\Stored Procedures\ReportTeacherSchedule.sql" />
     <Build Include="dbo\Stored Procedures\ReportTeacherEntrySummary.sql" />
     <Build Include="dbo\Stored Procedures\ReportJudgesSchedule.sql" />
+    <Build Include="dbo\Functions\AwardPoints.sql" />
+    <Build Include="dbo\Functions\AwardCup.sql" />
+    <Build Include="dbo\Stored Procedures\ReportStudentStats.sql" />
+    <Build Include="dbo\Stored Procedures\ReportEventsInLocation.sql" />
+    <Build Include="dbo\Stored Procedures\ReportAwardCup.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

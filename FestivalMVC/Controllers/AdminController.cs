@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.Reporting.WebForms;
 using System.Web.UI.WebControls;
+using System.Text;
 
 namespace FestivalMVC.Controllers
 {
@@ -44,10 +45,11 @@ namespace FestivalMVC.Controllers
             LoginPerson theUser;
             theUser = (LoginPerson)Session["TheUser"];
 
-            reportViewer.ServerReport.ReportPath = "/FestivalReports/" + report.Name;
-            reportViewer.ServerReport.ReportServerUrl = new Uri("http://localhost/ReportServer/");
-            if (report.Params.IndexOf('L')>=0)
-                reportViewer.ServerReport.SetParameters(new ReportParameter("Location", theUser.LocationId.ToString()));
+            string parms = "";
+            if (report.Params.IndexOf('L') >= 0)
+                parms=$"@location={theUser.LocationId}";
+
+            FestivalMVC.Reports.SQLReportData.PrepareReport(reportViewer, report.Name, parms);
 
             ViewBag.ReportViewer = reportViewer;
             return View(reports);

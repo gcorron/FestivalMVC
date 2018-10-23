@@ -286,6 +286,9 @@
     <None Include="Reports\TeacherEntries.rdlc" />
     <Content Include="Reports\JudgesSchedule.rdlc" />
     <Content Include="Reports\TeacherEntrySummary.rdlc" />
+    <Content Include="Reports\AwardCup.rdlc" />
+    <Content Include="Reports\EventsInLocation.rdlc" />
+    <Content Include="Reports\StudentStats.rdlc" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Entries.js" />
     <Content Include="Scripts\EventsPage.js" />

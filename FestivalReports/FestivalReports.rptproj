@@ -52,7 +52,10 @@
     <DataSource Include="DataSource1.rds" />
   </ItemGroup>
   <ItemGroup>
+    <Report Include="AwardCup.rdl" />
+    <Report Include="EventsInLocation.rdl" />
     <Report Include="JudgesSchedule.rdl" />
+    <Report Include="StudentStats.rdl" />
     <Report Include="TeacherEntries.rdl" />
     <Report Include="TeacherEntrySummary.rdl" />
     <Report Include="TeacherSchedule.rdl" />

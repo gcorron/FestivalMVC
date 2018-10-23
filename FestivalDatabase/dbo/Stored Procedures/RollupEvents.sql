@@ -7,6 +7,7 @@ declare mycsr cursor for
 select id,eventdate from event
 where status='D'
 and datediff(d,eventdate,getdate())>36 -- allow 6 weeks past event date until rollup, unless testing
+order by eventdate
 
 open mycsr
 fetch next from mycsr into @eventid, @eventdate
@@ -18,8 +19,7 @@ BEGIN
 		select
 			e.student, e.classtype, @eventid as event,
 			(select eventdate from event where id=@eventid) as eventdate, e.classabbr,
-			a.awardrating,
-			case a.awardrating when 'S' then 4 when 'E' then 3 when 'G' then 2 when 'F' then 1 else 0 end as awardpoints,
+			a.awardrating,dbo.awardpoints(a.awardrating) as awardpoints,
 			isnull(h.consecutivesuperior,0) as consecutivesuperior,isnull(h.accumulatedpoints,0) as accumulatedpoints,
 			DENSE_RANK() over (partition by h.student,h.classtype order by case when accumulatedpoints is not null then eventdate end desc) as rn
 		from entry e inner join audition a
