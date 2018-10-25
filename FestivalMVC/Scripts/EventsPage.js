@@ -22,7 +22,7 @@ var EventsPage = (function () {
 
         selectEvent: function (elt) {
             var event = $(elt).data('event');
-            FestivalLib.postAjax("/Chair/Index", { id: event.Event.Id }, false, onAjaxSelectEventSuccess, null);
+            FestivalLib.postAjax("/Chair/Index", { id: event.Event.Id }, false, onAjaxSelectEventSuccess,FestivalLib.onAjaxFailure);
         }
     };
 

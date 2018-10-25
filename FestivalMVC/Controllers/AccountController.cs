@@ -82,8 +82,38 @@ namespace FestivalMVC.Controllers
 
             if (model.UserName == demoAccess[0])
             {
-                SQLData.CopyFromShadowTables();
-                ModelState.AddModelError("", $"Demo data has been reset. The demo back door user names are: {demoAccess[1]} for the sys admin role," +
+
+                string modelError;
+                DateTime lastDemo;
+
+                HttpContext.Application.Lock();
+                try
+                {
+                    lastDemo = (DateTime)HttpContext.Application["LastDemoTime"];
+                }
+                catch (Exception)
+                {
+                    lastDemo = DateTime.Now.Subtract(new TimeSpan(24, 0, 0));
+                }
+
+                bool canDemo = (DateTime.Now - lastDemo).TotalMinutes > 120;
+
+                if (canDemo)
+                    HttpContext.Application["LastDemoTime"] = DateTime.Now;
+
+                HttpContext.Application.UnLock();
+
+                if (canDemo)
+                {
+//                    SQLData.CopyFromShadowTables();
+                    modelError="Demo data has been reset.";
+                }
+                else
+                {
+                    modelError=$"Demo data can be reset at most once every two hours. Please try again later.";
+                }
+
+                ModelState.AddModelError("", $"{modelError} The demo back door user names are: {demoAccess[1]} for the sys admin role," +
                     $" {demoAccess[2]} for the chair role," +
                     $" {demoAccess[3]} for the teacher role.");
                 return View(model);
@@ -95,6 +125,15 @@ namespace FestivalMVC.Controllers
                     model.UserName = demoAccess[i + 3];
                     model.Password = ConfigurationManager.AppSettings.Get("NewUserPassword");
                 }
+            }
+
+            // check if username/password pair match.
+            var loggedinUser = await UserManager.FindAsync(model.UserName, model.Password);
+            if (loggedinUser != null)
+            {
+                // change the security stamp only on correct username/password
+                // invalidates any other security cookie being used with the same username/password!
+                await UserManager.UpdateSecurityStampAsync(loggedinUser.Id);
             }
 
 

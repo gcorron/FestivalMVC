@@ -11,6 +11,8 @@ namespace FestivalMVC
 {
     public partial class Startup
     {
+        private readonly int _validateInterval=1; // changed from default 30 minutes for demo!!
+
         // For more information on configuring authentication, please visit https://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
@@ -31,7 +33,7 @@ namespace FestivalMVC
                     // Enables the application to validate the security stamp when the user logs in.
                     // This is a security feature which is used when you change a password or add an external login to your account.  
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
-                        validateInterval: TimeSpan.FromMinutes(30),
+                        validateInterval: TimeSpan.FromMinutes(_validateInterval),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
             });            

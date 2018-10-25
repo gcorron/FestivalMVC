@@ -16,6 +16,8 @@ namespace FestivalMVC
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            Application["LiveSessionsCount"] = 0;
         }
+
     }
 }

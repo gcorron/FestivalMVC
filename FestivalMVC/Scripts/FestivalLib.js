@@ -16,7 +16,7 @@ var FestivalLib = (function () {
 
             message = response.d || response.responseText;
 
-            if (message == null)
+            if (!message)
                 return 'No details available';
 
             try {
