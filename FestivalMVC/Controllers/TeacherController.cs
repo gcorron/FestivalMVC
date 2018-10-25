@@ -76,10 +76,11 @@ namespace FestivalMVC.Controllers
 
             var reportViewer = new ReportViewer()
             {
-                ProcessingMode = ProcessingMode.Remote,
+                ProcessingMode = ProcessingMode.Local,
                 SizeToReportContent = true,
                 Width = Unit.Percentage(100),
-                Height = Unit.Percentage(100)
+                Height = Unit.Percentage(100),
+                AsyncRendering = false
             };
 
             LoginPerson theUser;

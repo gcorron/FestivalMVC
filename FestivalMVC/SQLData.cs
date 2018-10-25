@@ -11,6 +11,14 @@ namespace FestivalMVC
     public class SQLData
     {
 
+        public static void CopyFromShadowTables()
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("CopyFromShadowTables", commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public static IEnumerable<ReportModel> SelectReports(char role)
         {
             using (IDbConnection connection = GetDBConnection())
@@ -23,7 +31,7 @@ namespace FestivalMVC
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                connection.Execute("RollupEvents", new { testing = true }, commandType: CommandType.StoredProcedure); //set testing to false to purge event entries
+                connection.Execute("RollupEvents", new { testing = false }, commandType: CommandType.StoredProcedure); //set testing to false to purge event entries
             }
         }
 

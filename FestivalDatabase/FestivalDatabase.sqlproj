@@ -145,6 +145,20 @@
     <Build Include="dbo\Stored Procedures\ReportStudentStats.sql" />
     <Build Include="dbo\Stored Procedures\ReportEventsInLocation.sql" />
     <Build Include="dbo\Stored Procedures\ReportAwardCup.sql" />
+    <Build Include="dbo\Tables\__teacherevent.sql" />
+    <Build Include="dbo\Tables\__student.sql" />
+    <Build Include="dbo\Tables\__schedule.sql" />
+    <Build Include="dbo\Tables\__location.sql" />
+    <Build Include="dbo\Tables\__judge.sql" />
+    <Build Include="dbo\Tables\__history.sql" />
+    <Build Include="dbo\Tables\__event.sql" />
+    <Build Include="dbo\Tables\__entrydetails.sql" />
+    <Build Include="dbo\Tables\__entry.sql" />
+    <Build Include="dbo\Tables\__contact.sql" />
+    <Build Include="dbo\Tables\__audition.sql" />
+    <Build Include="dbo\Tables\__aspnetusers.sql" />
+    <Build Include="dbo\Stored Procedures\copyToShadowTables.sql" />
+    <Build Include="dbo\Stored Procedures\copyFromShadowTables.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

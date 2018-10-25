@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using FestivalMVC.Models;
 using System.Web.Security;
 using System.Net;
+using System.Configuration;
 
 namespace FestivalMVC.Controllers
 {
@@ -70,10 +71,32 @@ namespace FestivalMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
+
+            //backdoor for demo to reset data in tables
+            string[] demoAccess = ConfigurationManager.AppSettings.Get("DemoAccess").Split(',');
+
+            if (model.UserName == demoAccess[0])
+            {
+                SQLData.CopyFromShadowTables();
+                ModelState.AddModelError("", $"Demo data has been reset. The demo back door user names are: {demoAccess[1]} for the sys admin role," +
+                    $" {demoAccess[2]} for the chair role," +
+                    $" {demoAccess[3]} for the teacher role.");
+                return View(model);
+            }
+            for (var i = 1; i <= 3; i++)
+            {
+                if (model.UserName == demoAccess[i])
+                {
+                    model.UserName = demoAccess[i + 3];
+                    model.Password = ConfigurationManager.AppSettings.Get("NewUserPassword");
+                }
+            }
+
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
@@ -83,7 +106,7 @@ namespace FestivalMVC.Controllers
                 case SignInStatus.Success:
                     int locationId;
 
-                    string nextAction="";
+                    string nextAction = "";
                     LoginPerson theUser;
                     theUser = SQLData.GetLoginPerson(model.UserName);
                     locationId = theUser.LocationId;
@@ -469,7 +492,51 @@ namespace FestivalMVC.Controllers
 
             base.Dispose(disposing);
         }
+        //catch all unhandled exceptions that are thrown within scope of this controller
+        protected override void OnException(ExceptionContext filterContext)
+        {
 
+            if (filterContext.ExceptionHandled)
+                return;
+
+            if (filterContext.HttpContext.Request.IsAjaxRequest())
+            {
+                if (filterContext.Exception == null)
+                {
+                    base.OnException(filterContext);
+                }
+                else
+                {
+                    filterContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    filterContext.Result = new JsonResult
+                    {
+                        JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                        Data = new
+                        {
+                            filterContext.Exception.Message
+                        }
+                    };
+                    filterContext.ExceptionHandled = true;
+                }
+            }
+            else
+            {
+                filterContext.ExceptionHandled = true;
+
+                // Redirect on error:
+                //filterContext.Result = RedirectToAction("Index", "Error");
+
+                // OR set the result without redirection:
+                filterContext.Result = new ViewResult
+                {
+                    ViewName = "~/Views/Shared/Error.cshtml",
+                    ViewData = new ViewDataDictionary(filterContext.Controller.ViewData) //this view will use the exception as its model
+                    {
+                        Model = filterContext.Exception
+                    }
+                };
+            }
+        }
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
