@@ -114,7 +114,8 @@ var PersonApp = (function () {
             popover({
                 title: 'Contact',
                 trigger: 'hover',
-                content: o.Email + '  ph: ' + o.Phone
+                placement: 'bottom',
+                content: o.Email + '  ph: ' + o.Phone + '  login: ' + o.UserName
             });
         FestivalLib.convertJqueryData(v, 'location');
         return o; //return the data

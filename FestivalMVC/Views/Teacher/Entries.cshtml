@@ -29,7 +29,10 @@
             }
             else if (Model.EntriesAllApproved())
             {
-                <h3> All entries have been accepted.</h3>
+                if (Model.HasEntries())
+                {
+                    <h3> All entries have been accepted.</h3>
+                }
             }
             else
             {

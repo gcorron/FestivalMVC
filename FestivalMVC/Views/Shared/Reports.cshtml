@@ -31,19 +31,3 @@
         }
     </div>
 </div>
-@section Scripts {
-    <script>
-        $document.ready(function () {
-            $('#ReportViewer1').add_propertyChanged(viewPropertyChanged);
-        });
-
-        function viewPropertyChanged(sender, e) {
-            if (e.get_propertyname() == 'isLoading') {
-                alert('loading started');
-            }
-            else {
-                alert('loading stopped.');
-            }
-        }
-    </script>
-    }

@@ -32,6 +32,7 @@ namespace FestivalMVC.Models
             Available = contact.Available;
             ParentLocation = contact.ParentLocation;
             AssignedToLocation = 0;
+            UserName = contact.UserName;
         }
 
         public int Id { get; set; }
@@ -43,6 +44,7 @@ namespace FestivalMVC.Models
         public Boolean Available { get; set; }
         public int ParentLocation { get; set; }
         public int AssignedToLocation { get; set; }
+        public string UserName { get; set; }
         public string FullName
         {
             get

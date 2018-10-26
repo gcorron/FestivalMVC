@@ -91,6 +91,11 @@ namespace FestivalMVC.ViewModels
 
         }
 
+        public bool HasEntries()
+        {
+            return _entries.Count() > 0;
+        }
+
     }
 
     public class EntryVM
