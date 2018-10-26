@@ -70,6 +70,21 @@ namespace FestivalMVC.Models
         public int? ContactId { get; set; }
     }
 
+    public struct LocationB
+    {
+        public string LocationName { get; set; }
+        public int Id { get; set; }
+        public string ContactName { get; }
+        public char LocationType { get; }
+    }
+
+    public struct LocationC
+    {
+        public string LocationName { get; set; }
+        public int Id { get; set; }
+        public int ParentLocation { get; set; }
+    }
+
 
     public struct LoginPerson
     {

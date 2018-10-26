@@ -55,6 +55,39 @@ namespace FestivalMVC.Controllers
             return View(reports);
         }
 
+        public ActionResult Locations ()
+        {
+            LoginPerson theUser;
+            theUser = (LoginPerson)Session["TheUser"];
+
+            return View(new LocationPageData(theUser.LocationId, false));
+        }
+
+        public ActionResult LocationsDown(int Id)
+        {
+            return View("Locations", new LocationPageData(Id, false));
+        }
+
+        public ActionResult LocationsUp(int Id)
+        {
+            return View("Locations", new LocationPageData(Id, true));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateLocationName(LocationC location)
+        {
+            return PartialView("_Location", SQLData.UpdateLocationName(location));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteLocation(LocationC location)
+        {
+            SQLData.DeleteLocation(location.Id);
+            return Json(location.Id);
+        }
+
         public ActionResult Rollup ()
         {
             return View(SQLData.SelectEventCountForRollup());

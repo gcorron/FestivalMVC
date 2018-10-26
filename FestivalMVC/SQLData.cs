@@ -352,6 +352,34 @@ out IEnumerable<Instrum> instruments, out Location location)
 
         #region ContactOrLocation
 
+        public static void SelectLocations(int currentId, bool goingUp, out LocationB currentLocation, out IEnumerable<LocationB> locations)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                using (var multi = connection.QueryMultiple("SelectLocations", new { currentId, goingUp }, commandType: CommandType.StoredProcedure))
+                {
+                    currentLocation = multi.ReadSingle<LocationB>();
+                    locations = multi.Read<LocationB>();
+                }
+            }
+        }
+
+        public static void DeleteLocation(int id)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("DeleteLocation", new { id }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public static LocationB UpdateLocationName(LocationC location)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.QuerySingle<LocationB>("UpdateLocationName", location, commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public static void UpdateContactForAccount(ContactShort model)
         {
             using (IDbConnection connection = GetDBConnection())

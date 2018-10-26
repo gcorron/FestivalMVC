@@ -46,6 +46,59 @@ namespace FestivalMVC.ViewModels
 
     }
 
+    public class LocationPageData
+    {
+        const string _LEVELS = "ABCDE";
+        public LocationPageData(int currentId, bool goingUp)
+        {
+            SQLData.SelectLocations(currentId, goingUp, out LocationB currentLocation, out IEnumerable<LocationB> locations);
+
+            Locations = locations;
+            CurrentLocation = currentLocation;
+        }
+
+        public LocationB CurrentLocation { get; }
+        public string CurrentLocationRole { get => GetLocationRole(CurrentLocation.LocationType); }
+        public string CurrentLocationTitle { get => GetLocationTitle(CurrentLocation.LocationType); }
+
+        public string HeadingLocationRole { get => GetLocationRole(NextLevelType(CurrentLocation.LocationType)); }
+        public string HeadingLocationTitle { get => GetLocationTitle(NextLevelType(CurrentLocation.LocationType)); }
+
+        private char NextLevelType(char locationType)
+        {
+            return _LEVELS[_LEVELS.IndexOf(locationType) + 1];
+        }
+
+        private string GetLocationRole(char locationType)
+        {
+            switch (locationType)
+            {
+                case 'A': return "Domain";
+                case 'B': return "Division";
+                case 'C': return "Region";
+                case 'D': return "Metro";
+                case 'E': return "District";
+                default: return "---";
+            }
+        }
+
+        public string GetLocationTitle(char locationType)
+        {
+            switch (locationType)
+            {
+                case 'A': return "Administrator";
+                case 'B': return "Director";
+                case 'C': return "Coordinator";
+                case 'D': return "Chair";
+                case 'E': return "Vice-Chair";
+                default: return "None";
+            }
+        }
+
+
+        public IEnumerable<LocationB> Locations { get; }
+    }
+
     public class PeopleViewModel
     {
 
@@ -79,18 +132,18 @@ namespace FestivalMVC.ViewModels
 
         public static int LocationIdSecured()
         {
-                string userData;
-                try
-                {
-                    userData = FormsAuthentication.Decrypt(HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName].Value).UserData;
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Session expired. Please log in again to continue.");
-                }
-                string role = userData.Substring(0, 1);
-                string id = userData.Substring(1);
-                return int.Parse(id);
+            string userData;
+            try
+            {
+                userData = FormsAuthentication.Decrypt(HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName].Value).UserData;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Session expired. Please log in again to continue.");
+            }
+            string role = userData.Substring(0, 1);
+            string id = userData.Substring(1);
+            return int.Parse(id);
         }
 
         public static string CreateUser(Contact person)

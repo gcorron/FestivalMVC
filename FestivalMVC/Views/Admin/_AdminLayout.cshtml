@@ -28,6 +28,7 @@
                         var theUser = (LoginPerson)Session["TheUser"];
                         if (theUser.RoleType == LoginPerson.Admin)
                         {
+                            <li class="@LinkClass("Locations")">@Html.ActionLink("Locations", "Locations", "Admin")</li>
                             <li class="@LinkClass("Rollup")">@Html.ActionLink("Rollup", "Rollup", "Admin")</li>
                         }
                     }

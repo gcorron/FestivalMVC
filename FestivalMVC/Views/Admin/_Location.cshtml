@@ -1,0 +1,16 @@
+﻿@model FestivalMVC.Models.LocationB
+
+<tr data-location="@Json.Encode(Model)" name="@Model.Id">
+    <td>
+        <a onclick="LocationsApp.editLocation($(this).closest('tr')[0])">@Model.LocationName</a>
+        @{ if (Model.LocationType < 'E')
+            {
+                <a href="@Url.Action("LocationsDown",new { Id = Model.Id })" class="btn btn-sm btn-default pull-right">
+                    <span class="caret"></span>
+                </a>
+            }
+        }
+    </td>
+    <td>@Model.ContactName</td>
+</tr>
+

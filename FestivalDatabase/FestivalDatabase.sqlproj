@@ -159,6 +159,9 @@
     <Build Include="dbo\Tables\__aspnetusers.sql" />
     <Build Include="dbo\Stored Procedures\copyToShadowTables.sql" />
     <Build Include="dbo\Stored Procedures\copyFromShadowTables.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateLocationName.sql" />
+    <Build Include="dbo\Stored Procedures\SelectLocations.sql" />
+    <Build Include="dbo\Stored Procedures\DeleteLocation.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

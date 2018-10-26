@@ -1,0 +1,105 @@
+﻿@model FestivalMVC.ViewModels.LocationPageData
+@{
+    ViewBag.Title = "Locations";
+}
+<!-- for ajax in AddAntiForgeryToken()-->
+<form id="__AjaxAntiForgeryForm" action="#" method="post">@Html.AntiForgeryToken()</form>
+
+<div style="height: 20px"></div>
+<div class="row">
+    <div class="col-sm-6 well">
+        <div class="row">
+            <div class="col-sm-12">
+                <h4>
+                    @{ if (Model.CurrentLocation.LocationType > 'A')
+                        {
+                            <span class="dropup">
+                                <a href="@Url.Action("LocationsUp",new { Id = Model.CurrentLocation.Id } )" class="btn btn-sm btn-default">
+                                    <span class="caret"></span>
+                                </a>
+                            </span>
+                        }
+                    }
+
+                    @($"{Model.CurrentLocation.LocationName} {Model.CurrentLocationRole}")
+                    <p>
+                        <small>@($"{Model.CurrentLocationTitle}: {Model.CurrentLocation.ContactName}")</small>
+                    </p>
+                </h4>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        @Model.HeadingLocationRole <a class="btn btn-sm btn-primary pull-right" onclick="LocationsApp.editLocation(null)">Add</a>
+                    </th>
+                    <th>@Model.HeadingLocationTitle</th>
+                </tr>
+            </thead>
+            <tbody id="locations">
+                @foreach (var location in Model.Locations)
+                {
+                    Html.RenderPartial("_Location", location);
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Edit Location modal -->
+<form id="locationForm">
+    <div class="modal fade" id="locationModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="well">
+                    <div class="form-group">
+                        <label class="control-label" for="LocationName">Location Name:</label>
+                        <input class="form-control" type="text" placeholder="Enter Location Name" name="LocationName" maxlength="50" minlength="2" required>
+                    </div>
+
+                    <input type="hidden" class="form-control" name="Id" />
+                    <input type="hidden" class="form-control" name="ParentLocation" value="@Model.CurrentLocation.Id" />
+
+
+                    <div class="form-group">
+                        <a class="btn btn-default" onclick="LocationsApp.updateLocation()">Save</a>
+                        <a class="btn btn-default" onclick="$(this).closest('div .modal').modal('hide')" title="Close">Cancel</a>
+                        <a id="deleteButton" class="btn btn-warning" onclick="LocationsApp.deleteLocation()" title="Delete"
+                           data-toggle="popover" data-trigger="hover" data-content="You can delete only locations that have no events or downline locations.">Delete</a>
+                    </div>
+                    <div class="alert alert-danger" name="submitError">
+                        <strong>Server error! </strong><span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a small modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/LocationsPage.js")
+}
