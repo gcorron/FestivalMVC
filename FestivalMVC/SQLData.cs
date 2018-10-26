@@ -5,11 +5,55 @@ using System.Data;
 using Dapper;
 using FestivalMVC.Models;
 using FestivalMVC.ViewModels;
+using Microsoft.Reporting.WebForms;
+using System.Data.Common;
+using System.Web;
+using System.Data.SqlClient;
 
 namespace FestivalMVC
 {
     public class SQLData
     {
+
+        public static void PrepareReport(ReportViewer reportViewer, string reportName, string parms)
+        {
+            reportViewer.ProcessingMode = ProcessingMode.Local;
+            LocalReport localReport = reportViewer.LocalReport;
+            localReport.ReportPath = HttpRuntime.AppDomainAppPath + "Reports\\" + reportName + ".rdlc";
+            localReport.DataSources.Clear();
+
+            var dataset = GetReportData("Report" + reportName + (parms.Length > 0 ? " " + parms : ""));
+            int i = 0;
+            foreach (var tb in dataset.Tables)
+            {
+                var dataSource = new ReportDataSource($"DataSet{i + 1}", dataset.Tables[i]);
+                localReport.DataSources.Add(dataSource);
+                i++;
+            }
+        }
+
+        private static DataSet GetReportData(string storedProc)
+        {
+            DataSet result = new DataSet();
+            SqlConnection connection = GetDBConnection() as SqlConnection;
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = storedProc;
+
+                connection.Open();
+                using (DbDataReader reader = command.ExecuteReader())
+                {
+                    do
+                    {
+                        var tb = new DataTable();
+                        tb.Load(reader);
+                        result.Tables.Add(tb);
+                    } while (!reader.IsClosed);
+                }
+                connection.Close();
+            }
+            return result;
+        }
 
         public static void CopyFromShadowTables()
         {

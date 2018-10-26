@@ -99,7 +99,7 @@ namespace FestivalMVC.Controllers
                 parms.Remove(0, 1); //extra comma
 
 
-            FestivalMVC.Reports.SQLReportData.PrepareReport(reportViewer, report.Name, parms.ToString());
+            SQLData.PrepareReport(reportViewer, report.Name, parms.ToString());
 
             ViewBag.ReportViewer = reportViewer;
             return View(reports);

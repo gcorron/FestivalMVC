@@ -122,7 +122,11 @@ var FestivalLib = (function () {
                     $('#' + formNamePart + 'Form .optional-hide').show();
                 }
             }
-            $('#' + formNamePart + 'Modal').modal();
+            var theModal = '#' + formNamePart + 'Modal';
+            $('body').on('shown.bs.modal', theModal, function () {
+                $('input:visible:enabled:first', this).focus();
+            })
+            $(theModal).modal();
         },
 
         addAntiForgeryToken: function (data) {

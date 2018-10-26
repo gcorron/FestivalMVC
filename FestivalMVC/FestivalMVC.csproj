@@ -245,7 +245,6 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ReportModel.cs" />
-    <Compile Include="Reports\SQLReportData.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\EntryModels.cs" />

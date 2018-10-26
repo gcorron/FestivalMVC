@@ -1,8 +1,8 @@
-﻿CREATE PROCEDURE copyFromShadowTables
+﻿CREATE PROCEDURE [dbo].[copyFromShadowTables]
 AS
 -- copy fresh data from shadow tables into regular tables
 set rowcount 0
-exec sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"
+exec sys.sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"
 
 delete aspnetusers
 insert aspnetusers select * from __aspnetusers
@@ -54,4 +54,4 @@ SET IDENTITY_INSERT student OFF
 delete teacherevent
 insert teacherevent select * from __teacherevent
 
-exec sp_MSforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"
+exec sys.sp_MSforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"

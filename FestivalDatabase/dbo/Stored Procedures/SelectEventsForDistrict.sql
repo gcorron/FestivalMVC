@@ -19,7 +19,10 @@ set nocount off
 
 	select id, instrument from instrument
 
-	select id,parentlocation,locationtype,locationname,contactid from location
-	where id=@location
+	select a.id,a.parentlocation,a.locationtype,b.locationname + ': ' + a.locationname as locationname,a.contactid
+		from location a inner join location b
+			on a.ParentLocation=b.id
+	where a.id=@location
+
 
 END

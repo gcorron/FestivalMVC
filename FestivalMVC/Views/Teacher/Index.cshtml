@@ -12,9 +12,10 @@
 
 <!-- Select Event -->
 <div id="contents" class="container">
-    <div class="content well">
-        <div class="row">
-            <div class="col-sm-8">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="content well">
+                <!-- script will reveal after load -->
                 <h3>
                     @if (Model.Events.Count() == 0)
                     {
@@ -26,7 +27,7 @@
                         {
                             if (Session["SelectedEvent"] is null)
                             {
-                                @:First, select an event.
+                                @:Please select an event.
                                 <br />
                             }
                         }
@@ -37,20 +38,16 @@
                         }
                     }
                 </h3>
-                
-                <div class="row">
-                    <div class="col-sm-6">
-                        @foreach (var ev in Model.Events)
-                        {
-                            <h4>@Html.ActionLink($"{ev.EventDescription} {ev.StatusDesc}","Register",new { id = ev.Event.Id })</h4>
-                        }
-
-                    </div>
-                </div>
+                <br />
+                @foreach (var ev in Model.Events)
+                {
+                    <h4>@Html.ActionLink($"{ev.EventDescription} {ev.StatusDesc}", "Register", new { id = ev.Event.Id })</h4>
+                }
             </div>
         </div>
     </div>
 </div>
+
 
 <div class="clear"></div>
 

@@ -49,7 +49,7 @@ namespace FestivalMVC.Controllers
             if (report.Params.IndexOf('L') >= 0)
                 parms=$"@location={theUser.LocationId}";
 
-            FestivalMVC.Reports.SQLReportData.PrepareReport(reportViewer, report.Name, parms);
+            SQLData.PrepareReport(reportViewer, report.Name, parms);
 
             ViewBag.ReportViewer = reportViewer;
             return View(reports);

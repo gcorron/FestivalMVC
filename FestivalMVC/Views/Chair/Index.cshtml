@@ -12,9 +12,9 @@
 
 <!-- Select Event -->
 <div id="contents" class="container">
-    <div class="content well">
-        <div class="row">
-            <div class="col-sm-8">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="content well">
                 <!-- script will reveal after load -->
                 <h3>
                     @if (Model.Events.Count() == 0)
@@ -23,51 +23,46 @@
                     }
                     else
                     {
-                        @:First, Add or Select an event.
+                        @:Select or add an event.
                     }
                 </h3>
                 <br />
-                <div class="row">
-                    <div class="col-sm-6">
-                        @foreach (var ev in Model.Events)
-                        {
-                            <h4><a data-event="@Json.Encode(ev)" onclick="EventsPage.selectEvent(this)">@ev.EventDescription</a>&nbsp;@ev.StatusDesc</h4>
-                        }
-
-                    </div>
-                    <div class="col-sm-6">
-                        <h4><a onclick="EventEdit.editEvent(null)">Add New Event</a></h4>
-                    </div>
-                </div>
+                @foreach (var ev in Model.Events)
+                {
+                    <h4><a data-event="@Json.Encode(ev)" onclick="EventsPage.selectEvent(this)">@ev.EventDescription</a>&nbsp;@ev.StatusDesc</h4>
+                }
+                <a class="btn btn-sm btn-primary" onclick="EventEdit.editEvent(null)">Add New Event</a>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="infoModal" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Modal Header</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>This is a small modal.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="infoModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a small modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
+    </div>
+</div>
 
-        @{Html.RenderPartial("_EventEdit");}
-        <div class="clear"></div>
+@{Html.RenderPartial("_EventEdit");}
+<div class="clear"></div>
 
-        @section Scripts
+@section Scripts
 {
 
-            @Scripts.Render("~/bundles/jqueryval")
-            @Scripts.Render("~/Scripts/FestivalLib.js")
-            @Scripts.Render("~/Scripts/EventsPage.js")
-            @Scripts.Render("~/Scripts/EventEdit.js")
-        }
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/FestivalLib.js")
+    @Scripts.Render("~/Scripts/EventsPage.js")
+    @Scripts.Render("~/Scripts/EventEdit.js")
+}
