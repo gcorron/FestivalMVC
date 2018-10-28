@@ -7,6 +7,8 @@ var LocationsApp = (function () {
 
         init: function () {
             FestivalLib.initAjaxCursor();
+            FestivalLib.initPopupForm('location');
+
             $('[data-toggle="popover"]').popover();
 
             $('#locations tr').each(function (i, v) {

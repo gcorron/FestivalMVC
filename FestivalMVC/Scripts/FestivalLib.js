@@ -102,6 +102,7 @@ var FestivalLib = (function () {
         },
 
         initPopupForm: function (formNamePart) {
+           FestivalLib.$formElt(formNamePart, 'submit').addClass('submit-button');
             $('#' + formNamePart + 'Modal').keypress(function (e) {
                 if (e.keyCode == 13) {
                     FestivalLib.$formElt(formNamePart, 'submit').trigger('click');

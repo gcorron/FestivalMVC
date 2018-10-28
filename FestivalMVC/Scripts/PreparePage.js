@@ -4,6 +4,7 @@ var PreparePageApp = (function () {
     return {
         init: function () {
             FestivalLib.initAjaxCursor();
+            FestivalLib.initPopupForm('judge');
             PersonApp.setAssignFunction(changeParticipate);
         },
 

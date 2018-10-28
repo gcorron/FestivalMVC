@@ -10,6 +10,7 @@ var RatingApp = (function () {
             });
 
             FestivalLib.initAjaxCursor();
+            FestivalLib.initPopupForm('rating');
         },
 
         editRating: function (elt) {

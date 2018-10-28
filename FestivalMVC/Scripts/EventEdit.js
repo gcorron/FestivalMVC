@@ -7,6 +7,7 @@ var EventEdit = (function () {
 
         init: function () {
             FestivalLib.initAjaxCursor();
+            FestivalLib.initPopupForm('event');
         },
 
         editEvent: function (event) {
