@@ -27,6 +27,7 @@
                                     @if (classtype.RequiresChoicePiece)
                                     {
                                         <th>Choice Piece</th>
+                                        <th>Publisher</th>
                                     }
                                     @if (classtype.RequiresAccomp)
                                     {
@@ -38,25 +39,27 @@
                             <tbody>
                                 @foreach (var entry in Model.EntriesByClassType(classtype.ClassType))
                                 {
-                                    <tr name="@entry.EntryBase.Id" data-entry="@Json.Encode(entry)"
-                                        onclick="EntriesApp.editEntry($(this).data('entry'),$(this).closest('div.tab-pane').data('classType'))">
-                                        <td>@entry.StudentName</td>
+                                <tr name="@entry.EntryBase.Id" data-entry="@Json.Encode(entry)"
+                                    onclick="EntriesApp.editEntry($(this).data('entry'),$(this).closest('div.tab-pane').data('classType'))">
+                                    <td>@entry.StudentName</td>
 
-                                        <td class="text-center">
-                                            <span class="label label-fixed @LabelForStatus(entry.EntryBase.Status)">
-                                            @entry.EntryBase.ClassAbbr</span>
-                                        </td>
-                                        <td name="req">@entry.RequiredPieceDesc</td>
-                                        @if (classtype.RequiresChoicePiece)
-                                        {
-                                            <td name="choice">@entry.ChoicePieceDesc</td>
-                                        }
-                                        @if (classtype.RequiresAccomp)
-                                        {
-                                            <td name="acc">@entry.EntryDetails.Accompanist</td>
-                                        }
-                                        <td name="notes">@entry.EntryDetails.Notes</td>
-                                    </tr>
+                                    <td class="text-center">
+                                        <span class="label label-fixed @LabelForStatus(entry.EntryBase.Status)">
+                                            @entry.EntryBase.ClassAbbr
+                                        </span>
+                                    </td>
+                                    <td name="req">@entry.RequiredPieceDesc</td>
+                                    @if (classtype.RequiresChoicePiece)
+                                    {
+                                        <td name="choice">@entry.ChoicePieceDesc</td>
+                                        <td name="pub">@entry.EntryDetails.Publisher</td>
+                                    }
+                                    @if (classtype.RequiresAccomp)
+                                    {
+                                        <td name="acc">@entry.EntryDetails.Accompanist</td>
+                                    }
+                                    <td name="notes">@entry.EntryDetails.Notes</td>
+                                </tr>
                                 }
                             </tbody>
                         </table>

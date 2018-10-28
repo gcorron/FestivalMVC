@@ -8,12 +8,13 @@
     [Status]    CHAR (1)     NOT NULL,
     CONSTRAINT [PK_Entry] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Entry_Contact] FOREIGN KEY ([Teacher]) REFERENCES [dbo].[Contact] ([Id]),
-    CONSTRAINT [FK_Entry_EntryDetails] FOREIGN KEY ([Id]) REFERENCES [dbo].[EntryDetails] ([Id]),
     CONSTRAINT [FK_Entry_Event] FOREIGN KEY ([Event]) REFERENCES [dbo].[Event] ([Id]),
     CONSTRAINT [FK_Entry_EventClass] FOREIGN KEY ([ClassAbbr]) REFERENCES [dbo].[EventClass] ([ClassAbbr]),
     CONSTRAINT [FK_Entry_EventClassType] FOREIGN KEY ([ClassType]) REFERENCES [dbo].[EventClassType] ([ClassType]),
     CONSTRAINT [FK_Entry_Student] FOREIGN KEY ([Student]) REFERENCES [dbo].[Student] ([Id])
 );
+
+
 
 
 

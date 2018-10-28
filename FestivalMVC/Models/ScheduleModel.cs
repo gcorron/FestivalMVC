@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -8,10 +9,9 @@ namespace FestivalMVC.Models
 {
     public struct UnscheduledSummaryModel
     {
-        public string ClassTypeDesc { get;}
-        public string AuditionMinutes { get;}
-        public Int16 TotalMinutes { get;}
-        public Int16 Number { get;}
+        public string ClassTypeDesc { get; }
+        public Int16 TotalMinutes { get; }
+        public Int16 Number { get; }
     }
 
     public struct ScheduledSummaryModel
@@ -24,7 +24,17 @@ namespace FestivalMVC.Models
         public string JudgeName { get; }
         public DateTime AuditionTime { get; }
 
-        public string AuditionTimeString { get => $"{AuditionTime:h:mm tt}"; }
+        public string AuditionTimeString
+        {
+            get
+            {
+                if (AuditionTime.Ticks == 0)
+                    return "- - -";
+                else
+                    return $"{AuditionTime:h:mm tt}";
+            }
+        }
+
         public string StudentName { get => $"{FirstName} {LastName}"; }
     }
 
@@ -52,6 +62,7 @@ namespace FestivalMVC.Models
     public class ProcessAuditionModel
     {
         public int Id { get; }
+        public int Student { get; }
         public char ClassType { get; }
         public Int16 AuditionMinutes { get; }
 
@@ -68,70 +79,130 @@ namespace FestivalMVC.Models
         private const char _HIGH = 'H';
         private const char _LOW = 'L';
 
-        public bool BeginProcess(int ev)
+        public bool DoProcess(int ev, bool generate)
         {
+            bool result;
             SQLData.SelectDataForGeneratingSchedule(ev, out _schedules, out _entries);
-            return Task.Run(() => Process()).Result;
+            if (!generate)
+                return true;
+
+            try
+            {
+                result = Task.Run(() => Process()).Result;
+            }
+            catch (AggregateException ae)
+            {
+                throw ae.InnerExceptions.First<Exception>();
+            }
+            return result;
         }
 
         private bool Process()
         {
 
+            bool conflict;
+            bool processedOne;
+            bool foundInConflictList;
+
             ProcessAuditionModel foundEntry;
+            ProcessAuditionModel compareEntry;
+            var conflictList = new List<ProcessAuditionModel>();
+            IEnumerable<ProcessAuditionModel> query;
 
             _auditions = new List<ProcessAuditionModel>();
-            while (_entries.Count > 0 && _schedules.Count > 0) //finished when either one is exhausted
+
+            while ((_entries.Count > 0 || conflictList.Count > 0) && _schedules.Count > 0) //finished when either entries or schedules are empty
             {
-                for (var i = 0; i < _schedules.Count;)
+                processedOne = false;
+                for (var i = 0; i < _schedules.Count; i++) //go through all the schedules in sequence, and try to find an entry for each (loop over and over until done)
                 {
                     var schedule = _schedules[i];
-                    IEnumerable<ProcessAuditionModel> query;
-                    if (schedule.ClassType != _ANY)
-                        query = _entries.Where(p => p.ClassType == schedule.ClassType && p.AuditionMinutes < schedule.MinutesRemain);
-                    else
-                        query = _entries.Where(p => p.AuditionMinutes < schedule.MinutesRemain);
-                    switch (schedule.PrefHighLow)
+
+                    foundInConflictList = false;
+                    query = BuildQuery(schedule, _entries);
+                    foundEntry = query.Select(p => p).FirstOrDefault();
+
+                    if (foundEntry is null && conflictList.Count > 0)
                     {
-                        case _ANY:
-                            break;
-                        case _HIGH:
-                            query = query.OrderByDescending(p => p.AuditionMinutes);
-                            break;
-                        case _LOW:
-                            query = query.OrderBy(p => p.AuditionMinutes);
-                            break;
-                        default: throw new Exception("Invalid High-Low Preference in Schedule!");
+                        query = BuildQuery(schedule, conflictList);
+                        foundEntry = query.Select(p => p).FirstOrDefault();
+                        foundInConflictList = !(foundEntry is null);
                     }
-                    try
-                    {
-                        foundEntry = query.Select(p => p).First();
-                    }
-                    catch (Exception) //none matching, toss the schedule
-                    {
-                        _schedules.Remove(schedule);
+
+                    if (foundEntry is null)
                         continue;
+
+                    //check if this student is already scheduled with a different classification within 30 minutes of this audition
+                    compareEntry = _auditions.Where(p => p.Student == foundEntry.Student).FirstOrDefault();
+                    conflict = false;
+                    if (!(compareEntry is null))
+                        if (compareEntry.Schedule != foundEntry.Schedule) //different judge (possibly), possible conflict of times
+                            if (Math.Abs((compareEntry.AuditionTime - schedule.AuditionTime).Value.Minutes) < 30)
+                                conflict = true;
+
+                    if (foundInConflictList)
+                        conflictList.Remove(foundEntry);
+                    else
+                        _entries.Remove(foundEntry);
+
+                    if (conflict)
+                    {
+                        conflictList.Add(foundEntry);
                     }
-                    foundEntry.AuditionTime = schedule.AuditionTime;
-                    foundEntry.Schedule = schedule.Id;
-                    schedule.MinutesRemain -= foundEntry.AuditionMinutes;
-                    schedule.AuditionTime = schedule.AuditionTime.AddMinutes(foundEntry.AuditionMinutes);
-                    _entries.Remove(foundEntry);
-                    _auditions.Add(foundEntry);
-                    i++; // on to the next schedule
+                    else
+                    {
+                        foundEntry.AuditionTime = schedule.AuditionTime;
+                        foundEntry.Schedule = schedule.Id;
+                        _auditions.Add(foundEntry);
+                        schedule.MinutesRemain -= foundEntry.AuditionMinutes;
+                        schedule.AuditionTime = schedule.AuditionTime.AddMinutes(foundEntry.AuditionMinutes);
+                        processedOne = true;
+                    }
+                } //next schedule
+                if (!processedOne)
+                {
+                    for (var i=0;i<_schedules.Count;)
+                    {
+                        _schedules[i].AuditionTime = _schedules[i].AuditionTime.AddMinutes(5);
+                        _schedules[i].MinutesRemain -= 5;
+                        if (_schedules[i].MinutesRemain <= 0)
+                            _schedules.Remove(_schedules[i]);
+                        else
+                            i++;
+                    }
                 }
 
-            }
+            } // end while
+
             //now save the audtion results
             foreach (var audition in _auditions)
             {
                 SQLData.InsertAudition(audition);
             }
-
-            return _entries.Count == 0; //if successfully scheduled all entries
+            return _entries.Count == 0 && conflictList.Count == 0; //if successfully scheduled all entries
 
         }
 
-
+        IEnumerable<ProcessAuditionModel> BuildQuery(ProcessScheduleModel schedule, IEnumerable<ProcessAuditionModel> entries)
+        {
+            IEnumerable<ProcessAuditionModel> query;
+            if (schedule.ClassType != _ANY)
+                query = entries.Where(p => p.ClassType == schedule.ClassType && p.AuditionMinutes < schedule.MinutesRemain);
+            else
+                query = entries.Where(p => p.AuditionMinutes < schedule.MinutesRemain);
+            switch (schedule.PrefHighLow)
+            {
+                case _ANY:
+                    break;
+                case _HIGH:
+                    query = query.OrderByDescending(p => p.AuditionMinutes);
+                    break;
+                case _LOW:
+                    query = query.OrderBy(p => p.AuditionMinutes);
+                    break;
+                default: throw new Exception("Invalid High-Low Preference in Schedule!");
+            }
+            return query;
+        }
     }
-
 }

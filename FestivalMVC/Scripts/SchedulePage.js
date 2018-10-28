@@ -44,8 +44,15 @@ var ScheduleApp = (function () {
 
         generateNewSchedule: function () {
             if (confirm('This will erase any existing audition times for entries and create new times. Are you sure?')) {
-                FestivalLib.postAjax('/Chair/GenerateNewSchedule', {}, false, onGenerateSuccess, FestivalLib.onAjaxFailure);
+                FestivalLib.postAjax('/Chair/GenerateNewSchedule', { generate:true }, false, onGenerateSuccess, FestivalLib.onAjaxFailure);
             }
+        },
+
+        clearSchedule: function () {
+            if (confirm('This will erase any existing audition times for entries. Are you sure?')) {
+                FestivalLib.postAjax('/Chair/GenerateNewSchedule', { generate:false }, false, onGenerateSuccess, FestivalLib.onAjaxFailure);
+            }
+
         }
     };
 

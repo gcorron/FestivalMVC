@@ -42,15 +42,29 @@
                     </div>
                 </div>
 
-                @* Enable this once you have account confirmation enabled for password reset functionality*@
-                <p>
-                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                </p>
+                @* Enable this once you have account confirmation enabled for password reset functionality
+                    <p>
+                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                    </p>
+                *@
             }
         </section>
     </div>
-    
 </div>
+@{ if (ViewBag.ShowDocs ?? false)
+    {
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="well">
+                    <h2>Project Documentation</h2>
+                    <p><a href="http://www.bridgertechservices.com/docs/quickguide.pdf" target="_blank">Quick Guide</a></p>
+                    <p><a href="http://www.bridgertechservices.com/docs/blueprint.pdf" target="_blank">Initial Project Blueprint</a></p>
+                </div>
+            </div>
+        </div>
+    }
+}
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

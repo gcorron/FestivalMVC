@@ -13,86 +13,68 @@
 <div class="row">
     <div class="col-sm-6">
         <div class="well well-sm">
-            @{ if (Model.Summary.Count() > 0)
-                {
-                    <h4>Unscheduled Entry Summary</h4>
-                    <table class="table table-bordered table-condensed">
-                        <thead>
+            <h4>Unscheduled Entry Summary</h4>
+            <a class="pull-right btn btn-sm btn-warning" onclick="ScheduleApp.generateNewSchedule()">Generate Student Schedule</a>
+            <table class="table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th class="text-right">Minutes</th>
+                        <th class="text-right">Entries</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ bool lastTotal = false;
+                        foreach (var summaryLine in Model.Summary)
+                        {
                             <tr>
-                                <th>Class</th>
-                                <th class="text-right">Minutes</th>
-                                <th class="text-right">Total</th>
+                                <td>@TotalBold(summaryLine.ClassTypeDesc)</td>
+                                <td class="text-right">@summaryLine.TotalMinutes</td>
+                                <td class="text-right">@summaryLine.Number</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @{ bool lastTotal = false;
-                                foreach (var summaryLine in Model.Summary)
-                                {
-                                    <tr>
-                                        <td>@TotalBold(summaryLine.ClassTypeDesc)</td>
-                                        <td class="text-right">@TotalBold(summaryLine.AuditionMinutes)</td>
-                                        <td class="text-right">@summaryLine.TotalMinutes</td>
-                                    </tr>
 
-                                    if (summaryLine.AuditionMinutes == "Total")
-                                    {
-                                        if (!lastTotal)
-                                        {
-                                            <tr><td></td><td></td><td></td></tr>
-                                        }
-                                        lastTotal = true;
-                                    }
-                                    else
-                                    {
-                                        lastTotal = false;
-                                    }
-
-                                }
-                                IHtmlString TotalBold(string desc)
-                                {
-                                    if (desc == "Total")
-                                    {
-                                        return Html.Raw(lastTotal ? "" : "<b>Total</b>");
-                                    }
-                                    else
-                                    {
-                                        return Html.Raw(desc);
-                                    }
-                                }
+                        }
+                        IHtmlString TotalBold(string desc)
+                        {
+                            if (desc == "Total")
+                            {
+                                return Html.Raw(lastTotal ? "" : "<b>Total</b>");
                             }
-                        </tbody>
-                    </table>
-                }
-                else //all scheduled, show the entry schedule
-                {
-                    <h4>Scheduled Entry Summary</h4>
-                    <table class="table table-bordered table-condensed">
-                        <thead>
+                            else
+                            {
+                                return Html.Raw(desc);
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <h4>Scheduled Entry Summary</h4>
+            <a class="pull-right btn btn-sm btn-danger" onclick="ScheduleApp.clearSchedule()">Clear Student Schedule</a>
+            <table class="table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Class Type</th>
+                        <th>Class</th>
+                        <th>Judge</th>
+                        <th>Audition Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ foreach (var schedule in Model.EntrySchedule)
+                        {
                             <tr>
-                                <th>Student</th>
-                                <th>Class Type</th>
-                                <th>Class</th>
-                                <th>Judge</th>
-                                <th>Audition Time</th>
+                                <td>@schedule.StudentName</td>
+                                <td>@schedule.ClassType</td>
+                                <td>@schedule.ClassAbbr</td>
+                                <td>@schedule.JudgeName</td>
+                                <td class="text-right">@schedule.AuditionTimeString</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @{ foreach (var schedule in Model.EntrySchedule)
-                                {
-                                    <tr>
-                                        <td>@schedule.StudentName</td>
-                                        <td>@schedule.ClassType</td>
-                                        <td>@schedule.ClassAbbr</td>
-                                        <td>@schedule.JudgeName</td>
-                                        <th>@schedule.AuditionTimeString</th>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-
-                }
-            }
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -103,7 +85,6 @@
             @if (Model.CanSchedule)
             {
                 <a class="btn btn-sm btn-primary pull-right" onclick="ScheduleApp.addSchedule()">Add</a>
-                <a class="pull-right btn btn-sm btn-warning" onclick="ScheduleApp.generateNewSchedule()">Generate Student Schedule</a>
             }
             else
             {
@@ -245,10 +226,31 @@
                             </div>
                         </div>
                     </div>
+                </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a small modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 <div class="clear"></div>
 @section Scripts

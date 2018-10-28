@@ -9,6 +9,7 @@ var EntriesApp = (function () {
         init: function (requiredVersion) { //version of required pieces database cached in local storage
 
             FestivalLib.initAjaxCursor();
+            FestivalLib.initPopupForm('entry');
 
             $('tr[name]').each(function (i, v) {
                 FestivalLib.convertJqueryData(v, 'entry');
@@ -165,7 +166,7 @@ var EntriesApp = (function () {
         //reconstruct required piece desc
         var pieces = getFromStorage('Pieces.' + entryVM.EntryBase.ClassAbbr);
         var piece = findPiece(entry.RequiredPiece);
-        var pieceName = _composers[piece.Composer] + ': ' + piece.Composition;
+        var pieceName = _composers[piece.Composer] + ': ' + piece.Composition + (entry.RequiredExtension ? ' Mvt. ' + entry.RequiredExtension : '');
         findTd('req').text(pieceName);
 
         //if choice piece, display that
@@ -180,7 +181,11 @@ var EntriesApp = (function () {
 
         $td = findTd('notes');
         $td.text(entry.Notes);
-        
+
+        $td = findTd('pub');
+        if ($td.length > 0)
+            $td.text(entry.Publisher);
+
         $('#entryModal').modal('hide');
 
         function findTd(name) {

@@ -32,10 +32,10 @@
                 }
             }
 
-            <table class="table table-bordered table-responsive table-striped table-condensed" data-classTypes="@Json.Encode(Model.EventVM.Event.ClassTypes)">
+            <table class="table table-bordered table-responsive table-condensed" data-classTypes="@Json.Encode(Model.EventVM.Event.ClassTypes)">
                 <thead>
                     <tr>
-                        <th>Student</th>
+                        <th>Student<span id="totalStudents" class="badge bg-info pull-right">@Model.AllStudents.Count()</span></th>
                         <th>History</th>
                         <th>Registration</th>
                     </tr>
@@ -81,7 +81,7 @@
                             <div class="form-group">
                                 <label class="control-label" for="phone">Phone:</label>
                                 <input class="form-control" type="tel" placeholder="Enter Phone"
-                                       name="Phone" maxlength="50" required>
+                                       name="Phone" maxlength="20" required>
                             </div>
                             <input class="form-control" type="hidden" name="Id" />
                             <input class="form-control" type="hidden" name="Instrument" />
@@ -91,7 +91,7 @@
                         <!-- RH half -->
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <a class="btn btn-default" onclick="RegisterApp.updateStudent()">Save</a>
+                                <a name="submit" class="btn btn-default" onclick="RegisterApp.updateStudent()">Save</a>
                                 <a class="btn btn-default" onclick="$('#studentModal').modal('hide')" title="Close">Cancel</a>
                                 <a name="deleteButton" class="btn btn-warning" onclick="RegisterApp.removeStudent()" title="Remove"
                                    data-toggle="popover" data-trigger="hover" data-content="You can remove only students who have no registrations for this event.">Remove</a>

@@ -1,5 +1,5 @@
 ﻿
-CREATE PROCEDURE SelectDataForGeneratingSchedule @ev int
+CREATE PROCEDURE [dbo].[SelectDataForGeneratingSchedule] @ev int
 AS
 BEGIN
 select a.id, classtype,prefhighlow,
@@ -8,7 +8,7 @@ from schedule a inner join judge b
 on a.judge=b.id
 where b.event=@ev
 
-select id,a.classtype,auditionminutes, 0 as schedule, null as auditionTime
+select id, student, a.classtype,auditionminutes, 0 as schedule, null as auditionTime
 from entry a inner join eventclass b
 on a.classabbr=b.classabbr
 where a.event=@ev

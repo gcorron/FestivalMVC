@@ -82,7 +82,7 @@ namespace FestivalMVC.Controllers
 
             if (model.UserName == demoAccess[0])
             {
-
+                ViewBag.ShowDocs = true;
                 string modelError;
                 DateTime lastDemo;
 
@@ -110,12 +110,9 @@ namespace FestivalMVC.Controllers
                 }
                 else
                 {
-                    modelError=$"Demo data can be reset at most once every two hours. Please try again later.";
+                    modelError=$"Demo data can be reset at most once every two hours. Please try again in {Math.Round(120-(DateTime.Now - lastDemo).TotalMinutes)} minutes.";
                 }
-
-                ModelState.AddModelError("", $"{modelError} The demo back door user names are: {demoAccess[1]} for the sys admin role," +
-                    $" {demoAccess[2]} for the chair role," +
-                    $" {demoAccess[3]} for the teacher role.");
+                ModelState.AddModelError("", modelError);
                 return View(model);
             }
             for (var i = 1; i <= 3; i++)

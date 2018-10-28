@@ -101,7 +101,16 @@ var FestivalLib = (function () {
             });
         },
 
+        initPopupForm: function (formNamePart) {
+            $('#' + formNamePart + 'Modal').keypress(function (e) {
+                if (e.keyCode == 13) {
+                    FestivalLib.$formElt(formNamePart, 'submit').trigger('click');
+                }
+            });
+        },
+
         popupForm(formNamePart, o, canDelete, optionalFields) {
+
             FestivalLib.populateForm(formNamePart, o);
             $(FestivalLib.formErrorDiv(formNamePart)).hide();
 
@@ -112,20 +121,26 @@ var FestivalLib = (function () {
             else
                 FestivalLib.$formElt(formNamePart, 'deleteButton').attr('disabled',true);
 
+            var theModal = '#' + formNamePart + 'Modal';
+            var theForm = '#' + formNamePart + 'Form';
+
+
             if (typeof optionalFields !== 'undefined') {
                 if (optionalFields) {
-                    $('#' + formNamePart + 'Form .optional-show').show();
-                    $('#' + formNamePart + 'Form .optional-hide').hide();
+                    $(theForm + ' .optional-show').show();
+                    $(theForm + ' .optional-hide').hide();
                 }
                 else {
-                    $('#' + formNamePart + 'Form .optional-show').hide();
-                    $('#' + formNamePart + 'Form .optional-hide').show();
+                    $(theForm + ' .optional-show').hide();
+                    $(theForm + ' .optional-hide').show();
                 }
             }
-            var theModal = '#' + formNamePart + 'Modal';
+
             $('body').on('shown.bs.modal', theModal, function () {
-                $('input:visible:enabled:first', this).focus();
-            })
+                $('.form-control:visible:enabled:not([readonly]):first', this).focus();
+            });
+
+
             $(theModal).modal();
         },
 

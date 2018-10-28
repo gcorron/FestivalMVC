@@ -126,11 +126,11 @@ namespace FestivalMVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult GenerateNewSchedule()
+        public ActionResult GenerateNewSchedule(bool generate)
         {
             var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
             var generator = new AuditionGenerator();
-            bool result=generator.BeginProcess(theEvent.Event.Id);
+            bool result=generator.DoProcess(theEvent.Event.Id,generate);
             return Json(result);
             
         }
