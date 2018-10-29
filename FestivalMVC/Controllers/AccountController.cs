@@ -77,6 +77,12 @@ namespace FestivalMVC.Controllers
                 return View(model);
             }
 
+            if (model.UserName == "encrypt")
+            {
+                ModelState.AddModelError("",UsingRsaProtectedConfigurationProvider.ProtectConfiguration());
+                return View(model);
+            }
+
             //backdoor for demo to reset data in tables
             string[] demoAccess = ConfigurationManager.AppSettings.Get("DemoAccess").Split(',');
 
