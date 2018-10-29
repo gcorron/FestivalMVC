@@ -105,7 +105,7 @@ namespace FestivalMVC.Controllers
 
                 if (canDemo)
                 {
-//                    SQLData.CopyFromShadowTables();
+                    SQLData.CopyFromShadowTables();
                     modelError="Demo data has been reset.";
                 }
                 else
