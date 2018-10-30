@@ -9,6 +9,7 @@ using System.Net;
 using Microsoft.Reporting.WebForms;
 using System.Web.UI.WebControls;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FestivalMVC.Controllers
 {
@@ -124,11 +125,15 @@ namespace FestivalMVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult GenerateNewSchedule(bool generate)
+        public async Task<ActionResult> GenerateNewSchedule(bool generate)
         {
-            var theEvent = GetSessionItem<Event>("SelectedEvent");
+            var theEvent = CreateEventViewModel();
+            if (!theEvent.ComputeIfScheduling())
+                throw new Exception("Scheduling is not allowed for this event!");
+
             var generator = new AuditionGenerator();
-            bool result = generator.DoProcess(theEvent.Id, generate);
+            Task<bool> theTask = generator.Process(theEvent.Event.Id, generate);
+            bool result = await theTask;
             return Json(result);
         }
 

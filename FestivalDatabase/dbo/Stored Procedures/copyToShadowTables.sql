@@ -1,9 +1,12 @@
-﻿CREATE PROCEDURE copyToShadowTables
+﻿CREATE PROCEDURE [dbo].[copyToShadowTables]
 AS
 
 -- copy into shadow tables
 
 set rowcount 0
+
+drop table if exists __aspnetuserroles;
+select * into __aspnetuserroles from AspNetUserRoles;
 
 drop table if exists __aspnetusers;
 select * into __aspnetusers from aspnetusers;

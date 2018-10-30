@@ -79,27 +79,14 @@ namespace FestivalMVC.Models
         private const char _HIGH = 'H';
         private const char _LOW = 'L';
 
-        public bool DoProcess(int ev, bool generate)
+        public async Task<bool> Process(int ev, bool generate)
         {
-            bool result;
             SQLData.SelectDataForGeneratingSchedule(ev, out _schedules, out _entries);
             if (!generate)
                 return true;
 
-            try
+            return await Task.Factory.StartNew(() =>
             {
-                result = Task.Run(() => Process()).Result;
-            }
-            catch (AggregateException ae)
-            {
-                throw ae.InnerExceptions.First<Exception>();
-            }
-            return result;
-        }
-
-        private bool Process()
-        {
-
             bool conflict;
             bool processedOne;
             bool foundInConflictList;
@@ -161,7 +148,7 @@ namespace FestivalMVC.Models
                 } //next schedule
                 if (!processedOne)
                 {
-                    for (var i=0;i<_schedules.Count;)
+                    for (var i = 0; i < _schedules.Count;)
                     {
                         _schedules[i].AuditionTime = _schedules[i].AuditionTime.AddMinutes(5);
                         _schedules[i].MinutesRemain -= 5;
@@ -180,7 +167,7 @@ namespace FestivalMVC.Models
                 SQLData.InsertAudition(audition);
             }
             return _entries.Count == 0 && conflictList.Count == 0; //if successfully scheduled all entries
-
+            });
         }
 
         IEnumerable<ProcessAuditionModel> BuildQuery(ProcessScheduleModel schedule, IEnumerable<ProcessAuditionModel> entries)

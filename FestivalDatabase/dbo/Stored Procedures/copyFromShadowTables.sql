@@ -4,6 +4,9 @@ AS
 set rowcount 0
 exec sys.sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"
 
+delete aspnetuserroles
+insert aspnetuserroles select * from __aspnetuserroles
+
 delete aspnetusers
 insert aspnetusers select * from __aspnetusers
 

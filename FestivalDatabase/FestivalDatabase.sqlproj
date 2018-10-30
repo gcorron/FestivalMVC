@@ -163,6 +163,7 @@
     <Build Include="dbo\Stored Procedures\SelectLocations.sql" />
     <Build Include="dbo\Stored Procedures\DeleteLocation.sql" />
     <Build Include="dbo\Stored Procedures\SelectInstruments.sql" />
+    <Build Include="dbo\Tables\__aspnetuserroles.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />
