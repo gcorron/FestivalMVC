@@ -8,16 +8,16 @@
         var theUser = (LoginPerson)Session["TheUser"];
         switch (theUser.RoleType)
         {
-            case LoginPerson.Chair:
+            case PersonHelper.Chair:
                 Layout = "~/Views/Chair/_ChairLayout.cshtml";
                 break;
-            case LoginPerson.Admin:
-            case LoginPerson.Coordinator:
-            case LoginPerson.Director:
-            case LoginPerson.Manager:
+            case PersonHelper.Admin:
+            case PersonHelper.Coordinator:
+            case PersonHelper.Director:
+            case PersonHelper.Manager:
                 Layout = "~/Views/Admin/_AdminLayout.cshtml";
                 break;
-            case LoginPerson.Teacher:
+            case PersonHelper.Teacher:
                 Layout = "~/Views/Teacher/_TeacherLayout.cshtml";
                 break;
 

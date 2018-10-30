@@ -8,7 +8,7 @@ BEGIN
 	END
 	else if @id<0
 	BEGIN
-		if exists(Select * from audition a inner join schedule b on a.schedule=b.id where b.Judge=judge)
+		if exists(Select * from audition a inner join schedule b on a.schedule=b.id where b.Judge=@id)
 			RAISERROR('This judge has been assigned to entries and cannot be deleted.',11,1,'UpdateJudge')
 		delete judge where id=-@id
 

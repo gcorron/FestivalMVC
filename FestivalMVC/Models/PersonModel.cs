@@ -88,6 +88,56 @@ namespace FestivalMVC.Models
     }
 
 
+    public static class PersonHelper
+    {
+        private const string _LEVELS = "ABCDE";
+
+        public const char Admin = 'A';
+        public const char Director = 'B';
+        public const char Manager = 'C';
+        public const char Coordinator = 'D';
+        public const char Chair = 'E';
+        public const char Teacher = 'T';
+
+        private static char NextLevelType(char locationType)
+        {
+            return _LEVELS[_LEVELS.IndexOf(locationType) + 1];
+        }
+
+        public static string LocationRole(char role)
+        {
+            switch (role)
+            {
+                case 'A': return "Admin";
+                case 'B': return "Director";
+                case 'C': return "Manager";
+                case 'D': return "Coordinator";
+                case 'E': return "Chair";
+                case 'T': return "Teacher";
+                default: return "---";
+            }
+
+        }
+
+        public static string CurrentDomain(char role)
+        {
+            switch (role)
+            {
+                case 'A': return "Domain";
+                case 'B': return "Division";
+                case 'C': return "Region";
+                case 'D': return "Metro";
+                case 'E': return "District";
+                case 'T': return "Studio";
+                default: return "---";
+            }
+        }
+        public static string NextDomain(char role) { return CurrentDomain(NextLevelType(role)); }
+        public static string NextRole(char role) { return LocationRole(NextLevelType(role)); }
+
+    }
+
+    [Serializable]
     public struct LoginPerson
     {
         public int Id { get; set; }
@@ -99,83 +149,5 @@ namespace FestivalMVC.Models
         public string ParentLocationName { get; set; }
         public int ParentLocationId { get; set; }
         public char RoleType { get; set; }
-
-        public string FullName { get => $"{FirstName} {LastName}"; }
-        public string LocationDomain { get => RoleScope(LocationRank); }
-        public string LocationSlot { get => RoleScope(LocationRank + 1); }
-
-        public const char Admin = 'A';
-        public const char Director = 'B';
-        public const char Manager = 'C';
-        public const char Coordinator = 'D';
-        public const char Chair = 'E';
-        public const char Teacher = 'T';
-
-
-
-        private int LocationRank
-        {
-            get
-            {
-                switch (RoleType)
-                {
-                    case Admin: return 1;
-                    case Director: return 2;
-                    case Manager: return 3;
-                    case Coordinator: return 4;
-                    case Chair: return 5;
-                    case Teacher: return 6;
-                    default: throw new ArgumentOutOfRangeException("RoleType is not valid.");
-                }
-            }
-        }
-        public string LocationRole { get => RoleName(LocationRank); }
-        public string LocationRoleAssignments { get => RoleName(LocationRank + 1); }
-
-
-        private string RoleName(int rank)
-        {
-            switch (rank)
-            {
-                case 1: return "Admin";
-                case 2: return "Director";
-                case 3: return "Manager";
-                case 4: return "Coordinator";
-                case 5: return "Chair";
-                case 6: return "Teacher";
-                default: return "---";
-            }
-
-        }
-
-        private string RoleScope(int rank)
-        {
-            switch (rank)
-            {
-                case 1: return "Domain";
-                case 2: return "Division";
-                case 3: return "Region";
-                case 4: return "Metro";
-                case 5: return "District";
-                case 6: return "Studio";
-                default: return "---";
-            }
-        }
-
-        public string AdminTitle
-        {
-            get
-            {
-                switch (RoleType)
-                {
-                    case 'A': return "Administrator";
-                    case 'B': return "Director";
-                    case 'C': return "Coordinator";
-                    case 'D': return "Chair";
-                    case 'E': return "Vice-Chair";
-                    default: return "None";
-                }
-            }
-        }
     }
 }

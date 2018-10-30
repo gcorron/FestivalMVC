@@ -89,7 +89,6 @@
         {
             return "";
         }
-        var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
-        return theEvent.EventDescription;
+        return (string)Session["SelectedEventDesc"];
     }
 }

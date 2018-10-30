@@ -13,6 +13,7 @@ namespace FestivalMVC.Models
         public const char Completed = 'D';
     }
 
+    [Serializable]
     public struct Event
     {
         private string _venue;

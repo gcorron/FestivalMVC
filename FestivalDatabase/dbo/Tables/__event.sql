@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[__event] (
-    [Id]         INT           IDENTITY (1, 1) NOT NULL,
+    [Id]         INT           NOT NULL,
     [Location]   INT           NOT NULL,
     [OpenDate]   SMALLDATETIME NOT NULL,
     [CloseDate]  SMALLDATETIME NOT NULL,
@@ -10,4 +10,6 @@
     [Notes]      VARCHAR (256) NOT NULL,
     [ClassTypes] VARCHAR (5)   NOT NULL
 );
+
+
 

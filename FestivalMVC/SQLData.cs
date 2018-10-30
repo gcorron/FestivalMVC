@@ -14,6 +14,13 @@ namespace FestivalMVC
 {
     public class SQLData
     {
+        public static IEnumerable<Instrum> SelectInstruments()
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                return connection.Query<Instrum>("SelectInstruments",commandType: CommandType.StoredProcedure);
+            }
+        }
 
         public static void PrepareReport(ReportViewer reportViewer, string reportName, string parms)
         {
@@ -530,26 +537,11 @@ out IEnumerable<Instrum> instruments, out Location location)
                 {
                     throw new ArgumentException($"Database connection info for {cnnName} not found!");
                 }
-
             }
 
-            public static SingletonCnnString Instance
-            {
-                get
-                {
-                    return instance;
-                }
-            }
-
-            public string CnnVal
-            {
-                get
-                {
-                    return _cnnString;
-                }
-            }
+            public static SingletonCnnString Instance { get => instance; }
+            public string CnnVal { get =>  _cnnString; }
 
         }
-
     }
 }

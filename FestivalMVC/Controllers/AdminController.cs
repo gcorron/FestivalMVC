@@ -99,7 +99,7 @@ namespace FestivalMVC.Controllers
         public ActionResult Rollup(string dummy)
         {
             var theUser = (LoginPerson)Session["TheUser"];
-            if (theUser.RoleType != LoginPerson.Admin)
+            if (theUser.RoleType != PersonHelper.Admin)
                 throw new Exception("Only the top level Admin can perform a rollup.");
             SQLData.RollupEvents();
             return RedirectToAction("Rollup");

@@ -20,7 +20,7 @@ namespace FestivalMVC.ViewModels
             SQLData.SelectDataForLocation(theUser.LocationId, out IEnumerable<ContactForView> people, out IEnumerable<Location> locations);
 
             Locations = locations;
-            PeopleViewModel = new PeopleViewModel(people, theUser.LocationRoleAssignments);
+            PeopleViewModel = new PeopleViewModel(people, PersonHelper.NextRole(theUser.RoleType));
         }
 
         public PeopleViewModel PeopleViewModel { get; private set; }
@@ -58,43 +58,11 @@ namespace FestivalMVC.ViewModels
         }
 
         public LocationB CurrentLocation { get; }
-        public string CurrentLocationRole { get => GetLocationRole(CurrentLocation.LocationType); }
-        public string CurrentLocationTitle { get => GetLocationTitle(CurrentLocation.LocationType); }
+        public string CurrentLocationRole { get => PersonHelper.CurrentDomain(CurrentLocation.LocationType); }
+        public string CurrentLocationTitle { get => PersonHelper.LocationRole(CurrentLocation.LocationType); }
 
-        public string HeadingLocationRole { get => GetLocationRole(NextLevelType(CurrentLocation.LocationType)); }
-        public string HeadingLocationTitle { get => GetLocationTitle(NextLevelType(CurrentLocation.LocationType)); }
-
-        private char NextLevelType(char locationType)
-        {
-            return _LEVELS[_LEVELS.IndexOf(locationType) + 1];
-        }
-
-        private string GetLocationRole(char locationType)
-        {
-            switch (locationType)
-            {
-                case 'A': return "Domain";
-                case 'B': return "Division";
-                case 'C': return "Region";
-                case 'D': return "Metro";
-                case 'E': return "District";
-                default: return "---";
-            }
-        }
-
-        public string GetLocationTitle(char locationType)
-        {
-            switch (locationType)
-            {
-                case 'A': return "Administrator";
-                case 'B': return "Director";
-                case 'C': return "Coordinator";
-                case 'D': return "Chair";
-                case 'E': return "Vice-Chair";
-                default: return "None";
-            }
-        }
-
+        public string HeadingLocationRole { get => PersonHelper.NextDomain(CurrentLocation.LocationType); }
+        public string HeadingLocationTitle { get => PersonHelper.NextRole(CurrentLocation.LocationType); }
 
         public IEnumerable<LocationB> Locations { get; }
     }
@@ -122,7 +90,7 @@ namespace FestivalMVC.ViewModels
             try
             {
                 LoginPerson theUser = (LoginPerson)HttpContext.Current.Session["TheUser"];
-                return theUser.FullName;
+                return $"{theUser.FirstName} {theUser.LastName}";
             }
             catch
             {

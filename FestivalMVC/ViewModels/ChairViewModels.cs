@@ -11,17 +11,19 @@ namespace FestivalMVC.ViewModels
     public struct PreparePageViewModel
     {
         // Constructor
-        public PreparePageViewModel(int eventId)
+        public PreparePageViewModel(EventViewModel eventVM)
         {
 
-            SQLData.SelectTeachersForEvent(eventId, out IEnumerable<ContactForView> teachers, out IEnumerable<Judge> judges);
+            SQLData.SelectTeachersForEvent(eventVM.Event.Id, out IEnumerable<ContactForView> teachers, out IEnumerable<Judge> judges);
 
             PeopleViewModel = new PeopleViewModel(teachers, "Teachers");
+            EventViewModel = eventVM;
             Judges = judges;
         }
 
-        public PeopleViewModel PeopleViewModel { get; private set; }
-        public IEnumerable<Judge> Judges { get; private set; }
+        public PeopleViewModel PeopleViewModel { get;}
+        public EventViewModel EventViewModel { get; }
+        public IEnumerable<Judge> Judges { get;}
 
     }
 

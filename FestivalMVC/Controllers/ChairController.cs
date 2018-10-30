@@ -15,6 +15,9 @@ namespace FestivalMVC.Controllers
     [Authorize(Roles = "Chair")]
     public class ChairController : Controller
     {
+
+        private static IEnumerable<Instrum> _instruments = SQLData.SelectInstruments();
+
         // GET: Chair
         public ActionResult Index()
         {
@@ -27,42 +30,37 @@ namespace FestivalMVC.Controllers
         public ActionResult Index(int id)
         {
 
+            var dataEvent = SQLData.SelectEvent(id, out string instrumentName);
+            Session["SelectedEvent"] = dataEvent;
+            Session["SelectedEventDesc"] = new EventViewModel(dataEvent, instrumentName,false).EventDescription;
+
             ViewBag.Title = "Events";
 
-            RefreshSelectedEventSessionData(id);
             return Json(new { redirect = "/Chair/Prepare" });
-
         }
 
         public ActionResult Prepare()
         {
             ViewBag.Title = "Prepare";
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-            return View(new PreparePageViewModel(theEvent.Event.Id));
+            return View(new PreparePageViewModel(CreateEventViewModel()));
         }
 
         public ActionResult Entries()
         {
             ViewBag.Title = "Entries";
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-
-            return View(new EntryViewModel(theEvent,0));
+            return View(new EntryViewModel(CreateEventViewModel(), 0));
         }
 
         public ActionResult Schedule()
         {
             ViewBag.Title = "Schedule";
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-
-            return View(new SchedulePageViewModel(theEvent));
+            return View(new SchedulePageViewModel(CreateEventViewModel()));
         }
 
         public ActionResult Ratings()
         {
             ViewBag.Title = "Ratings";
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-
-            return View(new RatingsPageViewModel(theEvent));
+            return View(new RatingsPageViewModel(CreateEventViewModel()));
         }
 
         public ActionResult Reports(int? Id)
@@ -111,8 +109,8 @@ namespace FestivalMVC.Controllers
         [HttpPost]
         public ActionResult UpdateEventCompleted()
         {
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-            SQLData.UpdateEventCompleted(theEvent.Event.Id);
+            var theEvent = GetSessionItem<Event>("SelectedEvent");
+            SQLData.UpdateEventCompleted(theEvent.Id);
             return Json(Url.Action("Index"));
         }
 
@@ -128,27 +126,24 @@ namespace FestivalMVC.Controllers
         [HttpPost]
         public ActionResult GenerateNewSchedule(bool generate)
         {
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = GetSessionItem<Event>("SelectedEvent");
             var generator = new AuditionGenerator();
-            bool result=generator.DoProcess(theEvent.Event.Id,generate);
+            bool result = generator.DoProcess(theEvent.Id, generate);
             return Json(result);
-            
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult UpdateSchedule(ScheduleModel schedule)
         {
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-            return PartialView("_Schedule",new SchedulePageViewModel(theEvent,schedule));
+            return PartialView("_Schedule", new SchedulePageViewModel(CreateEventViewModel(), schedule));
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult DeleteSchedule(int id)
         {
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-            return PartialView("_Schedule", new SchedulePageViewModel(theEvent, id));
+            return PartialView("_Schedule", new SchedulePageViewModel(CreateEventViewModel(), id));
         }
 
 
@@ -157,18 +152,16 @@ namespace FestivalMVC.Controllers
         public ActionResult Entries(int SelectedTeacher)
         {
             ViewBag.Title = "Entries";
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
-
-            return View(new EntryViewModel(theEvent, SelectedTeacher));
+            return View(new EntryViewModel(CreateEventViewModel(), SelectedTeacher));
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult ApproveEntries(int teacher)
         {
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = GetSessionItem<Event>("SelectedEvent");
 
-            SQLData.UpdateAllEntryStatus(theEvent.Event.Id, teacher, EntryStatusTypes.Approved);
+            SQLData.UpdateAllEntryStatus(theEvent.Id, teacher, EntryStatusTypes.Approved);
             return Json(0);
 
         }
@@ -178,9 +171,7 @@ namespace FestivalMVC.Controllers
         public ActionResult UpdateEvent(Event theEvent)
         {
 
-            LoginPerson theUser = (LoginPerson)Session["TheUser"];
-
-
+            LoginPerson theUser = GetSessionItem<LoginPerson>("TheUser");
             if (theEvent.Location != theUser.LocationId)
             {
                 if (theEvent.Location == 0)
@@ -195,7 +186,8 @@ namespace FestivalMVC.Controllers
                 return Index(id);
             else
             {
-                RefreshSelectedEventSessionData(theEvent.Id);
+                var dataEvent = SQLData.SelectEvent(theEvent.Id, out string instrumentName);
+                Session["SelectedEvent"] = dataEvent;
                 return Json(new { redirect = "/Chair/Prepare" }); //edited events came from Prepare, so refresh the page
             }
         }
@@ -209,28 +201,16 @@ namespace FestivalMVC.Controllers
             return Json(new { redirect = "/Chair/Index" }); // back to events page
         }
 
-
-        private void RefreshSelectedEventSessionData(int id)
-        {
-            var dataEvent = SQLData.SelectEvent(id, out string instrumentName);
-
-            var theEvent = new EventViewModel(dataEvent, instrumentName,true);
-
-            Session["SelectedEvent"] = theEvent;
-
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateTeacherEventAssignment(int id, bool participate)
         {
-            var theEvent = (EventViewModel)Session["SelectedEvent"];
-            var eventId = theEvent.Event.Id;
-            SQLData.UpdateTeacherEvent(id, eventId, participate);
+            var theEvent = GetSessionItem<Event>("SelectedEvent");
+            SQLData.UpdateTeacherEvent(id, theEvent.Id, participate);
             if (!participate)
-                eventId = 0;
+                theEvent.Id = 0;
 
-            return Json(new { id, eventId });
+            return Json(new { id, theEvent.Id });
         }
 
         [HttpPost]
@@ -240,14 +220,14 @@ namespace FestivalMVC.Controllers
 
             person.ParentLocation = Admin.LocationIdSecured();
 
-            var theEvent = (EventViewModel)Session["SelectedEvent"];
-            person.Instrument = theEvent.Event.Instrument;
+            var theEvent = GetSessionItem<Event>("SelectedEvent");
+            person.Instrument = theEvent.Instrument;
             person.Available = true; //always true for events
 
             if (person.Id == 0)
             {
                 person.UserName = Admin.CreateUser(person);
-                assignedToLocation = theEvent.Event.Id;
+                assignedToLocation = theEvent.Id;
             }
 
 
@@ -279,8 +259,8 @@ namespace FestivalMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UpdateJudge(Judge judge)
         {
-            EventViewModel theEvent = (EventViewModel)Session["SelectedEvent"];
-            judge.Event = theEvent.Event.Id;
+            var theEvent = GetSessionItem<Event>("SelectedEvent");
+            judge.Event = theEvent.Id;
             return PartialView("_Judges", SQLData.UpdateJudge(judge));
         }
 
@@ -290,6 +270,16 @@ namespace FestivalMVC.Controllers
         {
             SQLData.UpdateEntryStatus(approve.Id, approve.Status, approve.Notes);
             return Json(approve);
+        }
+
+        private EventViewModel CreateEventViewModel()
+        {
+            Event ev = (Event)Session["SelectedEvent"];
+            string instrumentName = (from i in _instruments
+                                    where i.Id == ev.Instrument
+                                    select i.Instrument).Single();
+
+            return new EventViewModel(ev, instrumentName,true);
         }
 
         //catch all unhandled exceptions that are thrown within scope of this controller

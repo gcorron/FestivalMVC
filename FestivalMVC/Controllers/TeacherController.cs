@@ -15,30 +15,40 @@ namespace FestivalMVC.Controllers
     [Authorize(Roles = "Teacher")]
     public class TeacherController : Controller
     {
+
+        private static IEnumerable<Instrum> _instruments = SQLData.SelectInstruments();
+
         // GET: Teacher
         public ActionResult Index()
         {
             var eventsVM = new EventsViewModel(true);
-            if (Session["SelectedEvent"] is null && !((Session["SelectedEvent"] = eventsVM.GetOnlyEventOpen()) is null))
+            EventViewModel? selectedEventVM;
+            if (Session["SelectedEvent"] is null)
             {
-                return RedirectToAction("Register");
+                selectedEventVM = eventsVM.GetOnlyEventOpen();
+                if (!(selectedEventVM is null))
+                {
+                    Session["SelectedEvent"] = selectedEventVM.Value.Event;
+                    Session["SelectedEventDesc"] = selectedEventVM.Value.EventDescription;
+                    return RedirectToAction("Register");
+                }
             }
             return View(eventsVM);
         }
 
         public ActionResult Register(int? id)
         {
-            EventViewModel theEvent;
+            Event theEvent;
 
             if (id is null)
             {
-                theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+                theEvent = GetSessionItem<Event>("SelectedEvent");
             }
             else
             {
-                var dataEvent = SQLData.SelectEvent((int)id, out string instrumentName);
-                theEvent = new EventViewModel(dataEvent, instrumentName, false);
+                theEvent = SQLData.SelectEvent((int)id, out string instrumentName);
                 Session["SelectedEvent"] = theEvent;
+                Session["SelectedEventDesc"] = string.Format("{0:MMM d}", theEvent.EventDate) + " "  + instrumentName; 
             }
 
             ViewBag.Title = "Register";
@@ -46,21 +56,18 @@ namespace FestivalMVC.Controllers
 
             //verify that the teacher's location is the same as for the event
             //so one teacher cannot use this link for another teachers event
-            if (theUser.ParentLocationId != theEvent.Event.Location)
+            if (theUser.ParentLocationId != theEvent.Location)
             {
                 throw new Exception("This event does not belong to your location.");
             }
 
-            return View(new TeacherRegisterViewModel(theEvent.Event.Id, theUser.Id));
+            return View(new TeacherRegisterViewModel(theEvent.Id, theUser.Id));
         }
 
         public ActionResult Entries()
         {
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
             var theUser = GetSessionItem<LoginPerson>("TheUser");
-
-            var EntryViewModel = new EntryViewModel(theEvent, theUser.Id);
-
+            var EntryViewModel = new EntryViewModel(CreateEventViewModel(), theUser.Id);
             return View(EntryViewModel);
         }
 
@@ -85,7 +92,7 @@ namespace FestivalMVC.Controllers
 
             LoginPerson theUser;
             theUser = (LoginPerson)Session["TheUser"];
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = GetSessionItem<Event>("SelectedEvent");
 
             StringBuilder parms = new StringBuilder(100);
 
@@ -93,7 +100,7 @@ namespace FestivalMVC.Controllers
                 parms.Append($",@teacher={theUser.Id}");
 
             if (report.Params.IndexOf('E') >= 0)
-                parms.Append($",@ev={theEvent.Event.Id}");
+                parms.Append($",@ev={theEvent.Id}");
 
             if (parms.Length > 0)
                 parms.Remove(0, 1); //extra comma
@@ -122,7 +129,7 @@ namespace FestivalMVC.Controllers
         public ActionResult UpdateEntryDetails(EntryDetails details)
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = CreateEventViewModel();
             if (theEvent.ComputeIfOpen() == false)
                 throw new Exception("This event is closed - no changes to registrations allowed.");
 
@@ -135,7 +142,7 @@ namespace FestivalMVC.Controllers
         public ActionResult SubmitEntries()
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = CreateEventViewModel();
             if (theEvent.ComputeIfOpen() == false)
                 throw new Exception("This event is closed - no changes to registrations allowed.");
 
@@ -149,7 +156,7 @@ namespace FestivalMVC.Controllers
         public ActionResult PayRegistration(decimal amountDue)
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = CreateEventViewModel();
             if (theEvent.ComputeIfOpen() == false)
                 throw new Exception("This event is closed - no payment allowed.");
 
@@ -163,7 +170,7 @@ namespace FestivalMVC.Controllers
         public ActionResult UpdateEntry(RegisteredDB entry)
         {
             var theUser = GetSessionItem<LoginPerson>("TheUser");
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = CreateEventViewModel();
             if (theEvent.ComputeIfOpen() == false)
                 throw new Exception("This event is closed - no changes to registrations allowed.");
 
@@ -188,7 +195,7 @@ namespace FestivalMVC.Controllers
         [HttpPost]
         public ActionResult UpdateStudent(Student student)
         {
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = CreateEventViewModel();
             if (!theEvent.ComputeIfOpen())
                 throw new Exception("Event is not open for registration.");
 
@@ -212,6 +219,16 @@ namespace FestivalMVC.Controllers
                 });
             }
             return PartialView("_Student", new StudentViewModel { Student = student });
+        }
+
+        private EventViewModel CreateEventViewModel()
+        {
+            Event ev = (Event)Session["SelectedEvent"];
+            string instrumentName = (from i in _instruments
+                                     where i.Id == ev.Instrument
+                                     select i.Instrument).Single();
+
+            return new EventViewModel(ev, instrumentName, true);
         }
 
         //catch all unhandled exceptions that are thrown within scope of this controller

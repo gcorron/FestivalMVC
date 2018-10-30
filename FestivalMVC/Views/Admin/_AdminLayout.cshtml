@@ -26,7 +26,7 @@
                     <li class="@LinkClass("Reports")">@Html.ActionLink("Reports", "Reports", new { Id = 0 })</li>
                     @{
                         var theUser = (LoginPerson)Session["TheUser"];
-                        if (theUser.RoleType == LoginPerson.Admin)
+                        if (theUser.RoleType == PersonHelper.Admin)
                         {
                             <li class="@LinkClass("Locations")">@Html.ActionLink("Locations", "Locations", "Admin")</li>
                             <li class="@LinkClass("Rollup")">@Html.ActionLink("Rollup", "Rollup", "Admin")</li>

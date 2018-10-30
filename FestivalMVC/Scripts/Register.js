@@ -172,6 +172,26 @@ function onUpdateEntrySuccess(register) {
     var name = register.ClassType + register.Student;
     var $span = $('#students td[name="' + name + '"]').find('span');
     $span.text(register.ClassAbbr);
+    //upate data
+    var $tr = FestivalLib.$tableRow('students',register.Student);
+    var registered = $tr.data('register');
+
+    var updated = false;
+    for (var i = 0; i < registered.length; i++) {
+        if (registered[i].ClassType === register.ClassType) {
+            registered[i].ClassAbbr = register.ClassAbbr;
+            registered[i].Status = '-';
+            updated = true;
+        }
+    }
+    if (!updated) {
+        i = registered.length;
+        register.Status = '-';
+        registered[i] = register;
+    }
+
+    $tr.data('register', registered);
+
 }
 
 function onStudentFormFail(response) {

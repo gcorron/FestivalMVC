@@ -1,7 +1,7 @@
 ﻿@model FestivalMVC.ViewModels.PreparePageViewModel
 
 @{
-    var theEvent = (FestivalMVC.ViewModels.EventViewModel)Session["SelectedEvent"];
+    var theEvent = Model.EventViewModel;
     var theUser = (FestivalMVC.Models.LoginPerson)Session["TheUser"];
     var dataEvent = theEvent.Event;
 }

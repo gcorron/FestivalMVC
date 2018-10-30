@@ -22,7 +22,7 @@ BEGIN
 		if @id=0
 			RAISERROR('No entry found to delete.',11,1,'UpdateEntry')
 		delete entry
-		where event=@event and student=@student and status='-'
+		where event=@event and student=@student and classtype=@classtype and status='-'  --just to be extra careful, don't delete with id
 	END
 	else if @id=0
 	BEGIN
