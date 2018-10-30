@@ -21,7 +21,7 @@ namespace FestivalMVC.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("FestivalConnection", throwIfV1Schema: false)
+            : base(SQLData.SingletonCnnString.Instance.CnnVal, throwIfV1Schema: false)
         {
         }
 

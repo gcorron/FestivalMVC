@@ -498,19 +498,57 @@ out IEnumerable<Instrum> instruments, out Location location)
 
         public static IDbConnection GetDBConnection()
         {
-            return new System.Data.SqlClient.SqlConnection(CnnVal("FestivalConnection"));
+            return new System.Data.SqlClient.SqlConnection(SingletonCnnString.Instance.CnnVal);
         }
 
-        public static string CnnVal(string name)
+        // we only need to do the work of getting the connection string
+        // and possibly decrypting it once with this singleton class
+        public sealed class SingletonCnnString
         {
-            try
+            private static readonly SingletonCnnString instance = new SingletonCnnString();
+            private string _cnnString;
+
+            // Explicit static constructor to tell C# compiler
+            // not to mark type as beforefieldinit
+            static SingletonCnnString()
             {
-                return ConfigurationManager.ConnectionStrings[name].ConnectionString;
             }
-            catch
+
+            private SingletonCnnString()
             {
-                throw new ArgumentException($"Database connection info for {name} not found!");
+                string cnnName = "FestivalConnection";
+                
+                try
+                {
+                    _cnnString = ConfigurationManager.ConnectionStrings[cnnName].ConnectionString;
+                    if (_cnnString.Substring(0, 1) == "!")
+                    {
+                        _cnnString = Crypto.DecryptStringAES(_cnnString.Substring(1), "MyDemo");
+                    }
+                }
+                catch
+                {
+                    throw new ArgumentException($"Database connection info for {cnnName} not found!");
+                }
+
             }
+
+            public static SingletonCnnString Instance
+            {
+                get
+                {
+                    return instance;
+                }
+            }
+
+            public string CnnVal
+            {
+                get
+                {
+                    return _cnnString;
+                }
+            }
+
         }
 
     }
