@@ -4,27 +4,22 @@ Created with Visual Studio 2017, this ASP.NET MVC Application is a demo project 
 
 Prospective employers can load the project and peruse the source code. Some quick background:
 
-* Demonstrates my depth of analysis and productivity, starting from a set of complex requirements, and in 6 weeks completing:
+* Demonstrates my depth of analysis and productivity, starting from a set of complex requirements, and in 8 weeks completing:
 ** Database schema - normalized tables, with all data access through stored procedures, using Dapper.
 ** User authentication with three role categories, different layout for each.
 ** Robust models and view models.
 ** Controllers that handle errors gracefully.
 ** Extensive use of Ajax, jQuery validation.
 ** C# code which demonstrates a thorough understanding of the language elements.
+** SQL queries demonstrating CTE's and Window functions (see SelectDataForTeacherEvent stored procedure).
+** Async methods (see AuditionGenerator class).
 
-* Project begun Sept 3, 2018 as a Web Forms ASP.NET project. Two weeks later, converted and continued as an MVC project.
-* Core functionality, minus reports and email notifications, finished Oct 15, 2018.
-* See the Project Blueprint in the Solution Items folder for an overview.
+* Project begun Sept 3, 2018.
+* Core functionality completed Oct 29, 2018. Original project blueprint forecast Nov. 1 completion.
 
-### Installing
+### Try It Out
 
-* restore backup of SQL Server database to your SQL server
-* load the Visual Studio solution, FestivalMVC.sln.
-* edit web.config connection string to point to your server
-* Right-click on the database project, FestivalDatabase, and do a schema compare.
-* Update the database schema from the project (select your server as the target first.)
-* Run the project. Sample user names: accc1000 (top level Admin role), hcard1000 (Chair role), gbroo1000 (Teacher role). All passwords are 'Festival@2020'. 
-
+* Go to http://bridgertechservices.com.
 
 ## Built With
 

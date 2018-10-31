@@ -14,6 +14,15 @@ namespace FestivalMVC
 {
     public class SQLData
     {
+
+        public static void InsertLog(string LogEvent, string LogMessage)
+        {
+            using (IDbConnection connection = GetDBConnection())
+            {
+                connection.Execute("InsertLog", new { LogEvent, LogMessage }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public static IEnumerable<Instrum> SelectInstruments()
         {
             using (IDbConnection connection = GetDBConnection())
