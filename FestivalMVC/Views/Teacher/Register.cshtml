@@ -1,5 +1,4 @@
-﻿
-@model FestivalMVC.ViewModels.TeacherRegisterViewModel
+﻿@model FestivalMVC.ViewModels.TeacherRegisterViewModel
 @{
     ViewBag.Title = "Register";
 }
@@ -31,8 +30,10 @@
                     <a class="btn btn-sm btn-warning pull-right" onclick="RegisterApp.payRegistration()">Pay</a>
                 }
             }
+            @{ string dbtable = (Model.EventVM.Event.ClassTypes.Length == 2) ? "table-double" : "";}
 
-            <table class="table table-bordered table-responsive table-condensed" data-classTypes="@Json.Encode(Model.EventVM.Event.ClassTypes)">
+            }
+            <table class="table table-bordered table-responsive table-condensed @dbtable" data-classTypes="@Json.Encode(Model.EventVM.Event.ClassTypes)">
                 <thead>
                     <tr>
                         <th>Student<span id="totalStudents" class="badge bg-info pull-right">@Model.AllStudents.Count()</span></th>

@@ -26,8 +26,8 @@ namespace FestivalMVC.Models
         public DateTime EventDate { get; set; }
         public char Instrument { get; set; }
         public char Status { get; set; }
-        public string Venue { get => _venue; set => _venue=value.Trim(); }
-        public string Notes { get => _notes; set => _notes=value.Trim(); }
+        public string Venue { get => _venue; set => _venue= value?.Trim(); }
+        public string Notes { get => _notes; set => _notes= value?.Trim(); }
         public string ClassTypes { get; set; }
     }
 
@@ -37,7 +37,7 @@ namespace FestivalMVC.Models
 
         public int Id { get; set; }
         public int Event { get; set; }
-        public string Name { get => _name; set => _name = value.Trim(); }
+        public string Name { get => _name; set => _name = value?.Trim(); }
     }
 
     public struct ClassAbbreviation

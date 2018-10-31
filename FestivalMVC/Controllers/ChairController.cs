@@ -215,7 +215,7 @@ namespace FestivalMVC.Controllers
             if (!participate)
                 theEvent.Id = 0;
 
-            return Json(new { id, theEvent.Id });
+            return Json(new { id, eventId=theEvent.Id });
         }
 
         [HttpPost]

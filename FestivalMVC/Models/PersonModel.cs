@@ -8,10 +8,10 @@ namespace FestivalMVC.Models
         private string firstName, lastName, email, phone;
 
         public int Id { get; set; }
-        public string FirstName { get => firstName; set => firstName = value.Trim(); }
-        public string LastName { get => lastName; set => lastName = value.Trim(); }
-        public string Email { get => email; set => email = value.Trim(); }
-        public string Phone { get => phone; set => phone = value.Trim(); }
+        public string FirstName { get => firstName; set => firstName = value?.Trim(); }
+        public string LastName { get => lastName; set => lastName = value?.Trim(); }
+        public string Email { get => email; set => email = value?.Trim(); }
+        public string Phone { get => phone; set => phone = value?.Trim(); }
         public string UserName { get; set; }
         public char Instrument { get; set; }
         public Boolean Available { get; set; }
@@ -59,10 +59,10 @@ namespace FestivalMVC.Models
         private string firstName, lastName, email, phone;
 
         public int Id { get; set; }
-        public string FirstName { get => firstName; set => firstName = value.Trim(); }
-        public string LastName { get => lastName; set => lastName = value.Trim(); }
-        public string Email { get => email; set => email = value.Trim(); }
-        public string Phone { get => phone; set => phone = value.Trim(); }
+        public string FirstName { get => firstName; set => firstName = value?.Trim(); }
+        public string LastName { get => lastName; set => lastName = value?.Trim(); }
+        public string Email { get => email; set => email = value?.Trim(); }
+        public string Phone { get => phone; set => phone = value?.Trim(); }
     }
 
     public struct Location
