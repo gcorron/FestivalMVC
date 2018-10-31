@@ -1,6 +1,6 @@
 # Music Festival Demo App
 
-Created with Visual Studio 2017, this ASP.NET MVC Application is a demo project based on requirements of the Federated Music Clubs of America. Its purpose is to allow teachers to enter student’s enrollment, allow coordinators to schedule auditions, tabulate ratings awarded by judges, and track accumulated points from year to year for special recognition of achievement. It allows teachers to select the appropriate category for each student, according to the festival rules, and choose from required music selections for that category.
+Created with Visual Studio 2017, this ASP.NET MVC Application is a demo project based on requirements of the Federated Music Clubs of America. Its purpose is to allow teachers to enter students' enrollment, allow coordinators to schedule auditions, tabulate ratings awarded by judges, and track accumulated points from year to year for special recognition of achievement. It allows teachers to select the appropriate category for each student, according to the festival rules, and choose from required music selections for that category.
 
 Prospective employers can load the project and peruse the source code. Some quick background:
 
