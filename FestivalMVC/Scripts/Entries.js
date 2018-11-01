@@ -4,12 +4,14 @@ var EntriesApp = (function () {
     var _composers;
     var _requiredVersion;
     var _callbackFn;
+    var controllerUrl;
 
     return {
-        init: function (requiredVersion) { //version of required pieces database cached in local storage
 
+        init: function (forTeacher, requiredVersion) { //version of required pieces database cached in local storage
             FestivalLib.initAjaxCursor();
             FestivalLib.initPopupForm('entry');
+            controllerUrl = forTeacher ? '/Teacher' : '/Chair';
 
             $('tr[name]').each(function (i, v) {
                 FestivalLib.convertJqueryData(v, 'entry');
@@ -23,7 +25,7 @@ var EntriesApp = (function () {
             _requiredVersion = requiredVersion;
             _composers = getFromStorage('Composers');
             if (_composers === null) {
-                FestivalLib.getAjax('/Teacher/Composers', onGetComposers);
+                FestivalLib.getAjax(controllerUrl + '/Composers', onGetComposers);
             }
         },
 
@@ -198,7 +200,6 @@ var EntriesApp = (function () {
                     return pieces[i];
             }
         }
-
     }
 
     function onUpdateEntryFail(response) {
@@ -209,7 +210,7 @@ var EntriesApp = (function () {
         _callbackFn = callbackFn;
         var pieces = getFromStorage('Pieces.' + classAbbr);
         if (pieces === null)
-            FestivalLib.getAjax('/Teacher/Pieces?ClassAbbr=' + classAbbr, onGetPieces);
+            FestivalLib.getAjax(controllerUrl + '/Pieces?ClassAbbr=' + classAbbr, onGetPieces);
         else
             callbackFn(pieces);
     }
@@ -281,7 +282,3 @@ var EntriesApp = (function () {
     }
 
 })();
-
-$(document).ready(function () {
-    EntriesApp.init('1');
-});

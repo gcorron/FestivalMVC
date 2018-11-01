@@ -32,7 +32,6 @@
             }
             @{ string dbtable = (Model.EventVM.Event.ClassTypes.Length == 2) ? "table-double" : "";}
 
-            }
             <table class="table table-bordered table-responsive table-condensed @dbtable" data-classTypes="@Json.Encode(Model.EventVM.Event.ClassTypes)">
                 <thead>
                     <tr>
@@ -153,23 +152,8 @@
         </form>
     }
 }
-<div class="modal fade" id="infoModal" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Header</h4>
-            </div>
-            <div class="modal-body">
-                <p>This is a small modal.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
-            </div>
 
-        </div>
-    </div>
-</div>
+@{Html.RenderPartial("_InfoModal"); }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

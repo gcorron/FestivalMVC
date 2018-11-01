@@ -287,6 +287,17 @@ namespace FestivalMVC.Controllers
             return new EventViewModel(ev, instrumentName,true);
         }
 
+        public ActionResult Composers()
+        {
+            return Json(SQLData.SelectComposers(), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Pieces(string classAbbr)
+        {
+            var pieces = SQLData.SelectPiecesForClassAbbr(classAbbr);
+            return Json(new { classAbbr, pieces }, JsonRequestBehavior.AllowGet);
+        }
+
         //catch all unhandled exceptions that are thrown within scope of this controller
         protected override void OnException(ExceptionContext filterContext)
         {
