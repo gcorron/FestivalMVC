@@ -17,7 +17,7 @@ namespace FestivalMVC.Controllers
     public class ChairController : Controller
     {
 
-        private static IEnumerable<Instrum> _instruments = SQLData.SelectInstruments();
+        private static IEnumerable<InstrumentModel> _instruments = SQLData.SelectInstruments();
 
         // GET: Chair
         public ActionResult Index()
@@ -66,7 +66,7 @@ namespace FestivalMVC.Controllers
 
         public ActionResult Reports(int? Id)
         {
-            IEnumerable<ReportModel> reports = SQLData.SelectReports(role: 'C');
+            IEnumerable<ReportModel> reports = SQLData.SelectReports(ReportModelRoles.ChairRole);
             if ((Id ?? 0) == 0)
             {
                 return View(reports);
@@ -88,13 +88,13 @@ namespace FestivalMVC.Controllers
 
             StringBuilder parms = new StringBuilder(100);
 
-            if (report.Params.IndexOf('L') >= 0)
+            if (report.Params.IndexOf(ReportModelParamTypes.Location) >= 0)
                 parms.Append($",@location={theUser.LocationId}");
 
-            if (report.Params.IndexOf('T') >= 0)
+            if (report.Params.IndexOf(ReportModelParamTypes.Teacher) >= 0)
                 parms.Append($",@teacher={theUser.Id}");
 
-            if (report.Params.IndexOf('E') >= 0)
+            if (report.Params.IndexOf(ReportModelParamTypes.Event) >= 0)
                 parms.Append($",@ev={theEvent.Event.Id}");
 
             if (parms.Length > 0)

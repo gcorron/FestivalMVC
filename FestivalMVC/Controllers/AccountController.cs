@@ -71,7 +71,7 @@ namespace FestivalMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            const int minutesToDemo= 20;
+            const int minutesToDemo = 20;
 
             if (!ModelState.IsValid)
             {
@@ -86,34 +86,36 @@ namespace FestivalMVC.Controllers
                 ViewBag.ShowDocs = true;
                 string modelError;
                 DateTime lastDemo;
+                bool canDemo;
 
                 HttpContext.Application.Lock();
-                try
                 {
-                    lastDemo = (DateTime)HttpContext.Application["LastDemoTime"];
+                    try
+                    {
+                        lastDemo = (DateTime)HttpContext.Application["LastDemoTime"];
+                    }
+                    catch (Exception)
+                    {
+                        lastDemo = DateTime.Now.Subtract(new TimeSpan(24, 0, 0));
+                    }
+
+                    canDemo = (DateTime.Now - lastDemo).TotalMinutes > minutesToDemo;
+
+                    if (canDemo)
+                        HttpContext.Application["LastDemoTime"] = DateTime.Now;
                 }
-                catch (Exception)
-                {
-                    lastDemo = DateTime.Now.Subtract(new TimeSpan(24, 0, 0));
-                }
-
-                bool canDemo = (DateTime.Now - lastDemo).TotalMinutes > minutesToDemo;
-
-                if (canDemo)
-                    HttpContext.Application["LastDemoTime"] = DateTime.Now;
-
                 HttpContext.Application.UnLock();
-                
+
 
                 if (canDemo)
                 {
                     SQLData.CopyFromShadowTables();
-                    modelError="Demo data has been reset.";
+                    modelError = "Demo data has been reset.";
                     SQLData.InsertLog("Demo Data Reset", "NoMessage");
                 }
                 else
                 {
-                    modelError=$"Demo data can be reset at most once every { minutesToDemo } minutes. Please try again in {Math.Round(minutesToDemo-(DateTime.Now - lastDemo).TotalMinutes)} minutes.";
+                    modelError = $"Demo data can be reset at most once every { minutesToDemo } minutes. Please try again in {Math.Round(minutesToDemo - (DateTime.Now - lastDemo).TotalMinutes)} minutes.";
                 }
                 ModelState.AddModelError("", modelError);
                 return View(model);

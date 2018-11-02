@@ -23,11 +23,11 @@ namespace FestivalMVC
             }
         }
 
-        public static IEnumerable<Instrum> SelectInstruments()
+        public static IEnumerable<InstrumentModel> SelectInstruments()
         {
             using (IDbConnection connection = GetDBConnection())
             {
-                return connection.Query<Instrum>("SelectInstruments",commandType: CommandType.StoredProcedure);
+                return connection.Query<InstrumentModel>("SelectInstruments",commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -310,14 +310,14 @@ namespace FestivalMVC
         }
 
         public static void SelectEventsForTeacher(int parentLocation, DateTime currentTime, out IEnumerable<Event> events,
-out IEnumerable<Instrum> instruments, out Location location)
+out IEnumerable<InstrumentModel> instruments, out Location location)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 using (var multi = connection.QueryMultiple("SelectEventsForTeacher", new { parentLocation, currentTime }, commandType: CommandType.StoredProcedure))
                 {
                     events = multi.Read<Event>();
-                    instruments = multi.Read<Instrum>();
+                    instruments = multi.Read<InstrumentModel>();
                     location = multi.ReadSingle<Location>();
                 }
             }
@@ -336,14 +336,14 @@ out IEnumerable<Instrum> instruments, out Location location)
         }
 
         public static void SelectEventsForDistrict(int locationId, out IEnumerable<Event> events,
-            out IEnumerable<Instrum> instruments, out Location location)
+            out IEnumerable<InstrumentModel> instruments, out Location location)
         {
             using (IDbConnection connection = GetDBConnection())
             {
                 using (var multi = connection.QueryMultiple("SelectEventsForDistrict", new { location = locationId }, commandType: CommandType.StoredProcedure))
                 {
                     events = multi.Read<Event>();
-                    instruments = multi.Read<Instrum>();
+                    instruments = multi.Read<InstrumentModel>();
                     location = multi.ReadSingle<Location>();
                 }
             }

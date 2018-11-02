@@ -13,7 +13,7 @@ namespace FestivalMVC.ViewModels
 {
     public class AdminPageData
     {
-
+        //Constructor
         public AdminPageData(LoginPerson theUser)
         {
             TheUser = theUser;
@@ -25,7 +25,6 @@ namespace FestivalMVC.ViewModels
 
         public PeopleViewModel PeopleViewModel { get; private set; }
         public LoginPerson TheUser { get; private set; }
-
 
         public IEnumerable<Location> Locations { get; private set; }
 
@@ -49,6 +48,8 @@ namespace FestivalMVC.ViewModels
     public class LocationPageData
     {
         const string _LEVELS = "ABCDE";
+        
+        //Constructor
         public LocationPageData(int currentId, bool goingUp)
         {
             SQLData.SelectLocations(currentId, goingUp, out LocationB currentLocation, out IEnumerable<LocationB> locations);
@@ -69,7 +70,7 @@ namespace FestivalMVC.ViewModels
 
     public class PeopleViewModel
     {
-
+        //Constructor
         public PeopleViewModel(IEnumerable<ContactForView> people, string peopleDescription)
         {
             People = people;
@@ -78,9 +79,6 @@ namespace FestivalMVC.ViewModels
 
         public string PeopleDescription { get; private set; }
         public IEnumerable<ContactForView> People { get; private set; }
-
-
-
     }
 
     public static class Admin

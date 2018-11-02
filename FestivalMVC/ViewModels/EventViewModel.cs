@@ -109,7 +109,7 @@ namespace FestivalMVC.ViewModels
     public class EventsViewModel
     {
         private readonly IEnumerable<Event> _events;
-        private readonly IEnumerable<Instrum> _instruments;
+        private readonly IEnumerable<InstrumentModel> _instruments;
         private readonly Location _location;
         private readonly bool _forTeacher;
 

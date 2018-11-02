@@ -26,7 +26,7 @@ namespace FestivalMVC.Controllers
 
         public ActionResult Reports(int? Id)
         {
-            IEnumerable<ReportModel> reports = SQLData.SelectReports(role: 'A');
+            IEnumerable<ReportModel> reports = SQLData.SelectReports(ReportModelRoles.AdminRole);
             if ((Id ?? 0) == 0)
             {
                 return View(reports);
@@ -46,7 +46,7 @@ namespace FestivalMVC.Controllers
             theUser = (LoginPerson)Session["TheUser"];
 
             string parms = "";
-            if (report.Params.IndexOf('L') >= 0)
+            if (report.Params.IndexOf(ReportModelParamTypes.Location) >= 0)
                 parms=$"@location={theUser.LocationId}";
 
             SQLData.PrepareReport(reportViewer, report.Name, parms);

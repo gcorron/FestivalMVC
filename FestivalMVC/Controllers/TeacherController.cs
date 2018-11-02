@@ -16,7 +16,7 @@ namespace FestivalMVC.Controllers
     public class TeacherController : Controller
     {
 
-        private static IEnumerable<Instrum> _instruments = SQLData.SelectInstruments();
+        private static IEnumerable<InstrumentModel> _instruments = SQLData.SelectInstruments();
 
         // GET: Teacher
         public ActionResult Index()
@@ -73,7 +73,7 @@ namespace FestivalMVC.Controllers
 
         public ActionResult Reports(int? Id)
         {
-            IEnumerable<ReportModel> reports = SQLData.SelectReports(role: 'T');
+            IEnumerable<ReportModel> reports = SQLData.SelectReports(ReportModelRoles.TeacherRole);
             if ((Id ?? 0) == 0)
             {
                 return View(reports);
@@ -96,10 +96,10 @@ namespace FestivalMVC.Controllers
 
             StringBuilder parms = new StringBuilder(100);
 
-            if (report.Params.IndexOf('T') >= 0)
+            if (report.Params.IndexOf(ReportModelParamTypes.Teacher) >= 0)
                 parms.Append($",@teacher={theUser.Id}");
 
-            if (report.Params.IndexOf('E') >= 0)
+            if (report.Params.IndexOf(ReportModelParamTypes.Event) >= 0)
                 parms.Append($",@ev={theEvent.Id}");
 
             if (parms.Length > 0)
@@ -276,7 +276,7 @@ namespace FestivalMVC.Controllers
                 };
             }
         }
-        private T GetSessionItem<T>(string name) ///TODO implement in other controllers
+        private T GetSessionItem<T>(string name)
         {
             try
             {
@@ -284,7 +284,6 @@ namespace FestivalMVC.Controllers
             }
             catch (Exception)
             {
-
                 throw new Exception("Session timed out. Please log in again to continue.");
             }
         }

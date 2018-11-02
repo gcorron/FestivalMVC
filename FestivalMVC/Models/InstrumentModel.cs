@@ -1,7 +1,7 @@
 ﻿
 namespace FestivalMVC.Models
 {
-    public struct Instrum
+    public struct InstrumentModel
     {
         public char Id { get; set; }
         public string Instrument { get; set; }
