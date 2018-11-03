@@ -84,7 +84,7 @@ namespace FestivalMVC.Controllers
 
             LoginPerson theUser;
             theUser = (LoginPerson)Session["TheUser"];
-            var theEvent = GetSessionItem<EventViewModel>("SelectedEvent");
+            var theEvent = GetSessionItem<Event>("SelectedEvent");
 
             StringBuilder parms = new StringBuilder(100);
 
@@ -95,7 +95,7 @@ namespace FestivalMVC.Controllers
                 parms.Append($",@teacher={theUser.Id}");
 
             if (report.Params.IndexOf(ReportModelParamTypes.Event) >= 0)
-                parms.Append($",@ev={theEvent.Event.Id}");
+                parms.Append($",@ev={theEvent.Id}");
 
             if (parms.Length > 0)
                 parms.Remove(0, 1); //extra comma
