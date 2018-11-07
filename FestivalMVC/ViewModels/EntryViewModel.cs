@@ -58,10 +58,12 @@ namespace FestivalMVC.ViewModels
 
         private string TranslatePieceExtension(char ext)
         {
-            if (ext == '\0')
-                return "";
-            else
+
+            if (ext>='1' && ext<='9')
                 return $" Mvt. {ext}";
+            else
+                return "";
+
         }
 
         public IEnumerable<ContactShort> Teachers { get => _teachers; }
